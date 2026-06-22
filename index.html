@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caisse Noire — démo de cartes</title>
+<style>
+:root{
+  --bg:#11140f; --panel:#1b1f17; --panel2:#232820; --ink:#ece7d6; --muted:#9aa088;
+  --line:#3a4231; --gold:#d9b24a; --green:#4caf6a; --money:#7ec98f;
+  --red:#d4543f; --blue:#5a8fd6; --purple:#9b6cc4; --orange:#e0913a;
+  --justice:#5a8fd6; --presse:#c9743a; --rue:#cf5252; --finances:#54a06b;
+  --shadow:0 6px 18px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+h1,h2,h3{font-family:"Georgia","Times New Roman",serif;letter-spacing:.3px}
+header{padding:18px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#191d14,#141710)}
+header h1{margin:0;font-size:26px;color:var(--gold)}
+header p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:4px;padding:0 18px;border-bottom:1px solid var(--line);background:#161a12;position:sticky;top:0;z-index:5;flex-wrap:wrap}
+.tab{padding:12px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;font-weight:600}
+.tab.active{color:var(--gold);border-color:var(--gold)}
+.wrap{max-width:1180px;margin:0 auto;padding:22px}
+.btn{background:var(--panel2);color:var(--ink);border:1px solid var(--line);padding:9px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px}
+.btn:hover{border-color:var(--gold)}
+.btn.primary{background:var(--gold);color:#1a1a1a;border-color:var(--gold)}
+.btn.alt{border-color:var(--blue);color:var(--blue)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.muted{color:var(--muted)}
+.tag{display:inline-block;padding:1px 7px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid var(--line)}
+.t-justice{color:var(--justice);border-color:var(--justice)}
+.t-presse{color:var(--presse);border-color:var(--presse)}
+.t-rue{color:var(--rue);border-color:var(--rue)}
+.t-finances{color:var(--finances);border-color:var(--finances)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:12px;padding:11px;position:relative;min-height:152px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+.card .nom{font-weight:800;font-size:14px;line-height:1.15}
+.card .flavor{font-size:11.5px;color:var(--gold);font-style:italic;margin-top:6px;opacity:.85}
+.card .desc{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.45;flex:1}
+.card{min-height:auto}
+.card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px}
+.card .qty{position:absolute;top:8px;right:9px;font-size:10px;color:var(--muted)}
+.card.votant{border-top:3px solid var(--money)}
+.card.fin{border-top:3px solid var(--red)}
+.card.act{border-top:3px solid var(--blue)}
+.card.parti{border-top:3px solid var(--gold)}
+.pill{font-weight:800}
+.voix{color:var(--money)} .cout{color:var(--gold)} .malus{color:var(--red);font-weight:800}
+.filterbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:6px 12px;border:1px solid var(--line);border-radius:20px;cursor:pointer;font-size:13px;color:var(--muted)}
+.chip.active{background:var(--gold);color:#1a1a1a;border-color:var(--gold);font-weight:700}
+.sec-title{margin:22px 0 4px;color:var(--gold)}
+.sec-sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+.board{display:grid;grid-template-columns:1fr 320px;gap:18px}
+@media(max-width:900px){.board{grid-template-columns:1fr}}
+.players{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:168px;flex:1}
+.pcard.me{border-color:var(--gold)}
+.pcard.turn{box-shadow:0 0 0 2px var(--gold) inset}
+.pcard h4{margin:0 0 4px;font-size:14px}
+.bar{height:7px;background:#0d0f0a;border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--money)}
+.fronts{display:flex;gap:4px;margin-top:6px}
+.front{flex:1;text-align:center;font-size:10px;padding:2px 0;border-radius:5px;border:1px solid var(--line);color:var(--muted)}
+.backs{display:flex;gap:3px;margin-top:7px;flex-wrap:wrap;min-height:20px}
+.back{width:14px;height:20px;border-radius:3px;background:repeating-linear-gradient(45deg,#2c3124,#2c3124 3px,#1d2118 3px,#1d2118 6px);border:1px solid var(--line);box-shadow:inset 0 0 0 1px rgba(217,178,74,.12)}
+.pcard.acting{box-shadow:0 0 0 2px var(--gold) inset, 0 0 16px rgba(217,178,74,.25)}
+.nowplay{font-size:11px;color:var(--gold);font-weight:700;margin-top:5px;min-height:15px}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+.controls select{padding:5px 8px}
+.flash{position:fixed;left:50%;top:14%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--gold);color:var(--ink);padding:8px 16px;border-radius:10px;font-weight:600;z-index:15;box-shadow:var(--shadow);opacity:0;transition:opacity .2s;pointer-events:none}
+.flash.show{opacity:1}
+.front.dirty{border-color:var(--red);color:var(--red)}
+.front.prot{border-color:var(--green);color:var(--green);background:rgba(76,175,106,.12)}
+.market{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;max-height:300px;overflow:auto;padding-right:4px}
+.mini{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;font-size:12px;position:relative}
+.mini:hover{border-color:var(--gold)}
+.mini.dis{opacity:.4;cursor:not-allowed}
+.mini .mn{font-weight:700;font-size:12px}
+.mini .mv{color:var(--money);font-weight:700}
+.hand{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.hcard{width:128px;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;font-size:12px;position:relative}
+.hcard:hover{border-color:var(--gold)}
+.hcard.dis{opacity:.45;cursor:not-allowed}
+.hcard.sel{border-color:var(--red);box-shadow:0 0 0 2px var(--red) inset}
+.log{background:#0e110b;border:1px solid var(--line);border-radius:10px;padding:10px;height:460px;overflow:auto;font-size:12.5px}
+.log div{padding:3px 0;border-bottom:1px dashed #232820}
+.log .ev{color:var(--purple)} .log .den{color:var(--red)} .log .buy{color:var(--money)} .log .win{color:var(--gold);font-weight:800}
+.panelbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.kpi{display:flex;gap:18px;flex-wrap:wrap}
+.kpi div b{display:block;font-size:22px;color:var(--gold)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left}
+th{background:var(--panel2);color:var(--gold)}
+.setup label{display:block;margin:10px 0 4px;font-size:13px;color:var(--muted)}
+select,input[type=range]{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:7px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:20}
+.modal{background:var(--panel);border:1px solid var(--gold);border-radius:14px;padding:22px;max-width:480px;width:92%}
+.modal h2{margin:0 0 8px;color:var(--gold)}
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.choice{padding:10px 12px;border:1px solid var(--line);border-radius:9px;cursor:pointer}
+.choice:hover{border-color:var(--gold);background:var(--panel2)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Caisse Noire</h1>
+  <p>Démo de cartes &amp; bac à sable d'équilibrage. Tu te finances par la corruption (cartes stockées devant toi, à malus imprimé) pour acheter des voix — mais on peut te <b>dénoncer</b>. Les combines viennent d'une <b>pioche commune</b> ; les votants sont des <b>blocs uniques</b> qu'on s'arrache. Premier au <b>seuil (30 − nb de joueurs)</b> gagne. Satire ; ressemblances volontairement appuyées.</p>
+</header>
+<div class="tabs">
+  <div class="tab active" data-tab="play">▶ Jouer la démo</div>
+  <div class="tab" data-tab="cat">🃏 Catalogue des cartes</div>
+  <div class="tab" data-tab="bal">📊 Équilibrage 2–6 joueurs</div>
+  <div class="tab" data-tab="rules">📜 Règles &amp; chiffres</div>
+</div>
+
+<!-- PLAY -->
+<div class="wrap tabpane" id="play">
+  <div id="setup" class="setup panelbox">
+    <h2 style="margin-top:0;color:var(--gold)">Nouvelle partie</h2>
+    <p class="muted">Tu diriges le Parti&nbsp;1 (humain). Les autres sont automatiques. <b>Tout le monde puise dans la même pioche commune</b> (104 cartes). Main de <b>5</b>, revenu auto de <b>+3 M€</b>/tour. <b>Votants = blocs uniques</b> (un seul Retraités, une seule CGT… qui le prend le prive aux autres). Seuil = <b>30 − nombre de joueurs</b> (28 à 2 j., 24 à 6 j.). Conseil : à 2 c'est jouable mais le jeu brille à 3+.</p>
+    <label>Nombre de partis (2 à 6)</label>
+    <input type="range" id="nplayers" min="2" max="6" value="4" style="width:240px">
+    <span id="nlabel" style="font-weight:700;color:var(--gold)">4</span>
+    <label>Ton parti</label>
+    <select id="partySel"></select>
+    <div style="margin-top:16px"><button class="btn primary" onclick="startGame()">Lancer la campagne</button></div>
+  </div>
+  <div id="gameui" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <div><b id="turnInfo"></b> · <span class="muted">Objectif : <b id="goalInfo">— voix</b></span> · <span class="muted" id="deckInfo"></span></div>
+      <div class="controls">
+        <label><input type="checkbox" id="autoChk" onchange="toggleAuto()"> 👁 Regarder (auto)</label>
+        <span class="muted">Vitesse</span>
+        <select id="speedSel" onchange="G&&(G.delay=+this.value)"><option value="1500">Lent</option><option value="850" selected>Normal</option><option value="350">Rapide</option></select>
+        <button class="btn" id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
+        <button class="btn" onclick="resetGame()">↺ Rejouer</button>
+      </div>
+    </div>
+    <div class="players" id="players"></div>
+    <div class="board">
+      <div>
+        <div class="panelbox">
+          <h3 style="margin:0 0 4px">Marché des votants <span class="muted" style="font-size:12px">(cliquer pour acheter — 1 action)</span></h3>
+          <div class="market" id="market"></div>
+        </div>
+        <div class="panelbox" id="turnpanel">
+          <h3 style="margin:0 0 2px">Ton tour — <span id="actionsLeft" style="color:var(--gold)"></span></h3>
+          <p class="muted" style="margin:2px 0 8px">Joue une carte de ta main (1 action) ou achète un votant. Dénoncer 2 M€ · Protéger 5 M€ · Blanchir 3 M€.</p>
+          <div class="hand" id="hand"></div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn alt" id="recycleBtn" onclick="openRecycle()">♻ Recycler (1 action)</button>
+            <button class="btn primary" id="endTurnBtn" onclick="humanEndTurn()">Terminer mon tour ▶</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin:0 0 6px">Journal</h3>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CATALOGUE -->
+<div class="wrap tabpane" id="cat" style="display:none">
+  <div class="filterbar" id="catFilter"></div>
+  <div id="catBody"></div>
+</div>
+
+<!-- BALANCE -->
+<div class="wrap tabpane" id="bal" style="display:none">
+  <div class="panelbox">
+    <h2 style="margin-top:0;color:var(--gold)">Bac à sable d'équilibrage</h2>
+    <p class="muted">Milliers de parties simulées avec le vrai modèle : pioche commune (104 cartes), main de 5, votants en <b>blocs uniques</b> (pool fixe), dénonciation gated + Élément de langage, 1 scandale/manche. Seuil <b>30 − nb de joueurs</b>.</p>
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <label>Parties / config <select id="mcGames"><option>500</option><option selected>1500</option><option>3000</option></select></label>
+      <button class="btn primary" onclick="runMC()">Simuler 2→6 joueurs</button>
+      <span id="mcStatus" class="muted"></span>
+    </div>
+  </div>
+  <div class="panelbox"><div id="mcResult" class="muted">Clique sur « Simuler » pour générer le tableau.</div></div>
+</div>
+
+<!-- RULES -->
+<div class="wrap tabpane" id="rules" style="display:none">
+  <div class="panelbox" id="rulesBody"></div>
+</div>
+
+<div class="flash" id="flash"></div>
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+
+<script>
+/* ===================== DONNÉES ===================== */
+const FRONTS=["Justice","Presse","Rue","Finances"];
+const frontClass={Justice:"t-justice",Presse:"t-presse",Rue:"t-rue",Finances:"t-finances"};
+const HARD=[["Intégristes","LGBT"],["Patronat","CGT"]];
+const SOFT=[["Animalistes","Chasseurs"],["Animalistes","Pétrole"],["Animalistes","Agriculteurs"],
+  ["Souverainistes","Diaspora"],["Antivax","Soignants"],["Bobos","Chasseurs"],["Bobos","Pétrole"],
+  ["Flics","Complotistes"],["Complotistes","Profs"],["Intégristes","Influenceurs"],
+  ["Patronat","Fonctionnaires"],["Retraités","Étudiants"],
+  ["Ubers","Taxis"],["Masculinistes","Éveillés"],["Éveillés","Souverainistes"],
+  ["Militaires","Intermittents"],["Chômeurs","Patronat"],["Rentiers","CGT"],["Héritiers","CGT"],
+  ["Pharma","Antivax"],["Pêcheurs","Animalistes"],["Pêcheurs","Bobos"],["Banquiers","CGT"],
+  ["Crypto","Banquiers"],["Libertariens","Fonctionnaires"],["Libertariens","CGT"],["Startuppers","CGT"],
+  ["Motards","Bobos"],["Promoteurs","Néoruraux"],["Survivalistes","Éveillés"]];
+function hardConf(b,o){for(const[x,y]of HARD){if(b===x&&o.has(y))return y;if(b===y&&o.has(x))return x;}return null;}
+function softConf(b,o){for(const[x,y]of SOFT){if(b===x&&o.has(y))return y;if(b===y&&o.has(x))return x;}return null;}
+
+const VOTANTS=[
+ {nom:"Influenceurs",tier:"Petit",cost:4,voix:2,bloc:"Influenceurs",qty:3,fl:"Trois stories et un code promo électoral.",desc:"Tu leur envoies des cadeaux et ils te font une story « non sponsorisée #ad » — l'électorat le plus facile à louer."},
+ {nom:"Étudiants",tier:"Petit",cost:4,voix:2,bloc:"Étudiants",qty:3,fl:"Gratuité des transports promise, jamais votée.",desc:"Tu leur jures le RU à 1€ et la fin des partiels du lundi, et ils y croient le temps de la campagne."},
+ {nom:"Animalistes",tier:"Petit",cost:4,voix:2,bloc:"Animalistes",qty:2,fl:"Un sanglier vaut un ministre.",desc:"Tu signes leur charte anti-corrida et tu rafles leurs voix — mais les Chasseurs, Agriculteurs et le Pétrole te claquent la porte."},
+ {nom:"Anti-vax",tier:"Petit",cost:4,voix:2,bloc:"Antivax",qty:2,fl:"Confiance en tout sauf les médecins.",desc:"Ils ont « fait leurs recherches » et savent mieux que l'OMS — donc impossible de les marier aux Soignants."},
+ {nom:"Gamers",tier:"Petit",cost:4,voix:2,bloc:"Gamers",qty:2,fl:"Voteront si c'est jouable à la manette.",desc:"Promets-leur la fibre partout et moins de taxes sur les cartes graphiques, ils votent entre deux parties."},
+ {nom:"Bobos urbains",tier:"Petit",cost:4,voix:2,bloc:"Bobos",qty:2,fl:"Vélo cargo, marché bio, terrasse.",desc:"Ils adorent les pistes cyclables et fuient tout ce qui sent l'essence ou la campagne : ni Pétrole ni Chasseurs."},
+ {nom:"Complotistes",tier:"Petit",cost:4,voix:2,bloc:"Complotistes",fl:"Savent qui tire les ficelles. Toi.",desc:"Ils savent que « tout est lié » et se méfient des Flics (l'État) comme des Profs (l'endoctrinement)."},
+ {nom:"Masculinistes",tier:"Petit",cost:4,voix:2,bloc:"Masculinistes",fl:"La virilité serait en danger.",desc:"Tribu en ligne qui voit du « wokisme » partout — ennemis jurés des Éveillés."},
+ {nom:"Intermittents",tier:"Petit",cost:4,voix:2,bloc:"Intermittents",fl:"Du spectacle, et des cachets.",desc:"Ils défendent leur statut à coups de festivals annulés — la discipline des Militaires les horripile."},
+ {nom:"Chauffeurs VTC",tier:"Petit",cost:4,voix:2,bloc:"Ubers",fl:"L'appli plutôt que la licence.",desc:"Auto-entrepreneurs au volant, ennemis mortels des Taxis qu'ils ont ubérisés."},
+ {nom:"Les Éveillés",tier:"Petit",cost:4,voix:2,bloc:"Éveillés",fl:"Un fil Twitter, mille leçons.",desc:"Ils t'expliquent quoi penser, dire et manger — détestés des Masculinistes et des Souverainistes."},
+ {nom:"Crypto-bros",tier:"Petit",cost:4,voix:2,bloc:"Crypto",fl:"« To the moon », chaque lundi.",desc:"Ils ont mis leurs économies dans une pièce à l'effigie d'un chien — méfiants des Banquiers qu'ils veulent remplacer."},
+ {nom:"Survivalistes",tier:"Petit",cost:4,voix:2,bloc:"Survivalistes",fl:"Bunker, conserves, générateur.",desc:"Prêts pour l'effondrement, ils trouvent Les Éveillés parfaitement ridicules."},
+ {nom:"Néo-ruraux",tier:"Petit",cost:4,voix:2,bloc:"Néoruraux",fl:"Paris-province, aller simple.",desc:"Citadins repentis venus chercher le calme — qu'un Promoteur immobilier menace de bétonner."},
+ {nom:"Libertariens",tier:"Petit",cost:4,voix:2,bloc:"Libertariens",fl:"L'impôt, c'est du vol.",desc:"Moins d'État, moins de tout — incompatibles avec les Fonctionnaires et la CGT."},
+ {nom:"Policiers",tier:"Moyen",cost:8,voix:4,bloc:"Flics",fl:"De l'ordre et des heures sup payées.",desc:"Bloc discipliné qui veut de l'autorité et du matériel — forcément fâché avec les Complotistes."},
+ {nom:"Agriculteurs",tier:"Moyen",cost:8,voix:4,bloc:"Agriculteurs",fl:"Tracteurs sur le périph si on les oublie.",desc:"Ils veulent des subventions et la paix sur les pesticides, d'où la guerre ouverte avec les Animalistes."},
+ {nom:"Taxis",tier:"Moyen",cost:8,voix:4,bloc:"Taxis",fl:"Détestent l'appli qui commence par U.",desc:"Promets de protéger leur licence hors de prix et ils te bloquent les aéroports — en guerre avec les VTC."},
+ {nom:"Francs-maçons",tier:"Moyen",cost:8,voix:4,bloc:"Maçons",fl:"On ne sait jamais ce qu'ils décident.",desc:"Un déjeuner discret, une poignée de main particulière, et des portes qui s'ouvrent toutes seules."},
+ {nom:"Chasseurs",tier:"Moyen",cost:8,voix:4,bloc:"Chasseurs",fl:"Premiers écolos de France, paraît-il.",desc:"Bloc rural fidèle et bruyant, fusil à l'épaule — fâché à mort avec les Animalistes et les Bobos."},
+ {nom:"Soignants",tier:"Moyen",cost:8,voix:4,bloc:"Soignants",fl:"Applaudis hier, sous-payés aujourd'hui.",desc:"Tu leur promets des moyens que tu ne donneras pas, pendant que les Anti-vax les soupçonnent du pire."},
+ {nom:"Profs",tier:"Moyen",cost:8,voix:4,bloc:"Profs",fl:"Vacances enviées, salaires moins.",desc:"Sensibles aux promesses de revalorisation, et détestés des Complotistes qui les accusent de « formater les enfants »."},
+ {nom:"Diaspora",tier:"Moyen",cost:8,voix:4,bloc:"Diaspora",fl:"Un pied ici, un cœur ailleurs, deux votes.",desc:"Électorat précieux et reconnaissant, mais inconciliable avec les Souverainistes qui veulent fermer les frontières."},
+ {nom:"Militaires",tier:"Moyen",cost:8,voix:4,bloc:"Militaires",fl:"Ordre, discipline, budget défense.",desc:"Ils veulent des crédits et du respect ; la bohème des Intermittents les exaspère."},
+ {nom:"Chômeurs",tier:"Moyen",cost:8,voix:4,bloc:"Chômeurs",fl:"« On rase gratis demain. »",desc:"Sensibles aux promesses d'emploi, en guerre froide avec le Patronat qui les traite d'assistés."},
+ {nom:"Rentiers",tier:"Moyen",cost:8,voix:4,bloc:"Rentiers",fl:"Vivre de ses loyers, voter pour les garder.",desc:"Capital tranquille et conservateur, allergique à la CGT qui veut le faire cracher."},
+ {nom:"Héritiers",tier:"Moyen",cost:8,voix:4,bloc:"Héritiers",fl:"Nés sur la troisième base.",desc:"Fortune transmise et bonne conscience ; la CGT rêve de les imposer à 90 %."},
+ {nom:"Routiers",tier:"Moyen",cost:8,voix:4,bloc:"Routiers",fl:"Le diesel et le périph.",desc:"Maîtres des blocages, ils savent paralyser un pays en une seule nuit."},
+ {nom:"Motards",tier:"Moyen",cost:8,voix:4,bloc:"Motards",fl:"Ni radar, ni contrôle technique.",desc:"Vrombissants et remontés contre les pistes cyclables — donc contre les Bobos."},
+ {nom:"Start-uppers",tier:"Moyen",cost:8,voix:4,bloc:"Startuppers",fl:"« On disrupte, on lève, on pivote. »",desc:"French Tech en hoodie, ennemis naturels de la CGT et de ses 35 heures."},
+ {nom:"Pêcheurs",tier:"Moyen",cost:8,voix:4,bloc:"Pêcheurs",fl:"Quotas, gasoil et chalut.",desc:"Bloc côtier remonté contre les Animalistes et les Bobos qui veulent vider leurs filets."},
+ {nom:"Retraités",tier:"Gros",cost:13,voix:7,bloc:"Retraités",fl:"Votent. Toujours. Le bloc qui décide tout.",desc:"LE bloc qui fait une élection : touche à leurs pensions et tu meurs, gâte-les au détriment des Étudiants à qui tu jures l'inverse."},
+ {nom:"Patronat",tier:"Gros",cost:12,voix:6,bloc:"Patronat",fl:"Financent volontiers. Discrètement.",desc:"Ils financent ta campagne contre quelques « ajustements » — mais jamais avec la CGT (interdit), et ils boudent Fonctionnaires et Chômeurs."},
+ {nom:"La CGT",tier:"Gros",cost:12,voix:6,bloc:"CGT",fl:"Préavis de grève reconductible.",desc:"Bloc combatif au cortège bien rôdé — le Patronat lui est interdit (lutte des classes), et le capital la déteste."},
+ {nom:"Intégristes",tier:"Gros",cost:12,voix:6,bloc:"Intégristes",fl:"Votent comme un seul homme.",desc:"6 voix ultra-disciplinées au prix d'exigences non négociables — adieu la Communauté LGBT (interdit) et les Influenceurs frivoles."},
+ {nom:"Fonctionnaires",tier:"Gros",cost:12,voix:6,bloc:"Fonctionnaires",fl:"Le statut, rien que le statut.",desc:"Promets de ne jamais y toucher et tu gagnes un socle stable que le Patronat rêve de « dégraisser »."},
+ {nom:"Lobby pétrolier",tier:"Gros",cost:12,voix:6,bloc:"Pétrole",fl:"« Transition », mais pas trop vite.",desc:"Pour la transition énergétique… vers 2095 ; il ferme la porte aux Animalistes et aux Bobos."},
+ {nom:"Souverainistes",tier:"Gros",cost:12,voix:6,bloc:"Souverainistes",fl:"Frontières, drapeau, âge d'or fantasmé.",desc:"Bloc mobilisé et bruyant, impossible à marier avec la Diaspora ni avec Les Éveillés."},
+ {nom:"Communauté LGBT",tier:"Gros",cost:12,voix:6,bloc:"LGBT",fl:"Visibilité exigée, pas en option.",desc:"Bloc engagé qui sent l'opportunisme à dix kilomètres — et frontalement incompatible avec les Intégristes (interdit)."},
+ {nom:"Banquiers",tier:"Gros",cost:12,voix:6,bloc:"Banquiers",fl:"Trop gros pour tomber.",desc:"Costards et bonus, détestés de la CGT et concurrencés par les Crypto-bros."},
+ {nom:"Promoteurs immobiliers",tier:"Gros",cost:12,voix:6,bloc:"Promoteurs",fl:"Une grue, un permis, un parking.",desc:"Ils bétonnent tout ce qui bouge — cauchemar des Néo-ruraux."},
+ {nom:"Lobby pharmaceutique",tier:"Gros",cost:12,voix:6,bloc:"Pharma",fl:"Un cachet pour chaque maux.",desc:"Marges record et lobbying intense — bête noire des Anti-vax."},
+];
+
+// ---- PIOCHE COMMUNE « Les Combines » (104 cartes) ----
+const COMBINES=[
+ {kind:"cor",nom:"Petit pot-de-vin",gain:3,malus:1,front:"Justice",n:12,fl:"Une enveloppe, un service, un silence.",desc:"Tu graisses la patte au bon fonctionnaire (+3 M€) ; si un juge curieux ressort l'enveloppe, ça te coûte 1 voix."},
+ {kind:"cor",nom:"Faux militants",gain:4,malus:2,front:"Rue",n:10,fl:"Des badges, des cars, des têtes qu'on paie.",desc:"Tu factures ta propre foule en délire (+4 M€) ; le jour où la Rue compte les têtes, −2 voix."},
+ {kind:"cor",nom:"Costards & cadeaux",gain:6,malus:3,front:"Presse",n:10,fl:"« Un ami me les a offerts. » Quel ami.",desc:"Un « ami » t'habille sur mesure et t'offre des montres (+6 M€) ; quand la Presse retrouve les factures, −3 voix."},
+ {kind:"cor",nom:"Emploi fictif",gain:9,malus:4,front:"Finances",n:10,fl:"Un salaire public, un travail introuvable.",desc:"Tu crées des emplois injustifiés et touches une commission sur chacun (+9 M€) ; à l'audit qui cherche le bureau fantôme, −4 voix."},
+ {kind:"den",nom:"Dénonciation",n:22,fl:"Un dossier bien gras à un journaliste affamé.",desc:"Pour 2 M€, tu fais sauter la magouille la plus voyante d'un rival sur un front non protégé — sauf s'il sort un Élément de langage."},
+ {kind:"pro",nom:"Juge acheté",front:"Justice",n:4,fl:"Une instruction qui s'enlise comme par magie.",desc:"Pour 5 M€, plus aucune enquête ne t'atteint sur le front Justice : la justice est aveugle quand on lui bande les yeux avec des billets."},
+ {kind:"pro",nom:"Médias corrompus",front:"Presse",n:4,fl:"Rédactions amies, éditorialistes reconnaissants.",desc:"Pour 5 M€, aucun scandale Presse ne sortira jamais contre toi : le loyer de l'omerta est salé, mais le calme n'a pas de prix."},
+ {kind:"pro",nom:"Opinion achetée",front:"Rue",n:4,fl:"Sondages flatteurs, indignation étouffée.",desc:"Pour 5 M€, le front Rue est verrouillé : le peuple gronde partout, sauf contre toi."},
+ {kind:"pro",nom:"Compte offshore",front:"Finances",n:4,fl:"Sociétés-écrans et prête-noms exotiques.",desc:"Pour 5 M€, le front Finances devient introuvable, donc intouchable : tes comptes ? Quels comptes."},
+ {kind:"bla",nom:"Blanchiment",n:10,fl:"L'argent ressort propre comme un sou neuf.",desc:"Pour 3 M€, une de tes cartes sales redevient propre : tu gardes le fric, mais plus personne ne peut te la dénoncer."},
+ {kind:"coup",e:"remise",nom:"Remise de campagne",n:3,fl:"Un fournisseur « ami » te fait un prix d'ami.",desc:"Une subvention déguisée tombe à pic : ton prochain bloc d'électeurs coûte 3 M€ de moins."},
+ {kind:"coup",e:"incoherence",nom:"Incohérence",n:3,fl:"Tout et son contraire, et tu encaisses les deux.",desc:"Tu rafles un bloc incompatible sans perdre de voix, mais ton grand écart te colle une carte d'hypocrisie sur la Rue."},
+ {kind:"coup",e:"promesse",nom:"Promesse intenable",n:3,fl:"Tu jures la lune, on veut y croire.",desc:"+3 voix immédiates de gens qui veulent y croire ; la note infaisable arrive plus tard, en carte sale sur la Rue."},
+ {kind:"coup",e:"element",nom:"Élément de langage",n:3,fl:"« C'est plus compliqué que ça. »",desc:"Joue-la en réaction quand on te dénonce : le scandale se noie dans le brouillard et la dénonciation est annulée."},
+ {kind:"coup",e:"renvoi",nom:"Renvoi d'ascenseur",n:2,fl:"Un service en vaut un autre.",desc:"Un allié te renfloue au bon moment : +3 M€ et tu pioches une carte."},
+];
+const PARTIES=[
+ {nom:"La Meute",sub:"parti médiatique",color:"--presse",ban:null,fl:"1ʳᵉ protection Presse gratuite. Fragile en Justice.",bonus:"freePresse"},
+ {nom:"La Lumière",sub:"parti religieux",color:"--gold",ban:"LGBT",fl:"Intégristes +1 voix. Communauté LGBT interdite.",bonus:"integ+1"},
+ {nom:"Le Cartel",sub:"parti patronal",color:"--money",ban:"Syndicats",fl:"+1 M€ de revenu/tour. Syndicats interdits.",bonus:"income+1"},
+ {nom:"La Vague",sub:"parti populiste",color:"--red",ban:null,fl:"Dénonciation à moitié prix (1 M€).",bonus:"cheapDenounce"},
+ {nom:"Les Verts pâles",sub:"parti écolo",color:"--green",ban:"Pétrole",fl:"Animalistes & Bobos −2 M€. Lobby pétrolier interdit.",bonus:"ecoloDiscount"},
+ {nom:"La Forteresse",sub:"parti souverainiste",color:"--blue",ban:"Diaspora",fl:"« Costards & cadeaux » +2 M€. Diaspora interdite.",bonus:"foreign+2"},
+];
+
+/* ===================== PARAMÈTRES ===================== */
+const P={start:7,income:3,actions:2,hand:5,protectCost:5,blanchCost:3,denounceCost:2,guardrail:16};
+function seuil(N){return 30-N;}  // 2→28, 3→27, 4→26, 5→25, 6→24 (votants uniques = pool fixe)
+
+/* ===================== UTILS ===================== */
+const $=s=>document.querySelector(s);
+function el(t,c,h){const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+function shuffle(a,rnd){for(let i=a.length-1;i>0;i--){const j=Math.floor((rnd?rnd():Math.random())*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function maxIdx(a){let mi=-1,mv=-1;for(let i=0;i<a.length;i++)if(a[i]>mv){mv=a[i];mi=i;}return mi;}
+function buildDeck(){const d=[];COMBINES.forEach(c=>{for(let i=0;i<c.n;i++){const{n,...card}=c;d.push({...card});}});return d;}
+
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");
+  document.querySelectorAll(".tabpane").forEach(p=>p.style.display="none");$("#"+t.dataset.tab).style.display="block";
+});
+
+/* ===================== CATALOGUE ===================== */
+function votantCardHTML(v){return `<div class="card votant">
+   <div class="top"><div class="nom">${v.nom}</div></div>
+   <span class="tag" style="align-self:flex-start;margin-top:4px">${v.tier} · ${v.bloc}</span>
+   <div class="flavor">${v.fl}</div>
+   <div class="desc">${v.desc||""}</div>
+   <div class="foot"><span class="cout pill">${v.cost} M€</span><span class="voix pill">${v.voix} voix</span></div></div>`;}
+function combineCardHTML(c){
+  let cls=c.kind==="cor"?"fin":"act";
+  let badge=c.kind==="cor"?`<span class="tag ${frontClass[c.front]}" style="align-self:flex-start;margin-top:4px">Corruption · ${c.front}</span>`
+    :c.kind==="den"?`<span class="tag t-rue" style="align-self:flex-start;margin-top:4px">Dénonciation</span>`
+    :c.kind==="pro"?`<span class="tag ${frontClass[c.front]}" style="align-self:flex-start;margin-top:4px">Protection · ${c.front}</span>`
+    :c.kind==="bla"?`<span class="tag" style="align-self:flex-start;margin-top:4px">Blanchiment</span>`
+    :`<span class="tag" style="align-self:flex-start;margin-top:4px">Coup tactique</span>`;
+  let foot=c.kind==="cor"?`<div class="foot"><span style="color:var(--money)" class="pill">+${c.gain} M€</span><span class="malus">si dénoncé : −${c.malus} voix</span></div>`:"";
+  return `<div class="card ${cls}"><div class="qty">×${c.n}</div><div class="top"><div class="nom">${c.nom}</div></div>${badge}<div class="flavor">${c.fl}</div><div class="desc">${c.desc||""}</div>${foot}</div>`;
+}
+function partiCardHTML(p){return `<div class="card parti">
+   <div class="top"><div class="nom" style="color:var(${p.color})">${p.nom}</div></div>
+   <span class="tag" style="align-self:flex-start;margin-top:4px">${p.sub}</span>
+   <div class="flavor">${p.fl}</div>
+   <div class="foot"><span class="muted">${p.ban?("Interdit : "+p.ban):"Aucun bloc interdit"}</span></div></div>`;}
+const CAT_SECTIONS=["Tous","Votants","Combines (pioche commune)","Partis"];
+let catFilter="Tous";
+function renderCatFilter(){const f=$("#catFilter");f.innerHTML="";CAT_SECTIONS.forEach(s=>{const c=el("div","chip"+(s===catFilter?" active":""),s);c.onclick=()=>{catFilter=s;renderCatFilter();renderCat();};f.appendChild(c);});}
+function section(t,s,h){return `<h2 class="sec-title">${t}</h2><p class="sec-sub">${s}</p><div class="grid">${h}</div>`;}
+function renderCat(){
+  const b=$("#catBody");let h="";const show=s=>catFilter==="Tous"||catFilter===s;
+  if(show("Votants")){const pool=VOTANTS.reduce((a,v)=>a+v.voix,0);
+    h+=section(`Votants — ${VOTANTS.length} blocs UNIQUES (${pool} voix au total)`,
+      "Chaque bloc d'électeurs est une carte <b>unique</b> : qui le prend le prive aux autres. <b>Incompat. DURES</b> (interdites) : Intégristes✗LGBT · Patronat✗CGT. <b>MOLLES</b> (−1 voix) : Ubers✗Taxis · Masculinistes✗Éveillés · Éveillés✗Souverainistes · Pharma✗Anti-vax · Crypto✗Banquiers · Libertariens✗{Fonctionnaires,CGT} · Animalistes✗{Chasseurs,Pétrole,Agriculteurs} · Bobos✗{Chasseurs,Pétrole,Motards} · Pêcheurs✗{Animalistes,Bobos} · Souverainistes✗Diaspora · Anti-vax✗Soignants · Flics✗Complotistes · Complotistes✗Profs · Intégristes✗Influenceurs · Patronat✗{Fonctionnaires,Chômeurs} · {Rentiers,Héritiers,Banquiers,Start-uppers}✗CGT · Retraités✗Étudiants · Militaires✗Intermittents · Promoteurs✗Néo-ruraux · Survivalistes✗Éveillés.",
+      VOTANTS.map(votantCardHTML).join(""));}
+  if(show("Combines (pioche commune)")){const n=COMBINES.reduce((a,c)=>a+c.n,0);
+    h+=section(`Les Combines — pioche commune (${n} cartes)`,
+      "Un seul paquet commun, face cachée, pour toute la table. Chacun a une main de 5, pioche dedans, et peut <b>Recycler</b> (1 action) pour défausser 1-2 cartes et repiocher. Corruption ≈40% · Dénonciation ≈21% · Protection ≈15% · Blanchiment ≈10% · Coups ≈13%.",
+      COMBINES.map(combineCardHTML).join(""));}
+  if(show("Partis")){h+=section("Partis — 6 rôles asymétriques","Un par joueur : une force et un bloc interdit.",PARTIES.map(partiCardHTML).join(""));}
+  b.innerHTML=h;
+}
+
+/* ===================== HELPERS MOTEUR ===================== */
+function expandMarket(rnd){const m=VOTANTS.map(v=>({nom:v.nom,cost:v.cost,voix:v.voix,bloc:v.bloc,tier:v.tier}));return shuffle(m,rnd);} // UNIQUE : 1 carte par bloc, pas de scaling
+function exposedFront(p){let f=null,v=-1;for(const fr of FRONTS){if(p.protect.has(fr)||p.dirty[fr].length===0)continue;const mx=Math.max(...p.dirty[fr]);if(mx>v){v=mx;f=fr;}}return f;}
+function exposedFronts(p){return FRONTS.filter(fr=>!p.protect.has(fr)&&p.dirty[fr].length>0);}
+function biggestDirtyFront(p){let f=null,v=-1;for(const fr of FRONTS){if(p.dirty[fr].length===0)continue;const mx=Math.max(...p.dirty[fr]);if(mx>v){v=mx;f=fr;}}return f;}
+function handHas(p,pred){return p.hand.findIndex(pred);}
+function bestBuyIndex(p,market,discount){let bi=-1,bs=-1;for(let i=0;i<market.length;i++){const c=market[i];let cost=c.cost-(discount?3:0);if(p.party&&p.party.bonus==="ecoloDiscount"&&(c.bloc==="Animalistes"||c.bloc==="Bobos"))cost-=2;if(cost>p.money)continue;if(p.banBloc&&c.bloc===p.banBloc)continue;if(hardConf(c.bloc,p.blocs)&&!p.incoh)continue;const eff=c.voix-(softConf(c.bloc,p.blocs)?1:0);const s=eff/Math.max(1,cost)+eff*0.02;if(s>bs){bs=s;bi=i;}}return bi;}
+
+/* ===================== ÉTAT INTERACTIF ===================== */
+let G=null;
+function newPlayer(id,party,human){return {id,name:party.nom,party,isHuman:human,money:P.start,voix:0,blocs:new Set(),
+  dirty:{Justice:[],Presse:[],Rue:[],Finances:[]},protect:new Set(),votants:[],hand:[],banBloc:party.ban,
+  freePresseUsed:false,denouncedThisRound:false,discount:0,incoh:false};}
+function drawUp(p){while(p.hand.length<P.hand){if(G.deck.length===0){if(G.discard.length===0)break;G.deck=shuffle(G.discard);G.discard=[];}p.hand.push(G.deck.pop());}}
+function discardFromHand(p,idx){G.discard.push(p.hand[idx]);p.hand.splice(idx,1);}
+
+function startGame(){
+  const N=+$("#nplayers").value;const myParty=PARTIES[+$("#partySel").value];
+  const pool=PARTIES.filter(x=>x!==myParty);shuffle(pool);
+  const players=[newPlayer(0,myParty,true)];for(let i=1;i<N;i++)players.push(newPlayer(i,pool[i-1],false));
+  G={N,X:seuil(N),players,deck:shuffle(buildDeck()),discard:[],market:expandMarket(),turn:0,order:[],idx:0,actionsLeft:0,over:false,winner:null,log:[],
+     auto:false,delay:+($("#speedSel").value||850),paused:false,pending:null,timer:null,nowplay:""};
+  players.forEach(p=>drawUp(p));
+  $("#autoChk").checked=false;$("#pauseBtn").textContent="⏸ Pause";
+  $("#setup").style.display="none";$("#gameui").style.display="block";startRound();
+}
+/* ----- ordonnanceur temporisé (pour voir les joueurs jouer un par un) ----- */
+function later(fn){G.pending=fn;if(!G.paused)G.timer=setTimeout(()=>{if(!G)return;G.pending=null;fn();},G.delay);}
+function togglePause(){if(!G)return;G.paused=!G.paused;$("#pauseBtn").textContent=G.paused?"▶ Reprendre":"⏸ Pause";
+  if(!G.paused&&G.pending){const f=G.pending;G.pending=null;G.timer=setTimeout(()=>{if(!G)return;f();},120);}}
+function toggleAuto(){if(!G)return;G.auto=$("#autoChk").checked;
+  const cur=G.order[G.idx];if(G.auto&&cur&&cur.isHuman&&!G.over){G.actingLeft=G.actionsLeft;later(botStep);}render();}
+function flash(msg){const f=$("#flash");f.textContent=msg;f.classList.add("show");setTimeout(()=>f.classList.remove("show"),Math.min(1400,G?G.delay+200:900));}
+function resetGame(){if(G&&G.timer)clearTimeout(G.timer);$("#gameui").style.display="none";$("#setup").style.display="block";G=null;}
+function logLine(h,c){G.log.unshift(`<div class="${c||''}">${h}</div>`);}
+
+function startRound(){
+  G.turn++;G.players.forEach(p=>p.denouncedThisRound=false);
+  logLine(`🎲 <b>Manche ${G.turn}</b>`,"ev");
+  const sp=(G.turn-1)%G.N;G.order=G.players.slice(sp).concat(G.players.slice(0,sp));G.idx=0;
+  beginPlayerTurn();
+}
+function beginPlayerTurn(){
+  const p=G.order[G.idx];
+  p.money+=P.income+(p.party.bonus==="income+1"?1:0);p.discount=0;p.incoh=false;
+  G.nowplay=`▶ ${p.name}${p.isHuman?" (toi)":""} encaisse +${P.income+(p.party.bonus==="income+1"?1:0)} M€`;
+  if(p.isHuman&&!G.auto){G.actionsLeft=P.actions;render();}      // à toi de jouer
+  else{G.actingLeft=P.actions;render();later(botStep);}          // joueur auto : une action à la fois
+}
+function botStep(){               // exécute UNE action du joueur courant puis programme la suivante
+  if(!G||G.over)return;
+  const p=G.order[G.idx];
+  if(G.actingLeft>0){const acted=botOneAction(p);G.actingLeft--;render();later(botStep);}
+  else{drawUp(p);render();later(afterTurn);}
+}
+function afterTurn(){
+  if(!G||G.over)return;
+  G.idx++;
+  if(G.idx<G.N){beginPlayerTurn();}
+  else{
+    const reached=G.players.filter(p=>p.voix>=G.X);
+    if(reached.length){endGame(reached.sort((a,b)=>b.voix-a.voix||b.money-a.money)[0],true);return;}
+    if(G.turn>=P.guardrail||G.market.length===0){endGame(G.players.slice().sort((a,b)=>b.voix-a.voix||b.money-a.money)[0],false);return;}
+    startRound();
+  }
+}
+function endPlayerTurn(){ afterTurn(); }  // appelé après le tour humain manuel
+function endGame(w,byThreshold){
+  G.over=true;G.winner=w;
+  logLine(`🏆 <b>${w.name} remporte l'élection avec ${w.voix} voix</b> ${byThreshold?"(seuil atteint)":"(garde-fou)"}.`,"win");render();
+  showModal(`<h2>🏆 ${w.name} gagne</h2><p>${w.voix} voix — ${byThreshold?("seuil de "+G.X+" atteint"):"victoire au garde-fou"}.</p>
+    <p class="muted">${w.isHuman?"Bien joué, c'est toi !":"L'adversaire t'a coiffé au poteau."}</p>
+    <div class="choices"><div class="choice" onclick="hideModal();resetGame()">↺ Rejouer</div></div>`);
+}
+function spendAction(){G.actionsLeft--;if(G.actionsLeft<0)G.actionsLeft=0;render();}
+
+/* ----- achats votants ----- */
+function humanBuy(i){
+  if(G.over||G.actionsLeft<=0)return;const p=G.order[G.idx];if(!p.isHuman)return;
+  const c=G.market[i];if(!c)return;
+  let cost=c.cost;
+  if(p.party.bonus==="ecoloDiscount"&&(c.bloc==="Animalistes"||c.bloc==="Bobos"))cost-=2;
+  if(p.discount)cost=Math.max(0,cost-3);
+  if(cost>p.money){toast("Pas assez d'argent.");return;}
+  const hard=hardConf(c.bloc,p.blocs);const soft=softConf(c.bloc,p.blocs);
+  if(p.banBloc===c.bloc){toast(`${p.party.nom} : bloc « ${c.bloc} » interdit.`);return;}
+  if(hard&&!p.incoh){toast(`Incompatibilité DURE avec « ${hard} ». Il te faut une carte Incohérence.`);return;}
+  let gain=c.voix;let note="";
+  if(p.incoh){p.incoh=false;p.dirty.Rue.push(2);note=" (Incohérence : +carte sale Rue)";logLine(`🎭 ${p.name} assume une incohérence.`);}
+  else if(soft){gain-=1;note=` (−1 voix : coalition bancale avec « ${soft} »)`;}
+  if(p.party.bonus==="integ+1"&&c.bloc==="Intégristes")gain+=1;
+  p.money-=cost;p.voix+=gain;if(c.bloc)p.blocs.add(c.bloc);p.votants.push({voix:gain,nom:c.nom});
+  G.market.splice(i,1);p.discount=0;
+  logLine(`🗳️ ${p.name} achète <b>${c.nom}</b> (+${gain} voix${note}, −${cost} M€).`,"buy");spendAction();
+}
+/* ----- jouer une carte de la main ----- */
+function playHandCard(i){
+  if(G.over||G.actionsLeft<=0)return;const p=G.order[G.idx];if(!p.isHuman)return;
+  const card=p.hand[i];if(!card)return;
+  if(card.kind==="cor"){let g=card.gain;if(p.party.bonus==="foreign+2"&&card.front==="Presse")g+=2;p.money+=g;p.dirty[card.front].push(card.malus);
+    logLine(`💰 ${p.name} se finance (${card.nom}) : +${g} M€, carte sale sur ${card.front} (−${card.malus} si dénoncée).`);discardFromHand(p,i);spendAction();}
+  else if(card.kind==="pro"){
+    let cost=P.protectCost;if(p.party.bonus==="freePresse"&&card.front==="Presse"&&!p.freePresseUsed){cost=0;p.freePresseUsed=true;}
+    if(cost>p.money){toast(`Protéger coûte ${P.protectCost} M€.`);return;}
+    p.money-=cost;p.protect.add(card.front);logLine(`🛡️ ${p.name} protège ${card.front} (−${cost} M€).`);discardFromHand(p,i);spendAction();}
+  else if(card.kind==="bla"){
+    const fr=biggestDirtyFront(p);if(!fr){toast("Aucune carte corruption à blanchir.");return;}
+    if(p.money<P.blanchCost){toast(`Blanchir coûte ${P.blanchCost} M€.`);return;}
+    p.money-=P.blanchCost;const mi=maxIdx(p.dirty[fr]);const m=p.dirty[fr][mi];p.dirty[fr].splice(mi,1);
+    logLine(`🧼 ${p.name} blanchit une carte sale (${fr}, −${m} de risque, −${P.blanchCost} M€).`);discardFromHand(p,i);spendAction();}
+  else if(card.kind==="coup"){
+    if(card.e==="remise"){p.discount=1;logLine(`🏷️ ${p.name} : remise active.`);discardFromHand(p,i);spendAction();}
+    else if(card.e==="incoherence"){p.incoh=true;logLine(`🎭 ${p.name} prépare une Incohérence.`);discardFromHand(p,i);spendAction();}
+    else if(card.e==="promesse"){p.voix+=3;p.dirty.Rue.push(2);logLine(`📣 ${p.name} : promesse intenable (+3 voix, carte sale Rue).`,"buy");discardFromHand(p,i);spendAction();}
+    else if(card.e==="renvoi"){p.money+=3;discardFromHand(p,i);drawUp(p);logLine(`🤝 ${p.name} : renvoi d'ascenseur (+3 M€, pioche 1).`);spendAction();}
+    else if(card.e==="element"){toast("L'Élément de langage se joue tout seul, en réaction, quand on te dénonce. Garde-le en main.");}
+  }
+  else if(card.kind==="den"){
+    const cost=p.party.bonus==="cheapDenounce"?1:P.denounceCost;
+    if(p.money<cost){toast(`Dénoncer coûte ${cost} M€.`);return;}
+    chooseDenounce(i);
+  }
+}
+function chooseDenounce(handIdx){
+  const p=G.order[G.idx];
+  const targets=G.players.filter(q=>q!==p&&!q.denouncedThisRound&&exposedFronts(q).length>0);
+  if(targets.length===0){toast("Aucune cible dénonçable (déjà éclaboussée, protégée, ou sans carte sale).");return;}
+  let h=`<h2>Dénoncer qui ?</h2><p class="muted">Sa plus grosse carte sale du front choisi saute. Attention : il peut tenir un « Élément de langage » qui annule ton scandale.</p><div class="choices">`;
+  targets.forEach(t=>{exposedFronts(t).forEach(fr=>{const m=Math.max(...t.dirty[fr]);h+=`<div class="choice" onclick="doHumanDenounce(${handIdx},${t.id},'${fr}')"><b>${t.name}</b> — ${t.voix} voix · <span class="tag ${frontClass[fr]}">${fr}</span> → <span class="malus">−${m} voix</span></div>`;});});
+  h+=`</div><div style="margin-top:10px"><button class="btn" onclick="hideModal()">Annuler</button></div>`;showModal(h);
+}
+function doHumanDenounce(handIdx,targetId,fr){
+  hideModal();const p=G.order[G.idx];const t=G.players.find(x=>x.id===targetId);
+  if(!t||t.denouncedThisRound||t.protect.has(fr)||t.dirty[fr].length===0){toast("Cible devenue intouchable.");return;}
+  resolveDenounce(p,t,fr);discardFromHand(p,handIdx);spendAction();
+}
+function resolveDenounce(acc,tgt,fr){
+  const cost=acc.party.bonus==="cheapDenounce"?1:P.denounceCost;acc.money-=cost;
+  const ei=handHas(tgt,c=>c.kind==="coup"&&c.e==="element");
+  if(ei>=0){discardFromHand(tgt,ei);logLine(`🗣️ <b>${acc.name} dénonce ${tgt.name}</b> sur ${fr}… mais ${tgt.name} sort un <b>Élément de langage</b> : scandale étouffé !`,"den");return;}
+  const mi=maxIdx(tgt.dirty[fr]);const malus=tgt.dirty[fr][mi];tgt.dirty[fr].splice(mi,1);
+  tgt.voix=Math.max(0,tgt.voix-malus);tgt.denouncedThisRound=true;
+  logLine(`🔥 <b>${acc.name} dénonce ${tgt.name}</b> sur ${fr} : scandale ! ${tgt.name} perd ${malus} voix.`,"den");
+  flash(`🔥 ${acc.name} dénonce ${tgt.name} (−${malus} voix)`);
+}
+function humanEndTurn(){if(G.over)return;const p=G.order[G.idx];drawUp(p);endPlayerTurn();}
+
+/* ----- Recycler ----- */
+let recycleSel=[];
+function openRecycle(){
+  if(G.over||G.actionsLeft<=0){toast("Plus d'action ce tour.");return;}
+  const p=G.order[G.idx];recycleSel=[];
+  let h=`<h2>♻ Recycler (1 action)</h2><p class="muted">Choisis 1 ou 2 cartes à défausser. Tu repiocheras pour revenir à 5. La pioche est aveugle : c'est un pari.</p><div class="choices" id="recList"></div>
+    <div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" onclick="confirmRecycle()">Recycler</button><button class="btn" onclick="hideModal()">Annuler</button></div>`;
+  showModal(h);renderRecycleList();
+}
+function renderRecycleList(){
+  const p=G.order[G.idx];const c=$("#recList");c.innerHTML="";
+  p.hand.forEach((card,i)=>{const sel=recycleSel.includes(i);
+    const d=el("div","choice"+(sel?" ":""),`${sel?"☑":"☐"} <b>${card.nom}</b>`);
+    if(sel)d.style.borderColor="var(--red)";
+    d.onclick=()=>{if(sel)recycleSel=recycleSel.filter(x=>x!==i);else if(recycleSel.length<2)recycleSel.push(i);renderRecycleList();};
+    c.appendChild(d);});
+}
+function confirmRecycle(){
+  if(recycleSel.length===0){hideModal();return;}
+  const p=G.order[G.idx];
+  recycleSel.sort((a,b)=>b-a).forEach(i=>discardFromHand(p,i));
+  drawUp(p);hideModal();logLine(`♻ ${p.name} recycle ${recycleSel.length} carte(s).`);spendAction();
+}
+function toast(m){showModal(`<h2>⛔</h2><p>${m}</p><div class="choices"><div class="choice" onclick="hideModal()">OK</div></div>`);}
+
+/* ----- IA : UNE action à la fois (pour la regarder jouer) ----- */
+function np(p,msg){G.nowplay=`▶ ${p.name}${p.isHuman?" (toi)":""} ${msg}`;}
+function botOneAction(p){
+  const others=G.players.filter(q=>q!==p);const myMax=Math.max(...G.players.map(q=>q.voix));
+  // 1. dénoncer
+  const di=handHas(p,c=>c.kind==="den");const dcost=p.party.bonus==="cheapDenounce"?1:P.denounceCost;
+  if(di>=0&&p.money>=dcost){
+    const tgt=others.filter(q=>!q.denouncedThisRound&&exposedFront(q)&&(q.voix>=G.X-7||q.voix>=p.voix+5)).sort((u,v)=>v.voix-u.voix)[0];
+    if(tgt){const fr=exposedFront(tgt);np(p,`dénonce ${tgt.name} (${fr})`);resolveDenounce(p,tgt,fr);discardFromHand(p,di);return true;}
+  }
+  // 2. défense
+  const exp=exposedFront(p);const threatened=(p.voix>=myMax-3&&p.voix>G.X*0.4);
+  if(threatened&&exp&&Math.max(...p.dirty[exp])>=3){
+    const pi=handHas(p,c=>c.kind==="pro"&&c.front===exp);
+    if(pi>=0&&p.money>=P.protectCost){p.money-=P.protectCost;p.protect.add(exp);discardFromHand(p,pi);np(p,`protège ${exp}`);logLine(`🛡️ ${p.name} protège ${exp}.`);return true;}
+    const bi=handHas(p,c=>c.kind==="bla");
+    if(bi>=0&&p.money>=P.blanchCost){p.money-=P.blanchCost;const mi=maxIdx(p.dirty[exp]);p.dirty[exp].splice(mi,1);discardFromHand(p,bi);np(p,`blanchit (${exp})`);logLine(`🧼 ${p.name} blanchit (${exp}).`);return true;}
+  }
+  // 3. promesse si proche
+  const pri=handHas(p,c=>c.kind==="coup"&&c.e==="promesse");
+  if(pri>=0&&p.voix>=G.X-5){p.voix+=3;p.dirty.Rue.push(2);discardFromHand(p,pri);np(p,`promet l'impossible (+3 voix)`);logLine(`📣 ${p.name} : promesse intenable (+3 voix).`,"buy");return true;}
+  // 4. acheter
+  const vi=bestBuyIndex(p,G.market,p.discount);
+  if(vi>=0){const c=G.market[vi];let cost=c.cost-(p.discount?3:0);if(p.party.bonus==="ecoloDiscount"&&(c.bloc==="Animalistes"||c.bloc==="Bobos"))cost-=2;
+    const soft=softConf(c.bloc,p.blocs)?1:0;let g=c.voix-soft+(p.party.bonus==="integ+1"&&c.bloc==="Intégristes"?1:0);
+    p.money-=Math.max(0,cost);p.voix+=g;if(c.bloc)p.blocs.add(c.bloc);p.votants.push({voix:g,nom:c.nom});G.market.splice(vi,1);p.discount=0;
+    np(p,`achète ${c.nom} (+${g} voix)`);logLine(`🗳️ ${p.name} achète ${c.nom} (+${g} voix).`,"buy");return true;}
+  // 5. financer si pauvre
+  if(p.money<10){const ci=handHas(p,c=>c.kind==="cor");
+    if(ci>=0){const c=p.hand[ci];let g=c.gain+(p.party.bonus==="foreign+2"&&c.front==="Presse"?2:0);p.money+=g;p.dirty[c.front].push(c.malus);discardFromHand(p,ci);np(p,`se finance (+${g} M€)`);logLine(`💰 ${p.name} se finance (+${g} M€, ${c.front}).`);return true;}}
+  // 6. recycler l'inutile
+  let rec=0;for(let k=p.hand.length-1;k>=0&&rec<2;k--){const c=p.hand[k];
+    if((c.kind==="coup"&&c.e==="renvoi")||(c.kind==="pro"&&(!exp||c.front!==exp)&&!threatened)){discardFromHand(p,k);rec++;}}
+  if(rec>0){drawUp(p);np(p,`recycle ${rec} carte(s)`);logLine(`♻ ${p.name} recycle ${rec} carte(s).`);return true;}
+  // 7. financer même si riche
+  const ci2=handHas(p,c=>c.kind==="cor");
+  if(ci2>=0&&p.money<14){const c=p.hand[ci2];let g=c.gain+(p.party.bonus==="foreign+2"&&c.front==="Presse"?2:0);p.money+=g;p.dirty[c.front].push(c.malus);discardFromHand(p,ci2);np(p,`se finance (+${g} M€)`);logLine(`💰 ${p.name} se finance (+${g} M€, ${c.front}).`);return true;}
+  np(p,`passe`);return false;
+}
+
+/* ----- rendu ----- */
+function render(){
+  if(!G)return;
+  $("#turnInfo").textContent=`Manche ${G.turn}/${P.guardrail}`;
+  $("#goalInfo").textContent=`${G.X} voix`;
+  $("#deckInfo").textContent=`Combines : ${G.deck.length} · défausse : ${G.discard.length} · votants restants : ${G.market.length}`;
+  const ph=$("#players");ph.innerHTML="";const cur=G.order[G.idx];
+  G.players.forEach(p=>{
+    const acting=(p===cur&&!G.over);
+    const d=el("div","pcard"+(p.isHuman?" me":"")+(acting?" turn acting":""));
+    let fronts="";FRONTS.forEach(fr=>{const n=p.dirty[fr].length;const cl=p.protect.has(fr)?"prot":(n>0?"dirty":"");fronts+=`<div class="front ${cl}">${fr.slice(0,4)}${p.protect.has(fr)?" 🛡":n>0?" ✕"+n:""}</div>`;});
+    // main face cachée (dos de cartes) — tout le monde, comme à une vraie table
+    let backs="";for(let k=0;k<p.hand.length;k++)backs+=`<div class="back"></div>`;
+    d.innerHTML=`<h4 style="color:var(${p.party.color})">${p.name}${p.isHuman?" (toi)":""}</h4>
+      <div style="font-size:12px" class="muted">${p.party.sub} · ${p.hand.length} cartes</div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px"><span class="voix"><b>${p.voix}</b> voix</span><span class="cout">${p.money} M€</span></div>
+      <div class="bar"><i style="width:${Math.min(100,100*p.voix/G.X)}%"></i></div>
+      <div class="fronts">${fronts}</div>
+      <div class="backs">${backs}</div>
+      <div class="nowplay">${acting?(G.nowplay||"▶ en train de jouer…"):""}</div>`;
+    ph.appendChild(d);
+  });
+  const mk=$("#market");mk.innerHTML="";const me=G.players[0];const isMyTurn=cur&&cur.isHuman&&!G.over&&!G.auto;
+  const counts={};G.market.forEach(c=>{counts[c.nom]=counts[c.nom]||{...c,n:0};counts[c.nom].n++;});
+  Object.values(counts).sort((a,b)=>a.cost-b.cost).forEach(c=>{
+    let cost=c.cost;if(me.party.bonus==="ecoloDiscount"&&(c.bloc==="Animalistes"||c.bloc==="Bobos"))cost-=2;if(me.discount)cost=Math.max(0,cost-3);
+    const hard=hardConf(c.bloc,me.blocs);const soft=softConf(c.bloc,me.blocs);const banned=me.banBloc===c.bloc;
+    const aff=isMyTurn&&G.actionsLeft>0&&cost<=me.money&&!banned&&(!hard||me.incoh);
+    const idx=G.market.findIndex(x=>x.nom===c.nom);
+    const m=el("div","mini"+(aff?"":" dis"));
+    let warn=banned?" · interdit":hard?" · ✗DUR "+hard:soft?" · −1 "+soft:"";
+    m.innerHTML=`<div class="mn">${c.nom}</div><div class="muted" style="font-size:10px">${c.bloc}${warn}</div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px"><span class="cout">${cost} M€</span><span class="mv">${c.voix}v</span></div>`;
+    if(aff)m.onclick=()=>humanBuy(idx);
+    mk.appendChild(m);
+  });
+  const tp=$("#turnpanel");
+  if(isMyTurn){tp.style.display="block";$("#actionsLeft").textContent=`${G.actionsLeft} action${G.actionsLeft>1?"s":""} restante${G.actionsLeft>1?"s":""}`+(me.incoh?" · 🎭 Incohérence prête":"")+(me.discount?" · 🏷️ remise prête":"");
+    const hd=$("#hand");hd.innerHTML="";
+    me.hand.forEach((card,i)=>{
+      const can=G.actionsLeft>0;const h=el("div","hcard"+(can?"":" dis"));
+      let tagcls=card.front?frontClass[card.front]:"";
+      let sub=card.kind==="cor"?`<span class="tag ${tagcls}">+${card.gain}M€ · −${card.malus}v</span>`
+        :card.kind==="pro"?`<span class="tag ${tagcls}">Protéger ${card.front}</span>`
+        :card.kind==="den"?`<span class="tag t-rue">Dénoncer · 2M€</span>`
+        :card.kind==="bla"?`<span class="tag">Blanchir · 3M€</span>`
+        :card.e==="element"?`<span class="tag" style="color:var(--blue);border-color:var(--blue)">Réaction</span>`
+        :`<span class="tag">${card.e==="incoherence"?"Incohérence":card.e==="promesse"?"Promesse":card.e==="renvoi"?"Renvoi":"Remise"}</span>`;
+      h.innerHTML=`<div style="font-weight:700">${card.nom}</div><div style="margin-top:4px">${sub}</div>`;
+      if(can)h.onclick=()=>playHandCard(i);hd.appendChild(h);
+    });
+    $("#recycleBtn").disabled=G.actionsLeft<=0;
+  }else{tp.style.display=G.over?"none":"block";$("#actionsLeft").textContent=G.auto?"👁 mode Regarder — la partie se joue toute seule":"…un autre parti joue";$("#hand").innerHTML="";$("#recycleBtn").disabled=true;}
+  $("#endTurnBtn").disabled=!isMyTurn;
+  $("#log").innerHTML=G.log.slice(0,150).join("");
+}
+function showModal(h){$("#modal").innerHTML=h;$("#overlay").style.display="flex";}
+function hideModal(){$("#overlay").style.display="none";}
+
+/* ===================== ÉQUILIBRAGE (sim pioche commune) ===================== */
+function simGame(N,X,seed){
+  let s=seed>>>0;const rnd=()=>{s+=0x6D2B79F5;let r=Math.imul(s^(s>>>15),1|s);r^=r+Math.imul(r^(r>>>7),61|r);return((r^(r>>>14))>>>0)/4294967296;};
+  const deck=shuffle(buildDeck(),rnd);const discard=[];const market=expandMarket(rnd);
+  const players=Array.from({length:N},(_,i)=>({id:i,money:P.start,voix:0,blocs:new Set(),dirty:{Justice:[],Presse:[],Rue:[],Finances:[]},protect:new Set(),votants:[],hand:[],banBloc:null,denouncedThisRound:false,discount:0,incoh:false}));
+  const D={deck,discard};
+  const drawU=(p)=>{while(p.hand.length<P.hand){if(D.deck.length===0){if(D.discard.length===0)break;D.deck=shuffle(D.discard,rnd);D.discard=[];}p.hand.push(D.deck.pop());}};
+  const disc=(p,i)=>{D.discard.push(p.hand[i]);p.hand.splice(i,1);};
+  players.forEach(drawU);
+  let turn=0,winner=null,byThreshold=false;
+  const bestV=(p)=>{let bi=-1,bs=-1;for(let i=0;i<market.length;i++){const c=market[i];let cost=c.cost-(p.discount?3:0);if(cost>p.money)continue;if(hardConf(c.bloc,p.blocs)&&!p.incoh)continue;const eff=c.voix-(softConf(c.bloc,p.blocs)?1:0);const sc=eff/Math.max(1,cost)+eff*0.02;if(sc>bs){bs=sc;bi=i;}}return bi;};
+  while(turn<P.guardrail){
+    turn++;const sp=(turn-1)%N;const order=players.slice(sp).concat(players.slice(0,sp));let reached=false;
+    players.forEach(p=>p.denouncedThisRound=false);
+    for(const p of order){
+      p.money+=P.income;p.discount=0;p.incoh=false;
+      for(let a=0;a<P.actions;a++){
+        const others=players.filter(q=>q!==p);const myMax=Math.max(...players.map(q=>q.voix));
+        const di=p.hand.findIndex(c=>c.kind==="den");
+        if(di>=0&&p.money>=P.denounceCost){const tgt=others.filter(q=>!q.denouncedThisRound&&exposedFront(q)&&(q.voix>=X-7||q.voix>=p.voix+5)).sort((u,v)=>v.voix-u.voix)[0];
+          if(tgt){p.money-=P.denounceCost;disc(p,di);const ei=tgt.hand.findIndex(c=>c.kind==="coup"&&c.e==="element");
+            if(ei>=0)disc(tgt,ei);else{const fr=exposedFront(tgt);const mi=maxIdx(tgt.dirty[fr]);const m=tgt.dirty[fr][mi];tgt.dirty[fr].splice(mi,1);tgt.voix=Math.max(0,tgt.voix-m);tgt.denouncedThisRound=true;}continue;}}
+        const exp=exposedFront(p);const threatened=(p.voix>=myMax-3&&p.voix>X*0.4);
+        if(threatened&&exp&&Math.max(...p.dirty[exp])>=3){
+          const pi=p.hand.findIndex(c=>c.kind==="pro"&&c.front===exp);
+          if(pi>=0&&p.money>=P.protectCost){p.money-=P.protectCost;p.protect.add(exp);disc(p,pi);continue;}
+          const bi=p.hand.findIndex(c=>c.kind==="bla");
+          if(bi>=0&&p.money>=P.blanchCost){p.money-=P.blanchCost;const mi=maxIdx(p.dirty[exp]);p.dirty[exp].splice(mi,1);disc(p,bi);continue;}
+        }
+        const pri=p.hand.findIndex(c=>c.kind==="coup"&&c.e==="promesse");
+        if(pri>=0&&p.voix>=X-5){p.voix+=3;p.dirty.Rue.push(2);disc(p,pri);continue;}
+        const vi=bestV(p);
+        if(vi>=0){const c=market[vi];let cost=c.cost-(p.discount?3:0);const soft=softConf(c.bloc,p.blocs)?1:0;p.money-=Math.max(0,cost);p.voix+=c.voix-soft;if(c.bloc)p.blocs.add(c.bloc);p.votants.push(1);market.splice(vi,1);p.discount=0;continue;}
+        if(p.money<10){const ci=p.hand.findIndex(c=>c.kind==="cor");if(ci>=0){const c=p.hand[ci];p.money+=c.gain;p.dirty[c.front].push(c.malus);disc(p,ci);continue;}}
+        let rec=0;for(let k=p.hand.length-1;k>=0&&rec<2;k--){const c=p.hand[k];if((c.kind==="coup"&&c.e==="renvoi")||(c.kind==="pro"&&(!exp||c.front!==exp)&&!threatened)){disc(p,k);rec++;}}
+        if(rec>0){drawU(p);continue;}
+        const ci2=p.hand.findIndex(c=>c.kind==="cor");if(ci2>=0&&p.money<14){const c=p.hand[ci2];p.money+=c.gain;p.dirty[c.front].push(c.malus);disc(p,ci2);continue;}
+        break;
+      }
+      drawU(p);
+      if(p.voix>=X)reached=true;
+    }
+    if(reached){winner=players.filter(p=>p.voix>=X).sort((a,b)=>b.voix-a.voix||b.money-a.money)[0];byThreshold=true;break;}
+    if(market.length===0)break;
+  }
+  if(!winner)winner=players.slice().sort((a,b)=>b.voix-a.voix||b.money-a.money)[0];
+  return{turns:turn,seat:winner.id,byThreshold};
+}
+function runMC(){
+  const games=+$("#mcGames").value;$("#mcStatus").textContent="Calcul en cours…";
+  setTimeout(()=>{let rows="";
+    for(const N of [2,3,4,5,6]){let tt=0,thr=0;const sw=Array(N).fill(0);
+      const X=seuil(N);for(let g=0;g<games;g++){const r=simGame(N,X,(N*1000003+g*2654435761)>>>0);tt+=r.turns;if(r.byThreshold)thr++;sw[r.seat]++;}
+      const sp=sw.map(w=>100*w/games);const spread=(Math.max(...sp)-Math.min(...sp)).toFixed(1);
+      rows+=`<tr><td><b>${N} joueurs</b></td><td>${seuil(N)} voix</td><td>${(tt/games).toFixed(1)} manches</td><td>${(100*thr/games).toFixed(0)} %</td><td>${spread} pts</td></tr>`;}
+    $("#mcResult").innerHTML=`<div class="kpi" style="margin-bottom:12px">
+      <div><b>30−N</b><span class="muted">seuil (28→24)</span></div>
+      <div><b>~11</b><span class="muted">manches moyennes</span></div>
+      <div><b>≥92%</b><span class="muted">victoires par le seuil</span></div></div>
+      <table><tr><th>Config</th><th>Seuil</th><th>Durée moyenne</th><th>Victoires par le seuil</th><th>Écart entre sièges*</th></tr>${rows}</table>
+      <p class="muted" style="margin-top:10px">*Écart entre le siège qui gagne le plus et le moins. ${games} parties/config. Les votants sont des <b>blocs uniques</b> (pool fixe de ${VOTANTS.reduce((a,v)=>a+v.voix,0)} voix) : plus il y a de joueurs, plus l'électorat se partage, donc le seuil baisse (30 − nb de joueurs).</p>`;
+    $("#mcStatus").textContent="Terminé ✓";
+  },30);
+}
+
+/* ===================== RÈGLES ===================== */
+$("#rulesBody").innerHTML=`
+<h2 style="margin-top:0;color:var(--gold)">Réglages retenus (calibrés par simulation)</h2>
+<div class="kpi" style="margin:10px 0 16px">
+ <div><b>30−N</b><span class="muted">voix pour gagner (28→24)</span></div>
+ <div><b>42</b><span class="muted">blocs votants uniques</span></div>
+ <div><b>7</b><span class="muted">M€ de départ</span></div>
+ <div><b>+3</b><span class="muted">M€ revenu / manche</span></div>
+ <div><b>5</b><span class="muted">cartes en main</span></div>
+ <div><b>2</b><span class="muted">actions / tour</span></div>
+</div>
+<h3 style="color:var(--gold)">La pioche commune</h3>
+<p class="muted">Toutes les Combines (corruption, dénonciation, protection, blanchiment, coups) sont dans <b>une seule pioche commune face cachée de 104 cartes</b> (scindable en 2-3 piles autour de la table). Chacun a une <b>main de 5</b>, complétée en fin de tour. Une de tes 2 actions peut être <b>Recycler</b> : défausser 1-2 cartes et repiocher — utile contre une main morte, mais la pioche est aveugle, c'est un pari. Le revenu de <b>+3 M€/tour est automatique</b> (pas une carte) : tu n'es jamais totalement bloqué.</p>
+<table>
+<tr><th>Catégorie</th><th>Copies</th><th>Rôle</th></tr>
+<tr><td>Corruption (4 types)</td><td>42</td><td>+argent, carte sale stockée (malus imprimé)</td></tr>
+<tr><td>Dénonciation</td><td>22</td><td>2 M€ : fait sauter 1 carte sale d'un rival</td></tr>
+<tr><td>Protection (4 fronts)</td><td>16</td><td>5 M€ : bouclier permanent sur un front</td></tr>
+<tr><td>Blanchiment</td><td>10</td><td>3 M€ : nettoie 1 de tes cartes sales</td></tr>
+<tr><td>Coups (Remise, Incohérence, Promesse, Élément de langage, Renvoi)</td><td>14</td><td>effets tactiques</td></tr>
+<tr><td><b>Total</b></td><td><b>104</b></td><td></td></tr>
+</table>
+<h3 style="color:var(--gold)">Les votants — 42 blocs UNIQUES</h3>
+<p class="muted">Chaque bloc d'électeurs est une <b>carte unique</b> (un seul Retraités, une seule CGT, un seul Patronat…). Qui le prend le <b>prive aux autres</b> : c'est un jeu de compétition pour un électorat limité (pool fixe de 161 voix). Comme l'électorat se partage entre les partis, le <b>seuil baisse avec le nombre de joueurs : 30 − N</b> (28 à 2 joueurs … 24 à 6). Les <b>incompatibilités</b> (2 dures + 28 molles) forcent une identité cohérente : voir l'onglet Catalogue.</p>
+<h3 style="color:var(--gold)">Corruption &amp; dénonciation</h3>
+<p class="muted">Tu te finances → tu <b>poses la carte devant toi</b> (pile par front) avec son <b>malus imprimé</b>. Dénoncer (2 M€) fait sauter <b>une</b> carte (la plus grosse du front visé) → la cible perd les voix imprimées. <b>1 scandale subi par manche</b> max. Défenses : <b>Protection</b> (bouclier de front) ou <b>Blanchiment</b> (nettoie une carte). Et l'<b>Élément de langage</b> annule une dénonciation en réaction.</p>
+<table>
+<tr><th>Carte corruption</th><th>Argent</th><th>Front</th><th>Si dénoncé</th></tr>
+<tr><td>Petit pot-de-vin</td><td>+3 M€</td><td><span class="tag t-justice">Justice</span></td><td class="malus">−1 voix</td></tr>
+<tr><td>Faux militants</td><td>+4 M€</td><td><span class="tag t-rue">Rue</span></td><td class="malus">−2 voix</td></tr>
+<tr><td>Costards &amp; cadeaux</td><td>+6 M€</td><td><span class="tag t-presse">Presse</span></td><td class="malus">−3 voix</td></tr>
+<tr><td>Emploi fictif</td><td>+9 M€</td><td><span class="tag t-finances">Finances</span></td><td class="malus">−4 voix</td></tr>
+</table>
+<p class="muted" style="margin-top:10px">Votants : Petit 4/2 · Moyen 8/4 · Gros 12/6 · Retraités 13/7 (≈2 M€/voix). À 2 joueurs c'est jouable mais le jeu brille à 3+. Onglet « Équilibrage » pour re-tester les maths.</p>
+`;
+
+/* INIT */
+$("#nplayers").oninput=e=>$("#nlabel").textContent=e.target.value;
+PARTIES.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=`${p.nom} — ${p.sub}`;$("#partySel").appendChild(o);});
+renderCatFilter();renderCat();
+</script>
+</body>
+</html>

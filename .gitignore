@@ -1,0 +1,18 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+
+# Node (pour plus tard, si build/multijoueur)
+node_modules/
+dist/
+.env
+*.log
+
+# Temporaire
+_header.md
+_rules_body.md

@@ -1,72 +1,13 @@
-<!-- markdownlint-disable -->
+# Caisse Noire — jeu de cartes physique multijoueur
 
-# 🗳️ Caisse Noire
-
-> **Jeu de cartes satirique de corruption électorale — 2 à 6 joueurs.**
-> Tu diriges un parti en campagne : finance-toi par la corruption pour acheter des voix, mais chaque combine peut être dénoncée. Premier au seuil de voix → élection gagnée.
-
-**Statut : prototype jouable (beta locale).** Démo HTML autonome, équilibrage calibré par simulation (≥ 90 % des parties se finissent par le seuil de 2 à 6 joueurs).
-
----
-
-## ▶️ Jouer
-
-Ouvre **`index.html`** dans un navigateur — aucune installation. Tu y trouves :
-
-- **Jouer la démo** : une partie 2–6 joueurs (toi + adversaires automatiques), mains adverses face cachée, joueurs qui jouent un par un.
-- **👁 Mode Regarder** : la partie se joue toute seule, vitesse réglable + pause — pour observer la mécanique.
-- **🃏 Catalogue** : les 146 cartes (42 blocs votants uniques + 104 combines) avec textes et stats.
-- **📊 Équilibrage** : un bac à sable Monte Carlo qui re-teste les maths en direct.
-
-## 🌐 Beta en ligne
-
-La démo est un site **statique** (un seul fichier), donc déployable en 2 minutes :
-
-- **GitHub Pages** : pousser ce repo → Settings → Pages → branche `main` / dossier racine.
-- **Netlify / Vercel** : glisser-déposer le dossier, ou connecter le repo.
-
-*(URL de la beta à ajouter ici une fois déployée.)*
-
-## 📦 Contenu du repo
-
-| Fichier | Rôle |
-|---|---|
-| `src/engine.js` | **Moteur de jeu headless** : toutes les règles + valeurs calibrées, déterministe (RNG seedée), sans dépendance ni DOM. **Point de départ du dev.** |
-| `index.html` | La démo jouable (HTML/JS autonome) — référence d'interface et d'IA |
-| `README.md` | Règles complètes + infos projet (ce fichier) |
-| `docs/REGLES.md` | Design doc vivant (mêmes règles, espace de travail) |
-
-## 🛠️ Développer (moteur `src/engine.js`)
-
-Le moteur est la **source de vérité** des règles : il encode les 42 votants, les 104 Combines, les incompatibilités, l'économie et la condition de victoire (seuil = 30 − joueurs), et il est **déterministe** (passe un `seed`) pour qu'un serveur soit autoritatif.
-
-```js
-const G = require('./src/engine.js');
-let state = G.createGame({ nPlayers: 4, seed: 123 });   // état autoritatif
-G.applyAction(state, playerId, action);                 // valide + applique une action
-const view = G.publicState(state, playerId);            // état filtré (mains adverses cachées)
-G.botChooseAction(state, playerId);                     // IA pour sièges vides
-G.simulate(6, 2000);                                    // bac à sable d'équilibrage
-```
-
-`node src/engine.js` lance un mini-rapport d'équilibrage (2→6 joueurs).
-
-**Pour le multijoueur en ligne**, le moteur est pensé client-serveur : le serveur tient `state`, valide chaque action via `applyAction`, et diffuse `publicState(state, playerId)` à chaque joueur (qui ne voit que sa main, le compte des autres). Les sièges vides se remplissent avec `botChooseAction`. Reste à écrire : couche réseau (WebSocket), lobby/parties, et une UI (réutilisable depuis `index.html`).
-
-## 🗺️ Prochaines étapes (les « choses sérieuses »)
-
-- [ ] Déployer la beta statique (GitHub Pages / Netlify) et fixer l'URL.
-- [ ] **Multijoueur en ligne réel** : lobby, parties privées, synchro temps réel.
-- [ ] Direction artistique des cartes (visuel, gabarit imprimable).
-- [ ] **Références historiques** sur les cartes (costards = Fillon, argent étranger = Sarkozy/Kadhafi, emplois fictifs = assistants parlementaires…).
-- [ ] Variante « caisse noire » (argent caché) à tester.
-- [ ] Tests utilisateurs sur table + en ligne.
-
-> © 2026 — Tous droits réservés. Licence à définir.
+> *(titre de travail — à changer : « Campagne Sale », « Urnes & Combines », « Financement Occulte »…)*
+> Jeu de cartes multijoueur (**2–6 joueurs**). Document vivant.
+> Solo archivé dans `archive/REGLES_SOLO_archive.md`.
+> Démo jouable + bac à sable d'équilibrage : `index.html` (à ouvrir dans un navigateur).
+> Dernière mise à jour : 22 juin 2026 — *décisions matériel intégrées : roulette d'argent par joueur, piste de score commune 0–28 + meeples, marché de votants tournant. L'économie calibrée par simulation est inchangée.*
 
 ---
 
-# 📜 Règles du jeu
 ## 1. Le pitch
 
 Chacun dirige un **parti politique en campagne électorale**. Tout le monde se finance **illégalement** pour acheter des voix — pots-de-vin, argent étranger, emplois fictifs, cadeaux déguisés.
