@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caisse Noire — la table</title>
+<style>
+:root{
+  --felt:#16241c; --felt2:#0f1a14; --line:#2c3a2e; --line2:#3c4d3d;
+  --ink:#ece7d6; --muted:#94a08a; --gold:#d9b24a; --money:#86d39b;
+  --red:#d65a45; --blue:#5a8fd6; --paper:#211f17; --paper2:#2a2820;
+  --back1:#2c3124; --back2:#1d2118;
+  --justice:#5a8fd6; --presse:#d68a45; --rue:#d65a52; --finances:#54a06b;
+  --shadow:0 8px 22px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;color:var(--ink);font:14px/1.5 "Inter","Segoe UI",system-ui,sans-serif;
+  background:
+    radial-gradient(120% 90% at 50% 18%, #1d3026 0%, var(--felt) 45%, var(--felt2) 100%);
+  min-height:100vh;overflow-x:hidden}
+h1,h2,h3{font-family:"Georgia",serif;letter-spacing:.3px;margin:0}
+.muted{color:var(--muted)}
+button{font-family:inherit}
+.btn{background:var(--paper2);color:var(--ink);border:1px solid var(--line2);padding:9px 15px;
+  border-radius:9px;cursor:pointer;font-weight:600;font-size:14px;transition:.12s}
+.btn:hover:not(:disabled){border-color:var(--gold);transform:translateY(-1px)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.primary{background:var(--gold);color:#1c1c10;border-color:var(--gold)}
+.btn.ghost{background:transparent}
+.tag{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10.5px;font-weight:700;border:1px solid var(--line2);color:var(--muted)}
+.t-justice{color:var(--justice);border-color:var(--justice)}
+.t-presse{color:var(--presse);border-color:var(--presse)}
+.t-rue{color:var(--rue);border-color:var(--rue)}
+.t-finances{color:var(--finances);border-color:var(--finances)}
+
+/* ---------- SETUP ---------- */
+#setup{max-width:720px;margin:0 auto;padding:40px 20px}
+#setup h1{color:var(--gold);font-size:34px}
+#setup .sub{color:var(--muted);margin:8px 0 26px}
+.field{margin:18px 0}
+.field>label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px}
+.seats{display:flex;gap:8px;flex-wrap:wrap}
+.seat{width:44px;height:44px;border-radius:10px;border:1px solid var(--line2);background:var(--paper2);
+  cursor:pointer;font-weight:700;font-size:16px;color:var(--ink)}
+.seat.on{background:var(--gold);color:#1c1c10;border-color:var(--gold)}
+.parties{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.ppick{border:1px solid var(--line2);background:var(--paper);border-radius:12px;padding:12px 13px;cursor:pointer;transition:.12s}
+.ppick:hover{border-color:var(--gold)}
+.ppick.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.ppick .pn{font-weight:800;font-size:15px}
+.ppick .pb{font-size:12px;color:var(--money);margin-top:4px}
+.ppick .px{font-size:11.5px;color:var(--red);margin-top:2px}
+
+/* ---------- TABLE ---------- */
+#table{display:none;max-width:1280px;margin:0 auto;padding:10px 14px 24px}
+#topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:8px 4px 12px;border-bottom:1px solid var(--line);margin-bottom:14px}
+#topbar .title{font-family:Georgia,serif;color:var(--gold);font-size:20px}
+#topbar .meta{font-size:12.5px;color:var(--muted)}
+#topbar .meta b{color:var(--ink)}
+.toolbar{display:flex;gap:8px;align-items:center}
+.toolbar select{background:var(--paper2);color:var(--ink);border:1px solid var(--line2);border-radius:7px;padding:6px 8px;font-size:13px}
+
+/* opponents */
+#opponents{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.opp{background:linear-gradient(180deg,rgba(33,31,23,.85),rgba(20,19,14,.85));border:1px solid var(--line2);
+  border-radius:13px;padding:10px 12px;min-width:188px;flex:1;max-width:248px;position:relative}
+.opp.turn{box-shadow:0 0 0 2px var(--gold) inset, 0 0 18px rgba(217,178,74,.25)}
+.opp .ohead{display:flex;align-items:center;gap:8px}
+.dot{width:13px;height:13px;border-radius:50%;flex:none;border:2px solid rgba(0,0,0,.35)}
+.opp .onm{font-weight:800;font-size:13.5px;line-height:1.1}
+.opp .osub{font-size:10.5px;color:var(--muted)}
+.statline{display:flex;justify-content:space-between;margin-top:7px;font-size:13px}
+.statline .v{color:var(--money);font-weight:800}
+.statline .m{color:var(--gold);font-weight:700}
+.fronts{display:flex;gap:4px;margin-top:8px}
+.front{flex:1;text-align:center;font-size:9.5px;padding:3px 0;border-radius:5px;border:1px solid var(--line2);color:var(--muted);position:relative}
+.front.dirty{border-color:var(--red);color:#e7a99c;background:rgba(214,90,69,.1)}
+.front.prot{border-color:var(--finances);color:var(--money);background:rgba(84,160,107,.14)}
+.votstrip{display:flex;gap:3px;flex-wrap:wrap;margin-top:8px;min-height:14px}
+.vchip{font-size:9.5px;padding:1px 5px;border-radius:4px;background:rgba(134,211,155,.12);border:1px solid rgba(134,211,155,.3);color:var(--money);white-space:nowrap}
+.handbacks{display:flex;gap:2px;margin-top:8px}
+.cback{width:14px;height:20px;border-radius:3px;border:1px solid var(--line2);
+  background:repeating-linear-gradient(45deg,var(--back1),var(--back1) 3px,var(--back2) 3px,var(--back2) 6px);
+  box-shadow:inset 0 0 0 1px rgba(217,178,74,.1)}
+.nowp{font-size:11px;color:var(--gold);font-weight:700;margin-top:6px;min-height:14px}
+
+/* center */
+#center{display:grid;grid-template-columns:150px 1fr 230px;gap:14px;align-items:start;margin-bottom:6px}
+@media(max-width:920px){#center{grid-template-columns:1fr}}
+.zone{background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:14px;padding:12px}
+.zlabel{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:10px}
+.deckcol{display:flex;flex-direction:column;gap:16px;align-items:center}
+.deck{position:relative;width:74px;height:104px}
+.deck .layer{position:absolute;inset:0;border-radius:9px;border:1px solid var(--line2);
+  background:repeating-linear-gradient(45deg,var(--back1),var(--back1) 4px,var(--back2) 4px,var(--back2) 8px)}
+.deck .layer:nth-child(1){transform:translate(4px,4px);opacity:.5}
+.deck .layer:nth-child(2){transform:translate(2px,2px);opacity:.75}
+.deck .cnt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:22px;color:var(--gold);text-shadow:0 1px 3px #000;z-index:2}
+.deck.empty .layer{background:none;border-style:dashed}
+.decklbl{font-size:10.5px;color:var(--muted);text-align:center;margin-top:5px}
+.discard .layer{background:rgba(40,38,28,.6) !important}
+
+/* score track */
+#track{display:flex;flex-wrap:wrap;gap:3px;align-items:flex-end}
+.cell{width:30px;height:40px;border-radius:6px;border:1px solid var(--line);background:rgba(0,0,0,.18);
+  position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:2px}
+.cell .num{font-size:9px;color:var(--muted)}
+.cell.goal{border-color:var(--gold);background:rgba(217,178,74,.12)}
+.cell.goal .num{color:var(--gold);font-weight:700}
+.meeples{position:absolute;bottom:2px;left:0;right:0;display:flex;flex-wrap:wrap;justify-content:center;gap:1px}
+.meeple{width:11px;height:11px;border-radius:50%;border:1.5px solid rgba(0,0,0,.4);box-shadow:0 1px 2px rgba(0,0,0,.5)}
+.meeple.me{box-shadow:0 0 0 2px var(--gold)}
+
+/* market */
+#market{display:flex;gap:10px;flex-wrap:wrap}
+.vcard{width:124px;background:linear-gradient(180deg,var(--paper),var(--paper2));border:1px solid var(--line2);
+  border-radius:11px;padding:10px;cursor:default;position:relative;box-shadow:var(--shadow);transition:.12s}
+.vcard.buy{cursor:pointer}
+.vcard.buy:hover{border-color:var(--gold);transform:translateY(-3px)}
+.vcard.dis{opacity:.42}
+.vcard .vt{font-weight:800;font-size:13px;line-height:1.15}
+.vcard .vb{font-size:10.5px;color:var(--muted);margin-top:2px}
+.vcard .vwarn{font-size:10px;margin-top:4px;min-height:13px}
+.vcard .vfoot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:9px}
+.vcard .cost{color:var(--gold);font-weight:800}
+.vcard .vx{color:var(--money);font-weight:800;font-size:15px}
+.tier{position:absolute;top:8px;right:9px;font-size:9px;color:var(--muted)}
+
+/* my area */
+#me{margin-top:14px;background:linear-gradient(180deg,rgba(33,31,23,.55),rgba(20,19,14,.55));
+  border:1px solid var(--gold);border-radius:16px;padding:14px 16px;box-shadow:0 -4px 24px rgba(0,0,0,.35)}
+#me.notmyturn{border-color:var(--line2)}
+.myhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.roulette{width:58px;height:58px;border-radius:50%;flex:none;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;border:3px solid var(--gold);background:radial-gradient(circle,#2a2820,#14130d);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.6)}
+.roulette b{font-size:18px;color:var(--gold);line-height:1}
+.roulette span{font-size:9px;color:var(--muted)}
+.score-pill{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:58px;height:58px;border-radius:12px;border:2px solid var(--money);background:rgba(134,211,155,.08)}
+.score-pill b{font-size:20px;color:var(--money);line-height:1}
+.score-pill span{font-size:9px;color:var(--muted)}
+.myident{flex:1;min-width:160px}
+.myident .nm{font-weight:800;font-size:16px}
+.actpips{display:flex;gap:6px;margin-top:5px;align-items:center}
+.pip{width:13px;height:13px;border-radius:50%;border:1px solid var(--gold)}
+.pip.on{background:var(--gold)}
+.myactions{display:flex;gap:8px;flex-wrap:wrap}
+
+#tableau{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0}
+.tcol{flex:1;min-width:220px}
+.tcol .zlabel{margin-bottom:6px}
+.mycaser{display:flex;gap:6px}
+.cslot{flex:1;border:1px solid var(--line2);border-radius:9px;padding:6px 4px;text-align:center;position:relative}
+.cslot .cf{font-size:10px;color:var(--muted)}
+.cslot .pile{display:flex;justify-content:center;gap:2px;margin-top:5px;min-height:24px;align-items:flex-end}
+.dirtycard{width:13px;height:19px;border-radius:3px;border:1px solid #6b2f26;background:linear-gradient(180deg,#7a3328,#5a241c)}
+.cslot.prot{border-color:var(--finances);background:rgba(84,160,107,.1)}
+.cslot .shield{color:var(--money);font-size:11px}
+.myvots{display:flex;gap:5px;flex-wrap:wrap;min-height:26px}
+.myvchip{font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(134,211,155,.14);
+  border:1px solid rgba(134,211,155,.35);color:var(--money)}
+
+/* hand */
+#handwrap{margin-top:6px}
+#hand{display:flex;gap:10px;flex-wrap:wrap;padding-top:4px}
+.hcard{width:128px;min-height:104px;background:linear-gradient(180deg,var(--paper),var(--paper2));
+  border:1px solid var(--line2);border-radius:11px;padding:10px;position:relative;cursor:default;
+  display:flex;flex-direction:column;box-shadow:var(--shadow);transition:.12s}
+.hcard.play{cursor:pointer}
+.hcard.play:hover{border-color:var(--gold);transform:translateY(-5px)}
+.hcard.dis{opacity:.45}
+.hcard .hn{font-weight:800;font-size:13px;line-height:1.15}
+.hcard .hd{font-size:10.5px;color:var(--muted);margin-top:6px;flex:1;line-height:1.35}
+.hcard .ht{margin-top:6px}
+.hcard.k-cor{border-top:3px solid var(--red)}
+.hcard.k-den{border-top:3px solid var(--rue)}
+.hcard.k-pro{border-top:3px solid var(--finances)}
+.hcard.k-bla{border-top:3px solid var(--blue)}
+.hcard.k-coup{border-top:3px solid var(--gold)}
+
+/* log */
+#logzone{max-height:340px;overflow:auto}
+#log div{padding:4px 0;border-bottom:1px dashed var(--line);font-size:12px}
+#log .den{color:#e7a99c}#log .buy{color:var(--money)}#log .win{color:var(--gold);font-weight:800}
+#log .income{color:var(--muted)}
+
+/* overlay / toast */
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:40;padding:16px}
+.modal{background:var(--paper);border:1px solid var(--gold);border-radius:16px;padding:24px;max-width:520px;width:100%;box-shadow:var(--shadow)}
+.modal h2{color:var(--gold);margin-bottom:6px}
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.choice{padding:11px 13px;border:1px solid var(--line2);border-radius:10px;cursor:pointer;transition:.12s}
+.choice:hover{border-color:var(--gold);background:var(--paper2)}
+#toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);background:var(--paper);border:1px solid var(--gold);
+  padding:10px 18px;border-radius:11px;font-weight:600;z-index:50;opacity:0;transition:.2s;pointer-events:none;box-shadow:var(--shadow);max-width:90%}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup">
+  <h1>Caisse Noire</h1>
+  <p class="sub">Tu diriges un parti en campagne. Finance-toi par la corruption (cartes stockées devant toi, à malus imprimé), achète des voix sur le marché — mais garde un œil sur les rivaux : on peut te <b>dénoncer</b>. Premier au seuil <b>(30 − nombre de joueurs)</b> remporte l'élection.</p>
+
+  <div class="field">
+    <label>Nombre de partis à la table</label>
+    <div class="seats" id="seats"></div>
+  </div>
+
+  <div class="field">
+    <label>Choisis ton parti</label>
+    <div class="parties" id="parties"></div>
+  </div>
+
+  <div class="field" style="margin-top:26px">
+    <button class="btn primary" style="font-size:16px;padding:12px 26px" onclick="start()">Lancer la campagne ▶</button>
+    <a class="btn ghost" href="index.html" style="text-decoration:none;margin-left:8px">Catalogue &amp; équilibrage</a>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div id="table">
+  <div id="topbar">
+    <div>
+      <div class="title">Caisse Noire</div>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="toolbar">
+      <span class="muted" style="font-size:12px">Rythme adverses</span>
+      <select id="speed">
+        <option value="1100">Lent</option>
+        <option value="650" selected>Normal</option>
+        <option value="220">Rapide</option>
+      </select>
+      <button class="btn ghost" onclick="quit()">↺ Nouvelle partie</button>
+    </div>
+  </div>
+
+  <div id="opponents"></div>
+
+  <div id="center">
+    <div class="zone deckcol">
+      <div class="zlabel" style="align-self:center">Les pioches</div>
+      <div>
+        <div class="deck" id="deckCombines"><div class="layer"></div><div class="layer"></div><div class="layer"></div><div class="cnt"></div></div>
+        <div class="decklbl">Les Combines</div>
+      </div>
+      <div>
+        <div class="deck discard" id="deckDiscard"><div class="layer"></div><div class="cnt"></div></div>
+        <div class="decklbl">Défausse</div>
+      </div>
+      <div>
+        <div class="deck" id="deckVotants"><div class="layer"></div><div class="layer"></div><div class="cnt"></div></div>
+        <div class="decklbl">Pioche votants</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="zone" style="margin-bottom:14px">
+        <div class="zlabel">Piste de score — premier au seuil gagne</div>
+        <div id="track"></div>
+      </div>
+      <div class="zone">
+        <div class="zlabel">Marché des votants — présentoir tournant <span style="text-transform:none;color:var(--muted)">(clique pour acheter · 1 action)</span></div>
+        <div id="market"></div>
+      </div>
+    </div>
+
+    <div class="zone">
+      <div class="zlabel">Journal de campagne</div>
+      <div id="logzone"><div id="log"></div></div>
+    </div>
+  </div>
+
+  <!-- MY AREA -->
+  <div id="me">
+    <div class="myhead">
+      <div class="roulette"><b id="myMoney">0</b><span>M€</span></div>
+      <div class="score-pill"><b id="myVoix">0</b><span>VOIX</span></div>
+      <div class="myident">
+        <div class="nm" id="myName"></div>
+        <div class="osub" id="myBonus"></div>
+        <div class="actpips" id="actpips"></div>
+      </div>
+      <div class="myactions">
+        <button class="btn" id="recycleBtn" onclick="openRecycle()">♻ Recycler</button>
+        <button class="btn primary" id="endBtn" onclick="endMyTurn()">Terminer mon tour ▶</button>
+      </div>
+    </div>
+
+    <div id="tableau">
+      <div class="tcol">
+        <div class="zlabel">Mon casier — 4 fronts (cartes de corruption)</div>
+        <div class="mycaser" id="mycaser"></div>
+      </div>
+      <div class="tcol">
+        <div class="zlabel">Mes votants achetés</div>
+        <div class="myvots" id="myvots"></div>
+      </div>
+    </div>
+
+    <div id="handwrap">
+      <div class="zlabel">Ma main — <span id="handHint" style="text-transform:none;color:var(--muted)">joue une carte (1 action)</span></div>
+      <div id="hand"></div>
+    </div>
+  </div>
+</div>
+
+<div id="overlay"><div class="modal" id="modal"></div></div>
+<div id="toast"></div>
+
+<script src="src/engine.js"></script>
+<script>
+const CN = window.CaisseNoire;
+const ME = 0;
+
+/* couleurs + flavor des partis (l'engine ne porte pas la déco) */
+const PARTY_UI = {
+  meute:      {color:"#d68a45", bonus:"1ʳᵉ protection Presse gratuite", ban:"— (fragile en Justice)"},
+  lumiere:    {color:"#d9b24a", bonus:"Intégristes +1 voix",            ban:"Communauté LGBT"},
+  cartel:     {color:"#86d39b", bonus:"+1 M€ de revenu / tour",         ban:"La CGT"},
+  vague:      {color:"#d65a45", bonus:"Dénonciation à moitié prix (1 M€)", ban:"—"},
+  verts:      {color:"#54a06b", bonus:"Animalistes & Bobos −2 M€",      ban:"Lobby pétrolier"},
+  forteresse: {color:"#5a8fd6", bonus:"Costards & cadeaux +2 M€",       ban:"Diaspora"},
+};
+const frontClass = {Justice:"t-justice",Presse:"t-presse",Rue:"t-rue",Finances:"t-finances"};
+const VBYBLOC = {}; CN.VOTANTS.forEach(v=>VBYBLOC[v.bloc]=v);
+
+/* ---------- SETUP ---------- */
+let nPlayers = 4, myParty = "vague";
+function buildSetup(){
+  const seats = document.getElementById("seats"); seats.innerHTML="";
+  for(let n=2;n<=6;n++){
+    const b=document.createElement("button");
+    b.className="seat"+(n===nPlayers?" on":""); b.textContent=n;
+    b.onclick=()=>{nPlayers=n; buildSetup();};
+    seats.appendChild(b);
+  }
+  const ps=document.getElementById("parties"); ps.innerHTML="";
+  CN.PARTIES.forEach(p=>{
+    const ui=PARTY_UI[p.id];
+    const d=document.createElement("div");
+    d.className="ppick"+(p.id===myParty?" on":"");
+    d.onclick=()=>{myParty=p.id; buildSetup();};
+    d.innerHTML=`<div class="pn" style="color:${ui.color}">${p.nom}</div>
+      <div class="osub">${p.sub}</div>
+      <div class="pb">▲ ${ui.bonus}</div>
+      <div class="px">✗ ${ui.ban}</div>`;
+    ps.appendChild(d);
+  });
+}
+buildSetup();
+
+/* ---------- DRIVE THE GAME ---------- */
+let S=null, speed=650, botTimer=null;
+function cur(){ return CN.publicState(S,ME).currentPlayerId; }
+
+function start(){
+  // mon parti au siège 0, les autres tirés au hasard parmi le reste
+  const rest = CN.PARTIES.map(p=>p.id).filter(id=>id!==myParty);
+  for(let i=rest.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[rest[i],rest[j]]=[rest[j],rest[i]];}
+  const partyIds=[myParty, ...rest].slice(0,nPlayers);
+  S = CN.createGame({ nPlayers, partyIds });
+  document.getElementById("setup").style.display="none";
+  document.getElementById("table").style.display="block";
+  speed=+document.getElementById("speed").value;
+  document.getElementById("speed").onchange=e=>speed=+e.target.value;
+  render();
+  driveBots();
+}
+function quit(){ if(botTimer)clearTimeout(botTimer); S=null;
+  document.getElementById("table").style.display="none";
+  document.getElementById("setup").style.display="block"; buildSetup(); }
+
+function human(action){
+  if(!S||S.over||cur()!==ME) return;
+  const r = CN.applyAction(S, ME, action);
+  if(!r.ok){ toast(r.error); return; }
+  render();
+  if(cur()!==ME) driveBots(); else if(S.over) finish();
+}
+function endMyTurn(){ human({type:"END_TURN"}); }
+
+function driveBots(){
+  if(botTimer)clearTimeout(botTimer);
+  if(!S||S.over){ if(S&&S.over)finish(); return; }
+  if(cur()===ME){ render(); return; }
+  botTimer=setTimeout(()=>{
+    if(!S||S.over) return finish();
+    const id=cur();
+    if(id===ME){ render(); return; }
+    const a=CN.botChooseAction(S,id);
+    CN.applyAction(S,id,a);
+    render();
+    driveBots();
+  }, speed);
+}
+function finish(){
+  render();
+  const ps=CN.publicState(S,ME);
+  const w=ps.players.find(p=>p.id===ps.winner);
+  const mine = ps.winner===ME;
+  const reason = ps.endReason==="seuil" ? `seuil de ${ps.X} voix atteint` : "victoire au garde-fou (décompte des voix)";
+  showModal(`<h2>${mine?"🏆 Tu remportes l'élection !":"🗳️ "+w.name+" remporte l'élection"}</h2>
+    <p style="margin-top:6px">${w.name} — <b>${w.voix} voix</b> · ${reason}.</p>
+    <p class="muted" style="margin-top:4px">${mine?"Une campagne rondement (mal)menée.":"Tu t'es fait coiffer au poteau. La prochaine sera la bonne."}</p>
+    <div class="choices"><div class="choice" onclick="hideModal();quit()">↺ Rejouer une partie</div></div>`);
+}
+
+/* ---------- légalité côté affichage ---------- */
+function legalMap(){
+  const acts = (cur()===ME) ? CN.legalActions(S,ME) : [];
+  const buy=new Set(), hand={}, den=[]; let canRecycle=false, canEnd=false;
+  for(const a of acts){
+    if(a.type==="BUY_VOTANT") buy.add(a.marketIndex);
+    else if(a.type==="PLAY_DENOUNCE"){ den.push(a); (hand[a.handIndex]=hand[a.handIndex]||[]).push(a); }
+    else if(a.type==="RECYCLE") canRecycle=true;
+    else if(a.type==="END_TURN") canEnd=true;
+    else if(a.handIndex!=null) (hand[a.handIndex]=hand[a.handIndex]||[]).push(a);
+  }
+  return {buy,hand,den,canRecycle,canEnd};
+}
+/* conflits pour l'affichage (l'engine reste juge via legalActions) */
+function softWith(bloc, owned){ for(const[a,b]of CN.SOFT){ if(bloc===a&&owned.includes(b))return b; if(bloc===b&&owned.includes(a))return a; } return null; }
+function hardWith(bloc, owned){ for(const[a,b]of CN.HARD){ if(bloc===a&&owned.includes(b))return b; if(bloc===b&&owned.includes(a))return a; } return null; }
+
+/* ---------- RENDER ---------- */
+function render(){
+  if(!S) return;
+  const ps = CN.publicState(S,ME);
+  const me = ps.players.find(p=>p.id===ME);
+  const myTurn = !ps.over && ps.currentPlayerId===ME;
+  const L = legalMap();
+
+  document.getElementById("meta").innerHTML =
+    `Manche <b>${ps.turn}</b>/${ps.guardrail} · Objectif <b>${ps.X} voix</b> · `+
+    `Combines <b>${ps.deckCount}</b> · Votants restants <b>${ps.votantsLeft}</b>`;
+
+  /* opponents */
+  const opp=document.getElementById("opponents"); opp.innerHTML="";
+  ps.players.filter(p=>p.id!==ME).forEach(p=>{
+    const ui=PARTY_UI[p.partyId]||{color:"#888"};
+    const acting = !ps.over && ps.currentPlayerId===p.id;
+    const d=document.createElement("div"); d.className="opp"+(acting?" turn":"");
+    d.innerHTML=`
+      <div class="ohead"><span class="dot" style="background:${ui.color}"></span>
+        <div><div class="onm">${p.name}</div><div class="osub">${partySub(p.partyId)} · ${p.handCount} cartes</div></div></div>
+      <div class="statline"><span class="v">${p.voix} voix</span><span class="m">${p.money} M€</span></div>
+      <div class="fronts">${frontsHTML(p)}</div>
+      <div class="votstrip">${votstripHTML(p)}</div>
+      <div class="handbacks">${"<div class='cback'></div>".repeat(Math.min(p.handCount,7))}</div>
+      <div class="nowp">${acting?"▶ en train de jouer…":""}</div>`;
+    opp.appendChild(d);
+  });
+
+  /* decks */
+  setDeck("deckCombines", ps.deckCount);
+  setDeck("deckDiscard", ps.discardCount);
+  setDeck("deckVotants", ps.votantsLeft);
+
+  /* track */
+  const track=document.getElementById("track"); track.innerHTML="";
+  for(let i=0;i<=ps.X;i++){
+    const cell=document.createElement("div");
+    cell.className="cell"+(i===ps.X?" goal":"");
+    let mp="";
+    ps.players.forEach(p=>{ if(Math.min(p.voix,ps.X)===i){ const ui=PARTY_UI[p.partyId]||{color:"#888"};
+      mp+=`<div class="meeple${p.id===ME?" me":""}" style="background:${ui.color}" title="${p.name} (${p.voix})"></div>`; }});
+    cell.innerHTML=`<span class="num">${i}</span><div class="meeples">${mp}</div>`;
+    track.appendChild(cell);
+  }
+
+  /* market */
+  const mk=document.getElementById("market"); mk.innerHTML="";
+  ps.market.forEach((c,i)=>{
+    const ban = (CN.PARTIES.find(x=>x.id===me.partyId)||{}).ban===c.bloc;
+    const hard = hardWith(c.bloc, me.blocs);
+    const soft = softWith(c.bloc, me.blocs);
+    const canBuy = myTurn && L.buy.has(i);
+    const d=document.createElement("div");
+    d.className="vcard"+(canBuy?" buy":"")+(myTurn&&!canBuy?" dis":"");
+    let warn = ban ? `<span class="malus" style="color:var(--red)">✗ interdit pour ${me.name}</span>`
+      : hard ? `<span style="color:var(--red)">✗ incompatible (${hard})</span>`
+      : soft ? `<span style="color:var(--gold)">−1 voix : bancal avec ${soft}</span>` : "";
+    d.innerHTML=`<div class="tier">${c.tier}</div>
+      <div class="vt">${c.nom}</div><div class="vb">${c.bloc}</div>
+      <div class="vwarn">${warn}</div>
+      <div class="vfoot"><span class="cost">${c.cost} M€</span><span class="vx">${c.voix}<span style="font-size:10px"> voix</span></span></div>`;
+    if(canBuy) d.onclick=()=>human({type:"BUY_VOTANT", marketIndex:i});
+    mk.appendChild(d);
+  });
+
+  /* log */
+  document.getElementById("log").innerHTML =
+    ps.log.slice(0,80).map(e=>`<div class="${e.tag||""}">${e.msg}</div>`).join("");
+
+  /* my area */
+  document.getElementById("me").className = myTurn?"":"notmyturn";
+  document.getElementById("myMoney").textContent = me.money;
+  document.getElementById("myVoix").textContent = me.voix;
+  document.getElementById("myName").textContent = me.name+" (toi)";
+  document.getElementById("myBonus").textContent = (PARTY_UI[me.partyId]||{}).bonus||"";
+  const pips=document.getElementById("actpips");
+  if(myTurn){ let h=`<span class="osub" style="margin-right:4px">Actions :</span>`;
+    for(let k=0;k<CN.CONFIG.actions;k++) h+=`<span class="pip${k<ps.actionsLeft?" on":""}"></span>`;
+    pips.innerHTML=h;
+  } else pips.innerHTML=`<span class="osub">${ps.over?"Partie terminée":"…un autre parti joue"}</span>`;
+
+  document.getElementById("mycaser").innerHTML = caserHTML(me);
+  document.getElementById("myvots").innerHTML = me.votants.length
+    ? me.votants.map(v=>`<span class="myvchip">${v.nom} · ${v.voix}v</span>`).join("")
+    : `<span class="osub">aucun votant acheté pour l'instant</span>`;
+
+  /* hand */
+  const hand=document.getElementById("hand"); hand.innerHTML="";
+  (me.hand||[]).forEach((card,i)=>{
+    const legalForCard = myTurn && L.hand[i] && L.hand[i].length>0;
+    const d=document.createElement("div");
+    d.className="hcard k-"+card.kind+(legalForCard?" play":(myTurn?" dis":""));
+    d.innerHTML=`<div class="hn">${card.nom}</div>${cardTag(card)}<div class="hd">${cardDesc(card)}</div>`;
+    if(legalForCard) d.onclick=()=>playCard(i, card, L);
+    hand.appendChild(d);
+  });
+  document.getElementById("handHint").textContent =
+    myTurn ? (ps.actionsLeft>0?"joue une carte (1 action) ou achète un votant":"plus d'action — termine ton tour") : "ce n'est pas ton tour";
+
+  document.getElementById("recycleBtn").disabled = !(myTurn && L.canRecycle);
+  document.getElementById("endBtn").disabled = !(myTurn && L.canEnd);
+}
+
+function partySub(id){ return (CN.PARTIES.find(p=>p.id===id)||{}).sub||""; }
+function setDeck(elId, n){
+  const d=document.getElementById(elId);
+  d.classList.toggle("empty", n===0);
+  d.querySelector(".cnt").textContent=n;
+}
+function frontsHTML(p){
+  return CN.FRONTS.map(fr=>{
+    const prot=p.protect.includes(fr), n=p.dirty[fr];
+    const cls=prot?"prot":(n>0?"dirty":"");
+    return `<div class="front ${cls}">${fr.slice(0,4)}${prot?" 🛡":(n>0?" ✕"+n:"")}</div>`;
+  }).join("");
+}
+function votstripHTML(p){
+  if(!p.votants||!p.votants.length) return `<span class="osub">—</span>`;
+  return p.votants.map(v=>`<span class="vchip">${v.nom}</span>`).join("");
+}
+function caserHTML(p){
+  return CN.FRONTS.map(fr=>{
+    const prot=p.protect.includes(fr), n=p.dirty[fr];
+    let pile=""; for(let k=0;k<n;k++) pile+=`<div class="dirtycard"></div>`;
+    return `<div class="cslot ${prot?"prot":""}">
+      <div class="cf"><span class="tag ${frontClass[fr]}">${fr}</span></div>
+      <div class="pile">${pile||"<span class='osub' style='font-size:9px'>vide</span>"}</div>
+      <div class="shield">${prot?"🛡 protégé":""}</div></div>`;
+  }).join("");
+}
+function cardTag(c){
+  if(c.kind==="cor") return `<div class="ht"><span class="tag ${frontClass[c.front]}">+${c.gain}M€ · ${c.front} · −${c.malus}v si dénoncé</span></div>`;
+  if(c.kind==="den") return `<div class="ht"><span class="tag t-rue">Dénoncer · ${CN.CONFIG.denounceCost}M€</span></div>`;
+  if(c.kind==="pro") return `<div class="ht"><span class="tag ${frontClass[c.front]}">Protéger ${c.front} · ${CN.CONFIG.protectCost}M€</span></div>`;
+  if(c.kind==="bla") return `<div class="ht"><span class="tag">Blanchir · ${CN.CONFIG.blanchCost}M€</span></div>`;
+  if(c.e==="element") return `<div class="ht"><span class="tag" style="color:var(--blue);border-color:var(--blue)">Réaction (auto)</span></div>`;
+  return `<div class="ht"><span class="tag">Coup tactique</span></div>`;
+}
+function cardDesc(c){
+  if(c.kind==="cor") return `Encaisse +${c.gain} M€ ; pose la carte sur ${c.front} (−${c.malus} voix si on te dénonce).`;
+  if(c.kind==="den") return `Fais sauter la plus grosse carte sale d'un rival sur un front non protégé.`;
+  if(c.kind==="pro") return `Bouclier permanent : plus aucune dénonciation sur ${c.front}.`;
+  if(c.kind==="bla") return `Nettoie ta plus grosse carte sale (n'importe quel front).`;
+  if(c.e==="remise") return `Ton prochain votant coûte 3 M€ de moins.`;
+  if(c.e==="incoherence") return `Prends un bloc incompatible sans perte de voix (+1 carte sale Rue).`;
+  if(c.e==="promesse") return `+3 voix tout de suite (+1 carte sale Rue).`;
+  if(c.e==="element") return `Se joue tout seul en réaction : annule une dénonciation contre toi. Garde-la en main.`;
+  if(c.e==="renvoi") return `+3 M€ et pioche 1 carte.`;
+  return "";
+}
+
+/* ---------- jouer une carte (dénonciation = modal de ciblage) ---------- */
+function playCard(i, card, L){
+  if(card.kind==="den"){ openDenounce(i, L); return; }
+  human({type: card.kind==="cor"?"PLAY_FINANCE":card.kind==="pro"?"PLAY_PROTECT":
+    card.kind==="bla"?"PLAY_BLANCH":"PLAY_COUP", handIndex:i});
+}
+function openDenounce(handIdx, L){
+  const opts = L.den.filter(a=>a.handIndex===handIdx);
+  if(!opts.length){ toast("Aucune cible dénonçable."); return; }
+  const ps=CN.publicState(S,ME);
+  let h=`<h2>Dénoncer qui ?</h2><p class="muted">Sa plus grosse carte sale du front choisi saute. Attention : il peut tenir un « Élément de langage » qui annule ton scandale.</p><div class="choices">`;
+  opts.forEach(a=>{
+    const t=ps.players.find(p=>p.id===a.targetId);
+    h+=`<div class="choice" onclick="confirmDenounce(${handIdx},${a.targetId},'${a.front}')">
+      <b>${t.name}</b> — ${t.voix} voix · <span class="tag ${frontClass[a.front]}">${a.front}</span></div>`;
+  });
+  h+=`</div><div style="margin-top:10px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`;
+  showModal(h);
+}
+function confirmDenounce(handIdx,targetId,front){
+  hideModal();
+  human({type:"PLAY_DENOUNCE", handIndex:handIdx, targetId, front});
+}
+
+/* ---------- recycler ---------- */
+let recSel=[];
+function openRecycle(){
+  if(cur()!==ME) return;
+  const me=CN.publicState(S,ME).players.find(p=>p.id===ME);
+  recSel=[];
+  showModal(`<h2>♻ Recycler (1 action)</h2>
+    <p class="muted">Choisis 1 ou 2 cartes à défausser, tu repiocheras pour revenir à 5. La pioche est aveugle : c'est un pari.</p>
+    <div class="choices" id="recList"></div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn primary" onclick="confirmRecycle()">Recycler</button>
+      <button class="btn ghost" onclick="hideModal()">Annuler</button></div>`);
+  renderRecList();
+}
+function renderRecList(){
+  const me=CN.publicState(S,ME).players.find(p=>p.id===ME);
+  const c=document.getElementById("recList"); c.innerHTML="";
+  me.hand.forEach((card,i)=>{
+    const sel=recSel.includes(i);
+    const d=document.createElement("div"); d.className="choice";
+    if(sel) d.style.borderColor="var(--gold)";
+    d.innerHTML=`${sel?"☑":"☐"} <b>${card.nom}</b>`;
+    d.onclick=()=>{ if(sel)recSel=recSel.filter(x=>x!==i); else if(recSel.length<2)recSel.push(i); renderRecList(); };
+    c.appendChild(d);
+  });
+}
+function confirmRecycle(){
+  if(!recSel.length){ hideModal(); return; }
+  hideModal();
+  human({type:"RECYCLE", handIndexes:recSel.slice()});
+}
+
+/* ---------- utils ---------- */
+function showModal(h){ document.getElementById("modal").innerHTML=h; document.getElementById("overlay").style.display="flex"; }
+function hideModal(){ document.getElementById("overlay").style.display="none"; }
+let toastT=null;
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show");
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),1800); }
+</script>
+</body>
+</html>

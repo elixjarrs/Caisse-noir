@@ -432,6 +432,7 @@ function publicState(state, playerId) {
     players: state.players.map(p => ({
       id: p.id, name: p.name, partyId: p.partyId, voix: p.voix, money: p.money,
       blocs: p.blocs.slice(), protect: p.protect.slice(),
+      votants: p.votants.slice(),                                          // votants achetés = face VISIBLE sur la table (public)
       dirty: Object.fromEntries(FRONTS.map(f => [f, p.dirty[f].length])),  // compte de cartes sales par front (contenu caché)
       handCount: p.hand.length,
       hand: p.id === playerId ? p.hand.slice() : undefined,                // main en clair seulement pour soi

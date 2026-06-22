@@ -11,12 +11,15 @@
 
 ## ▶️ Jouer
 
-Ouvre **`index.html`** dans un navigateur — aucune installation. Tu y trouves :
+Ouvre **`game.html`** dans un navigateur — aucune installation. C'est **la table** : une vraie partie 2–6 joueurs (toi + adversaires automatiques) rendue comme un plateau physique, branchée directement sur le moteur de règles (`src/engine.js`).
 
-- **Jouer la démo** : une partie 2–6 joueurs (toi + adversaires automatiques), mains adverses face cachée, joueurs qui jouent un par un.
-- **👁 Mode Regarder** : la partie se joue toute seule, vitesse réglable + pause — pour observer la mécanique.
-- **🃏 Catalogue** : les 146 cartes (42 blocs votants uniques + 104 combines) avec textes et stats.
-- **📊 Équilibrage** : un bac à sable Monte Carlo qui re-teste les maths en direct.
+- **Les pioches visibles** : « Les Combines » (face cachée, avec compteur), la défausse, la pioche de votants.
+- **Le marché tournant** : ~8 votants face visible, clic pour acheter (1 action). Les conflits (dures/molles) et les blocs interdits sont signalés sur la carte.
+- **Ta zone de jeu** : roulette d'argent, piste de score, ton casier 4 fronts (piles de corruption + boucliers), tes votants achetés face visible, et ta main de 5.
+- **Les rivaux autour de la table** : leurs votants achetés, leurs fronts (cartes sales + protections), leur main face cachée, et un journal de campagne qui raconte chaque dénonciation.
+- **Piste de score commune** avec un meeple par parti — premier au seuil (30 − N) gagne.
+
+`index.html` reste disponible pour le **🃏 Catalogue** des 146 cartes et le **📊 bac à sable d'équilibrage** (Monte Carlo).
 
 ## 🌐 Beta en ligne
 
@@ -32,9 +35,11 @@ La démo est un site **statique** (un seul fichier), donc déployable en 2 minut
 | Fichier | Rôle |
 |---|---|
 | `src/engine.js` | **Moteur de jeu headless** : toutes les règles + valeurs calibrées, déterministe (RNG seedée), sans dépendance ni DOM. **Point de départ du dev.** |
-| `index.html` | La démo jouable (HTML/JS autonome) — référence d'interface et d'IA |
+| `game.html` | **La table** — partie jouable façon plateau physique, branchée sur `src/engine.js` (pioches, marché, casier, piste de score, IA adverse). |
+| `index.html` | Démo historique + 🃏 catalogue des cartes + 📊 bac à sable d'équilibrage (logique autonome) |
 | `README.md` | Règles complètes + infos projet (ce fichier) |
 | `docs/REGLES.md` | Design doc vivant (mêmes règles, espace de travail) |
+| `docs/DEV.md` | **Brief technique** pour coder la beta multijoueur en ligne (à donner à Claude Code) |
 
 ## 🛠️ Développer (moteur `src/engine.js`)
 
@@ -56,7 +61,7 @@ G.simulate(6, 2000);                                    // bac à sable d'équil
 ## 🗺️ Prochaines étapes (les « choses sérieuses »)
 
 - [ ] Déployer la beta statique (GitHub Pages / Netlify) et fixer l'URL.
-- [ ] **Multijoueur en ligne réel** : lobby, parties privées, synchro temps réel.
+- [ ] **Multijoueur en ligne (beta)** : serveur Node + WebSocket autour de `src/engine.js`, lien de partie par code, déploiement Render. → **Brief prêt : `docs/DEV.md`.**
 - [ ] Direction artistique des cartes (visuel, gabarit imprimable).
 - [ ] **Références historiques** sur les cartes (costards = Fillon, argent étranger = Sarkozy/Kadhafi, emplois fictifs = assistants parlementaires…).
 - [ ] Variante « caisse noire » (argent caché) à tester.
