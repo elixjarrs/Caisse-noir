@@ -11,15 +11,18 @@
 
 ## ▶️ Jouer
 
-Ouvre **`game.html`** dans un navigateur — aucune installation. C'est **la table** : une vraie partie 2–6 joueurs (toi + adversaires automatiques) rendue comme un plateau physique, branchée directement sur le moteur de règles (`src/engine.js`).
+Ouvre **`game.html`** dans un navigateur. C'est **la table** : un plateau rendu comme en physique, branché sur le moteur de règles (`src/engine.js`). Deux modes :
 
-- **Les pioches visibles** : « Les Combines » (face cachée, avec compteur), la défausse, la pioche de votants.
-- **Le marché tournant** : ~8 votants face visible, clic pour acheter (1 action). Les conflits (dures/molles) et les blocs interdits sont signalés sur la carte.
-- **Ta zone de jeu** : roulette d'argent, piste de score, ton casier 4 fronts (piles de corruption + boucliers), tes votants achetés face visible, et ta main de 5.
-- **Les rivaux autour de la table** : leurs votants achetés, leurs fronts (cartes sales + protections), leur main face cachée, et un journal de campagne qui raconte chaque dénonciation.
-- **Piste de score commune** avec un meeple par parti — premier au seuil (30 − N) gagne.
+- **🎲 Solo** — une partie 2–6 joueurs contre l'IA, tout de suite.
+- **🌐 En ligne avec tes potes** — un crée une table et partage le **code à 4 lettres** ; les autres rejoignent ; les sièges vides sont tenus par l'IA. Sync temps réel **sans serveur à héberger** (Supabase Realtime), une seule partie à la fois, **hôte autoritatif**.
+
+Sur la table tu retrouves l'expérience physique : **pioches visibles** (Les Combines, la défausse, la pioche de votants), **marché tournant** de ~8 votants (clic pour acheter, conflits dures/molles signalés), **ta zone** (argent, piste de score, casier 4 fronts avec piles de corruption + boucliers, votants achetés face visible, main de 5), les **rivaux autour de la table**, et un **journal** qui raconte chaque dénonciation. Premier au seuil (30 − N) gagne.
+
+> **Jouer en ligne maintenant :** il faut une URL publique (le `localhost` ne suffit pas pour tes potes). Déploie les fichiers statiques (`game.html` + `src/engine.js`) sur **GitHub Pages** ou **Netlify** (drag-and-drop du dossier), partage l'URL, chacun l'ouvre, un crée la table, les autres entrent le code. Le temps réel fonctionne depuis n'importe quelle origine.
 
 `index.html` reste disponible pour le **🃏 Catalogue** des 146 cartes et le **📊 bac à sable d'équilibrage** (Monte Carlo).
+
+> ⚠️ **Beta sans serveur** : l'état complet de la partie transite par le service temps réel, donc la **confidentialité des mains** (le bluff « Élément de langage ») n'est pas cryptographiquement garantie. Suffisant entre potes ; la version « sérieuse » (serveur autoritatif qui ne diffuse que `publicState` par joueur) est décrite dans `docs/DEV.md`.
 
 ## 🌐 Beta en ligne
 
