@@ -3,7 +3,7 @@
 > *(titre de travail — à changer : « Campagne Sale », « Urnes & Combines », « Financement Occulte »…)*
 > Jeu de cartes multijoueur (**2–6 joueurs**). Document vivant.
 > Solo archivé dans `archive/REGLES_SOLO_archive.md`.
-> Démo jouable + bac à sable d'équilibrage : `index.html` (à ouvrir dans un navigateur).
+> Jeu jouable (solo + en ligne) : `index.html` ; catalogue des cartes + bac à sable d'équilibrage : `catalogue.html` (à ouvrir dans un navigateur).
 > Dernière mise à jour : 22 juin 2026 — *décisions matériel intégrées : roulette d'argent par joueur, piste de score commune 0–28 + meeples, marché de votants tournant. L'économie calibrée par simulation est inchangée.*
 
 ---

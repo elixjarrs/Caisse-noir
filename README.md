@@ -11,16 +11,16 @@
 
 ## ▶️ Jouer
 
-Ouvre **`game.html`** dans un navigateur. C'est **la table** : un plateau rendu comme en physique, branché sur le moteur de règles (`src/engine.js`). Deux modes :
+Ouvre **`index.html`** dans un navigateur (c'est la page d'accueil = le jeu, donc la racine de ton URL déployée). C'est **la table** : un plateau rendu comme en physique, branché sur le moteur de règles (`src/engine.js`). Deux modes :
 
 - **🎲 Solo** — une partie 2–6 joueurs contre l'IA, tout de suite.
 - **🌐 En ligne avec tes potes** — un crée une table et partage le **code à 4 lettres** ; les autres rejoignent ; les sièges vides sont tenus par l'IA. Sync temps réel **sans serveur à héberger** (Supabase Realtime), une seule partie à la fois, **hôte autoritatif**.
 
 Sur la table tu retrouves l'expérience physique : **pioches visibles** (Les Combines, la défausse, la pioche de votants), **marché tournant** de ~8 votants (clic pour acheter, conflits dures/molles signalés), **ta zone** (argent, piste de score, casier 4 fronts avec piles de corruption + boucliers, votants achetés face visible, main de 5), les **rivaux autour de la table**, et un **journal** qui raconte chaque dénonciation. Premier au seuil (30 − N) gagne.
 
-> **Jouer en ligne maintenant :** il faut une URL publique (le `localhost` ne suffit pas pour tes potes). Déploie les fichiers statiques (`game.html` + `src/engine.js`) sur **GitHub Pages** ou **Netlify** (drag-and-drop du dossier), partage l'URL, chacun l'ouvre, un crée la table, les autres entrent le code. Le temps réel fonctionne depuis n'importe quelle origine.
+> **Jouer en ligne maintenant :** il faut une URL publique (le `localhost` ne suffit pas pour tes potes). Déploie les fichiers statiques (tout le dossier : `index.html` + `src/engine.js`) sur **Vercel**, **GitHub Pages** ou **Netlify**, partage l'URL, chacun l'ouvre, un crée la table, les autres entrent le code. Le temps réel fonctionne depuis n'importe quelle origine. La racine `/` ouvre directement le jeu.
 
-`index.html` reste disponible pour le **🃏 Catalogue** des 146 cartes et le **📊 bac à sable d'équilibrage** (Monte Carlo).
+`catalogue.html` reste disponible pour le **🃏 Catalogue** des 146 cartes et le **📊 bac à sable d'équilibrage** (Monte Carlo).
 
 > ⚠️ **Beta sans serveur** : l'état complet de la partie transite par le service temps réel, donc la **confidentialité des mains** (le bluff « Élément de langage ») n'est pas cryptographiquement garantie. Suffisant entre potes ; la version « sérieuse » (serveur autoritatif qui ne diffuse que `publicState` par joueur) est décrite dans `docs/DEV.md`.
 
@@ -38,8 +38,9 @@ La démo est un site **statique** (un seul fichier), donc déployable en 2 minut
 | Fichier | Rôle |
 |---|---|
 | `src/engine.js` | **Moteur de jeu headless** : toutes les règles + valeurs calibrées, déterministe (RNG seedée), sans dépendance ni DOM. **Point de départ du dev.** |
-| `game.html` | **La table** — partie jouable façon plateau physique, branchée sur `src/engine.js` (pioches, marché, casier, piste de score, IA adverse). |
-| `index.html` | Démo historique + 🃏 catalogue des cartes + 📊 bac à sable d'équilibrage (logique autonome) |
+| `index.html` | **La table** (page d'accueil) — jeu jouable solo + en ligne (Supabase Realtime), façon plateau physique, branché sur `src/engine.js`. |
+| `catalogue.html` | Démo historique + 🃏 catalogue des cartes + 📊 bac à sable d'équilibrage (logique autonome) |
+| `vercel.json` | Config de déploiement statique (Vercel). |
 | `README.md` | Règles complètes + infos projet (ce fichier) |
 | `docs/REGLES.md` | Design doc vivant (mêmes règles, espace de travail) |
 | `docs/DEV.md` | **Brief technique** pour coder la beta multijoueur en ligne (à donner à Claude Code) |
