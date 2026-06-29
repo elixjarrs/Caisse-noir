@@ -4,7 +4,9 @@
 > Jeu de cartes multijoueur (**2–6 joueurs**). Document vivant.
 > Solo archivé dans `archive/REGLES_SOLO_archive.md`.
 > Jeu jouable (solo + en ligne) : `index.html` ; catalogue des cartes + bac à sable d'équilibrage : `catalogue.html` (à ouvrir dans un navigateur).
-> Dernière mise à jour : 22 juin 2026 — *décisions matériel intégrées : roulette d'argent par joueur, piste de score commune 0–28 + meeples, marché de votants tournant. L'économie calibrée par simulation est inchangée.*
+> Dernière mise à jour : 27 juin 2026.
+>
+> 🔴 **MODÈLE CIBLE = v0.6 « corruption cachée » → voir §16. C'est ce qui fait foi pour le dev.** Les sections §3–§9 décrivent le modèle v0.5 (corruption visible) ; §16 les **remplace** : corruption cachée, dénonciation qui frappe l'**argent**, voix lues sur les cartes, familles/coalitions, vol d'électorat, rôles secrets (pouvoir + objectif). Seuil v0.6 = **40 − 2×joueurs** (calibré par simulation).
 
 ---
 
@@ -24,6 +26,8 @@ Inspiration : la galerie des scandales réels, en mode satirique — les **costa
 | Joueurs | 2 | 3 | 4 | 5 | 6 |
 |---|---|---|---|---|---|
 | **Seuil** | **28** | **27** | **26** | **25** | **24** |
+
+*(Seuil actuel = 30 − N. Avec l'extension v0.5 — synergies de coalition — le seuil montera, provisoirement **32 − N**, à recalibrer par simulation : voir §15.)*
 
 - **L'argent n'est pas un but**, c'est le carburant : on **convertit sans cesse l'argent en voix**. Le plus riche ne gagne pas — le plus de voix gagne.
 - **Garde-fou anti-partie-infinie** : si le marché des votants s'épuise (ou **16 manches** atteintes), le joueur avec le **plus de voix** l'emporte. *(En pratique ~95–100 % des parties se finissent par le seuil, pas par le garde-fou.)*
@@ -268,3 +272,116 @@ Les votants étant des **blocs uniques** (pool fixe de 161 voix), l'électorat s
 - Aucune valeur chiffrée modifiée : coûts des votants (4/8/12/13), voix (2/4/6/7), malus de corruption (−1/−2/−3/−4), prix des actions (dénoncer 2, protéger 5, blanchir 3), départ 7 M€, revenu +3/tour, seuil **30 − N**, main de 5.
 - Les 42 blocs uniques, les 104 « Combines », les incompatibilités et l'équilibrage par simulation restent identiques.
 - « Les Combines » (pioche commune face cachée) : inchangée.
+
+---
+
+## 15. Extension v0.5 — Synergies de coalition & Vol d'électorat *(à implémenter, voir prompt Claude)*
+
+> But : **rendre le jeu plus captivant** — récompenser les coalitions cohérentes (carotte, en miroir des incompatibilités) et **intensifier les confrontations** (vol d'électorat, inspiré de *Monopoly Deal*). **L'argent n'est pas touché** : seules les voix bougent.
+> ⚠️ Ces ajouts **changent l'économie des voix** → le **seuil doit être re-calibré par simulation** (voir §15.4). Tant que ce n'est pas fait, ils ne sont pas dans le moteur `src/engine.js` ni dans la démo.
+
+### 15.1 Synergies de coalition (la carotte)
+
+Chaque bloc votant appartient à une **famille politique** (imprimée sur la carte, comme l'incompatibilité). Réunir plusieurs blocs d'une même famille rapporte un **bonus fort** :
+
+- **Coalition complète = 3 blocs d'une même famille → +3 voix** (bonus immédiat, avance ton pion).
+- **Chaque bloc supplémentaire** de cette famille (4ᵉ, 5ᵉ…) → **+1 voix** de plus.
+
+| Famille | Blocs |
+|---|---|
+| **Le Capital** | Patronat · Banquiers · Rentiers · Héritiers · Promoteurs |
+| **Le Bloc Public** | CGT · Fonctionnaires · Soignants · Profs |
+| **L'Ordre & le Terroir** | Flics · Militaires · Chasseurs · Agriculteurs · Pêcheurs |
+| **La Start-up Nation** | Start-uppers · Crypto · Influenceurs · Libertariens · Gamers |
+| **L'Écolo-Bobo** | Animalistes · Bobos · Néo-ruraux · Éveillés |
+| **L'Identité** | Souverainistes · Intégristes · Masculinistes · Survivalistes |
+| **Les Précaires** | Chômeurs · Intermittents · Étudiants · Chauffeurs VTC |
+| **La Mobilité** | Taxis · Routiers · Motards |
+| *Indépendants (sans synergie)* | Francs-maçons · Diaspora · Anti-vax · Complotistes · Lobby pétrolier · LGBT · Lobby pharma · Retraités |
+
+→ Tu arbitres entre **bâtir serré** (bonus de coalition) et **t'éparpiller** (pénalités d'incompatibilité). Les familles sont **cohérentes en interne** (aucune incompatibilité dure/molle entre membres d'une même famille).
+
+### 15.2 Électorat fidèle (la défense)
+
+Les blocs faisant partie d'une **coalition complète (≥3)** sont **fidèles → involables** : ils ne peuvent pas être ciblés par un vol (principe « set complet protégé » de *Monopoly Deal*). Seuls les **blocs isolés** (hors coalition complète) sont vulnérables. La synergie a donc une **double valeur** : voix bonus *et* protection.
+
+### 15.3 Vol d'électorat (le mordant — nouvelles cartes des Combines)
+
+Transfert de **voix** (la carte bloc ne change pas de main ; on déplace les pions) :
+
+| Carte (Combines) | Coût | Effet | Inspiration MD |
+|---|---|---|---|
+| **Débauchage** ×6 | 2 M€ | Cible un **bloc isolé** d'un rival → **−2 voix** pour lui, **+2** pour toi | *Sly Deal* |
+| **OPA électorale** ×3 | 4 M€ | Cible un **bloc isolé** d'un rival → **−3 voix** pour lui, **+3** pour toi (rare, plus fort) | *Deal Breaker* |
+
+- **Impossible** de viser un bloc en coalition complète (involable).
+- **Anti-acharnement** : on ne subit qu'**une attaque par manche** — *dénonciation OU vol* partagent désormais ce plafond (extension de la règle « 1 scandale subi par manche »).
+- La pioche commune passe donc de **104 à 113 cartes** (+9 cartes de vol). *(Option future, écartée pour l'instant : un « Démenti » réactif façon Just Say No.)*
+
+### 15.4 Équilibrage à refaire (NE PAS deviner)
+
+- Les synergies **gonflent les voix** (≈ +3 par coalition complétée) ; il faut donc **remonter le seuil**. Valeur **provisoire : 32 − N** (au lieu de 30 − N), **à confirmer par `simulate()`** une fois les features codées, avec une IA qui **vise activement les coalitions** (sinon l'inflation est sous-estimée).
+- Le vol est **zéro-somme** (pas d'inflation de voix) mais ajoute de la friction → vérifier que la durée reste ~10-12 manches et que ≥90 % des parties finissent par le seuil.
+- **L'économie d'argent reste intacte** : coûts des votants, revenu, départ, prix des actions inchangés.
+
+---
+
+# 16. MODÈLE CIBLE v0.6 — « La caisse (vraiment) noire » 🔴 *fait foi pour le dev*
+
+> Remplace §3–§9. Le cœur : **la corruption est cachée**. On voit l'argent d'un joueur monter, mais pas s'il s'est enrichi proprement ou par la fraude, ni sur quel front. La dénonciation devient un **pari qui frappe l'ARGENT**. Calibré par simulation (sim v0.6).
+
+## 16.1 Vue d'ensemble — ce qui change vs v0.5
+- **Corruption CACHÉE** : les cartes de financement (propres ET sales) se jouent **face cachée** dans ton casier.
+- **Financement PROPRE** ajouté : de l'argent sûr, non dénonçable (brouille la lecture).
+- **Dénonciation = perte d'ARGENT** (plus de voix), et c'est un **pari sur un front**.
+- **Voix lues sur les cartes** votant (face visible). Piste de score = simple aide de lecture (facultative).
+- **Rôle SECRET** par joueur = un **pouvoir** + un **objectif** caché (2-en-1).
+- Conservés/adaptés : familles → coalitions (+voix), vol d'électorat, incompatibilités, défenses.
+
+## 16.2 L'argent (roulette individuelle 0–80, visible)
+Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée** :
+
+| Type | Cartes (exemples) | Argent | Dénonçable ? |
+|---|---|---|---|
+| **Propre** | Don légal / Meeting / Débat télévisé | **+2 / +3 / +4 M€** | ❌ jamais (sûr) |
+| **Sale (corruption)** | Petit pot-de-vin (Justice) / Faux militants (Rue) / Costards (Presse) / Emploi fictif (Finances) | **+3 / +4 / +6 / +9 M€** | ✅ sur **son** front |
+
+→ Le sale rapporte **plus**, mais chaque carte sale est posée (face cachée) sur **son front** et reste une bombe. **Les cartes propres servent de LEURRES** : tu les poses aussi face cachée sur le front de ton choix, pour que la **taille de tes piles ne trahisse pas** où tu es vraiment sale (une grosse pile « Finances » peut n'être que des dons légaux). Comme tout est face cachée, **les autres ne savent pas** si ta carte est un don légal ou un pot-de-vin, ni sur quel front tu as fraudé : ils voient juste ton argent monter et la hauteur de tes piles.
+
+## 16.3 Les voix (sur les cartes)
+Les **votants restent face visible** devant toi : **voix = somme de tes cartes votant** (+ bonus de coalition, voir 16.6). Lecture directe par tous. *(Une piste de score commune reste recommandée comme aide de lecture, mais n'est plus la source de vérité.)*
+
+## 16.4 La dénonciation = un PARI qui frappe l'argent
+**Dénoncer** (2 M€) : tu désignes un rival **et UN front** (Justice / Presse / Rue / Finances) — c'est ton pari. On révèle les cartes face cachée de **ce front** :
+- **Touché** (au moins une carte sale dessus) → la cible **perd de l'argent** = le **total sale de ce front** (toutes les cartes sales du front sautent d'un coup). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) — c'est elle qui décide quels blocs sacrifier — et ces votants **retournent au marché**.
+- **Raté** (le front ne contenait que des leurres / était vide) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** faussement accusée (et il a cramé son action). *Dénoncer est donc un vrai pari.*
+- **Un seul scandale subi par manche** (anti-acharnement).
+
+**Le frein anti-meneur (clé du modèle) :** plus tu as converti d'argent en voix, **moins tu as de cash** → quand on te dénonce, tu paies en **rendant des votants** → tu perds des voix. **Le frein se cible donc tout seul sur le meneur.** À l'inverse, planquer du cash sale = se rendre dénonçable sans avancer : double peine.
+
+**Défenses** (inchangées dans l'esprit) :
+- **Protection** (5 M€) — bouclier permanent sur un front : toute dénonciation y rate.
+- **Blanchiment** (3 M€) — rend une de tes cartes sales **propre** (elle n'est plus dénonçable).
+- **Élément de langage** — réactif : annule une dénonciation.
+
+## 16.5 Rôle secret = pouvoir + objectif (2-en-1)
+En début de partie, chaque joueur reçoit **1 carte Rôle face cachée** (aléatoire). Elle donne :
+- un **pouvoir** unique (l'asymétrie de parti, musclée — ex. « La Meute » : 1ʳᵉ protection Presse gratuite ; « La Vague » : dénonciation à 1 M€…) ;
+- un **objectif secret** (ex. « Les Mains Propres » : finis sans carte sale en Justice ; « Le Faiseur de Rois » : détiens les Retraités à la fin ; « Le Pur et Dur » : aie une coalition complète…). Accompli → **+3 voix**, révélé à la fin.
+Remplace le choix de parti ouvert + des cartes objectif séparées.
+
+## 16.6 Familles, coalitions & vol *(conservés de §15)*
+- **Familles** : 8 familles (voir §15.1). **3 blocs d'une même famille = +3 voix**, puis **+1 par bloc** en plus.
+- **Coalition complète = électorat fidèle → involable** (protégé du vol).
+- **Vol d'électorat** (transfert de voix) sur des **blocs isolés** : **Débauchage** (2 M€, −2/+2) et **OPA électorale** (4 M€, −3/+3). Partage le plafond « 1 attaque subie / manche » avec la dénonciation.
+
+## 16.7 Économie & seuil (calibré par simulation v0.6)
+- Départ **7 M€**, revenu **+3/tour**, main **5**, garde-fou **16 manches**.
+- Votants : Petit 4/2, Moyen 8/4, Gros 12/6, Retraités 13/7.
+- **Seuil de victoire = 40 − 2 × nombre de joueurs** → **36 / 34 / 32 / 30 / 28** (2→6 j.).
+- Coûts d'attaque : **dénoncer 2 M€** (+ **amende 3 M€** si raté) · **vol** Débauchage 2 / OPA 4.
+- Résultats sim (frein auto-ciblant, dénonciation = pari avec ~30 % de ratés + amende) : ~10 manches, **97–99 % des parties par le seuil**.
+- ⚠️ Calibrage issu d'une **simulation abstraite** (économie + frein, sans le détail des mains) → **à raffiner via `engine.simulate()`** une fois v0.6 implémenté.
+
+## 16.8 Pourquoi ce modèle
+Il ajoute la **couche de bluff / information cachée** (façon Coup/Sheriff) qui manquait : on ne sait jamais si un rival est propre ou pourri, dénoncer est un **pari risqué**, et la course aux voix se double d'une **guerre psychologique** sur l'argent. Le tout sans procédure lourde.
