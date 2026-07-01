@@ -346,6 +346,11 @@ const frontClass = {Justice:"t-justice",Presse:"t-presse",Finances:"t-finances"}
 let S = null, VIEW = null;
 let botTimer = null, botSpeed = 650, gameOverShown = false, modalMode = null;
 let soloSeats = 4, hostSeats = 4;
+// anti double-action (invités) : verrou pendant la latence réseau + dédup côté hôte
+let busy = false, busyTimer = null, aidCounter = 0;
+const seenAid = new Set();
+function nextAid(){ return NET.clientId + ":" + (++aidCounter); }
+function setBusy(){ busy = true; clearTimeout(busyTimer); busyTimer = setTimeout(()=>{ busy=false; render(); }, 3000); }
 const NET = { online:false, isHost:false, channel:null, room:null, clientId:getClientId(), name:"", mySeat:null, seats:[], started:false };
 function getClientId(){ let c=localStorage.getItem("cn_cid"); if(!c){ c="c"+Math.random().toString(36).slice(2,10); localStorage.setItem("cn_cid",c);} return c; }
 
@@ -371,8 +376,17 @@ function driveHost(){
   if(!isBotSeat(seat)) return;
   botTimer=setTimeout(()=>hostApply(seat, CN.botChooseAction(S,seat)), botSpeed);
 }
-function submit(action){ if(!VIEW||VIEW.pending||VIEW.currentPlayerId!==NET.mySeat) return; if(NET.isHost) hostApply(NET.mySeat, action); else NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action}}); }
-function submitPending(action){ if(NET.isHost) hostApply(NET.mySeat, action); else NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action}}); }
+function submit(action){
+  if(!VIEW||VIEW.pending||VIEW.currentPlayerId!==NET.mySeat||busy) return;
+  if(NET.isHost){ hostApply(NET.mySeat, action); return; }
+  setBusy(); render();   // verrou : plus d'envoi tant que l'hôte n'a pas renvoyé l'état
+  NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action,aid:nextAid()}});
+}
+function submitPending(action){
+  if(NET.isHost){ hostApply(NET.mySeat, action); return; }
+  if(busy) return; setBusy();   // pas de render() ici (éviterait de rouvrir la modale de réaction)
+  NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action,aid:nextAid()}});
+}
 function endMyTurn(){ submit({type:"END_TURN"}); }
 
 /* SOLO */
@@ -416,9 +430,14 @@ function hostStart(){
   VIEW=viewFor(0); broadcastState(); render(); driveHost();
 }
 function broadcastState(){ const views={}; NET.seats.filter(s=>!s.isBot&&s.clientId).forEach(s=>views[s.seat]=viewFor(s.seat)); NET.channel.send({type:"broadcast",event:"state",payload:{views,seats:NET.seats}}); }
-function onAction({payload}){ if(NET.isHost) hostApply(payload.seat, payload.action); }
+function onAction({payload}){
+  if(!NET.isHost) return;
+  const aid=payload.aid;                          // dédup : ignore une action livrée en double
+  if(aid){ if(seenAid.has(aid)) return; seenAid.add(aid); if(seenAid.size>300) seenAid.clear(); }
+  hostApply(payload.seat, payload.action);
+}
 function onStart({payload}){ if(NET.isHost) return; NET.seats=payload.seats; NET.started=true; gameOverShown=false; const me=NET.seats.find(s=>s.clientId===NET.clientId); NET.mySeat=me?me.seat:null; botSpeed=+$("#speed").value; $("#roomPill").style.display="inline-block"; if(NET.mySeat===null){ showScreen("lobby"); toast("Partie en cours — attends la prochaine."); return; } showScreen("table"); }
-function onState({payload}){ if(NET.isHost) return; NET.seats=payload.seats; const v=payload.views[NET.mySeat]; if(v){ VIEW=v; render(); if(VIEW.over) onGameOver(); } }
+function onState({payload}){ if(NET.isHost) return; NET.seats=payload.seats; const v=payload.views[NET.mySeat]; if(v){ VIEW=v; busy=false; clearTimeout(busyTimer); render(); if(VIEW.over) onGameOver(); } }
 
 /* LEGAL */
 function legalMap(){
@@ -441,7 +460,8 @@ function incompatWith(bloc,owned){ for(const[a,b]of CN.INCOMPAT){ if(bloc===a&&o
 function render(){
   if(!VIEW||NET.mySeat===null) return;
   const me=VIEW.players.find(p=>p.id===NET.mySeat); if(!me) return;
-  const myTurn=!VIEW.over&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat;
+  const isMine=!VIEW.over&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat;
+  const myTurn=isMine&&!busy;   // busy = action envoyée, on attend l'hôte → contrôles verrouillés
   const L=legalMap();
   // décision en attente pour moi (dette de dénonciation OU vol à subir)
   if(VIEW.pending&&VIEW.pending.playerId===NET.mySeat){
@@ -455,7 +475,7 @@ function render(){
   const tb=$("#turnbar");
   if(VIEW.over){ tb.className="turnbar"; tb.textContent="Partie terminée."; }
   else if(VIEW.pending){ tb.className="turnbar final"; tb.textContent=(VIEW.pending.kind==="cede"?"🎯 ":"⚖️ ")+seatName(VIEW.pending.playerId)+(VIEW.pending.kind==="cede"?" doit céder un électeur…":" doit rendre des votants…"); }
-  else if(myTurn){ tb.className="turnbar mine"; tb.textContent=VIEW.finalRound?"🏁 Manche finale — à toi de jouer !":"🎯 À toi de jouer !"; }
+  else if(isMine){ tb.className="turnbar mine"; tb.textContent=busy?"⏳ Envoi de ton action…":(VIEW.finalRound?"🏁 Manche finale — à toi de jouer !":"🎯 À toi de jouer !"); }
   else { tb.className="turnbar"+(VIEW.finalRound?" final":""); tb.textContent=(VIEW.finalRound?"🏁 Manche finale — ":"⏳ ")+"au tour de "+seatName(VIEW.currentPlayerId); }
 
   const opp=$("#opponents"); opp.innerHTML="";
@@ -509,7 +529,7 @@ function render(){
     const d=document.createElement("div"); d.className="hcard k-"+card.kind+(ok?" play":(myTurn?" dis":""));
     d.innerHTML=`<div class="hn">${card.nom}</div>${cardTag(card)}<div class="hd">${cardDesc(card)}</div>`;
     if(ok) d.onclick=()=>playCard(i,card,L); hand.appendChild(d); });
-  $("#handHint").textContent=VIEW.pending?"réaction en cours…":myTurn?(VIEW.actionsLeft>0?"joue une carte ou achète un votant":"plus d'action — termine ton tour"):"ce n'est pas ton tour";
+  $("#handHint").textContent=busy?"⏳ envoi de ton action…":VIEW.pending?"réaction en cours…":myTurn?(VIEW.actionsLeft>0?"joue une carte ou achète un votant":"plus d'action — termine ton tour"):"ce n'est pas ton tour";
   $("#recycleBtn").disabled=!(myTurn&&L.canRecycle); $("#endBtn").disabled=!(myTurn&&L.canEnd);
 }
 function blocName(bloc){ const v=CN.VOTANTS.find(x=>x.bloc===bloc); return v?v.nom:bloc; }
