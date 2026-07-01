@@ -270,8 +270,9 @@ function legalActions(state, playerId) {
     else if (card.kind === 'pro' && CONFIG.protectCost <= p.money && !p.protect.includes(card.front)) acts.push({ type: 'PLAY_PROTECT', handIndex: i });
     else if (card.kind === 'bla' && CONFIG.blanchCost <= p.money && biggestDirty(p)) acts.push({ type: 'PLAY_BLANCH', handIndex: i });
     else if (card.kind === 'den' && CONFIG.denounceCost <= p.money) {
+      // on peut viser N'IMPORTE quel front non protégé : le casier est invisible, c'est un pari à l'aveugle
       for (const t of state.players) if (t !== p && !t.attackedThisRound)
-        for (const fr of FRONTS) if (!t.protect.includes(fr) && frontCount(t, fr) > 0) acts.push({ type: 'PLAY_DENOUNCE', handIndex: i, targetId: t.id, front: fr });
+        for (const fr of FRONTS) if (!t.protect.includes(fr)) acts.push({ type: 'PLAY_DENOUNCE', handIndex: i, targetId: t.id, front: fr });
     } else if (card.kind === 'steal') {
       for (const t of state.players) if (t !== p && !t.attackedThisRound && cedeableBlocs(state, t, { attackerId: p.id, mode: card.e }).length) acts.push({ type: 'PLAY_STEAL', handIndex: i, targetId: t.id });
     } else if (card.kind === 'coup' && card.e !== 'element') acts.push({ type: 'PLAY_COUP', handIndex: i });
@@ -469,7 +470,7 @@ function publicState(state, playerId) {
         blocs: p.blocs.slice(), protect: p.protect.slice(),
         votants: p.votants.map(v => ({ nom: v.nom, bloc: v.bloc, voix: v.voix, family: v.bloc ? FAMILIES[v.bloc] : null, fidele: v.bloc ? isFidele(v.bloc, p.blocs) : false })),
         coalitions: completeFamilies(p.blocs),
-        financCount: Object.fromEntries(FRONTS.map(f => [f, p.financ[f].length])),
+        financCount: mine ? Object.fromEntries(FRONTS.map(f => [f, p.financ[f].length])) : undefined,   // casier INVISIBLE aux autres
         handCount: p.hand.length, attackedThisRound: p.attackedThisRound,
         hand: mine ? p.hand.slice() : undefined,
         financ: mine ? { Justice: p.financ.Justice.slice(), Presse: p.financ.Presse.slice(), Finances: p.financ.Finances.slice() } : undefined,

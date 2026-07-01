@@ -365,14 +365,14 @@ Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**
 | Meeting payant | +6 |
 | Subvention européenne | +6 |
 
-→ Le sale paie **plus** (jusqu'à +9 vs +6), prime du risque. Le propre (3, 6) **recoupe le bas du sale** (3, 6) → face cachée, on ne distingue pas un don d'un pot-de-vin, et la **hauteur des piles ne trahit pas** où tu es vraiment sale. Les autres voient seulement ton argent monter et le **nombre** de cartes par front.
+→ Le sale paie **plus** (jusqu'à +9 vs +6), prime du risque. Le propre (3, 6) **recoupe le bas du sale** (3, 6) → face cachée, on ne distingue pas un don d'un pot-de-vin. Les autres voient seulement **ton argent monter** — jamais le contenu de ton casier, **ni même le nombre de cartes** par front (casier totalement invisible → la dénonciation est un pari à l'aveugle).
 **Ratio : ~2 cartes SALES pour 1 PROPRE** — règle le niveau de bluff (assez de leurres pour douter, corruption dominante).
 
 ## 16.3 Les voix (sur les cartes)
 Les **votants restent face visible** devant toi : **voix = somme de tes cartes votant** (+ bonus de coalition, voir 16.6). Lecture directe par tous. *(Une piste de score commune reste recommandée comme aide de lecture, mais n'est plus la source de vérité.)*
 
 ## 16.4 La dénonciation = un PARI qui frappe l'argent (sur un FRONT entier)
-**Dénoncer** (2 M€) : tu désignes un rival **et UN de ses trois fronts** (Justice / Presse / Finances). Tu vois combien de cartes face cachée y sont empilées, mais pas leur contenu — c'est ton pari (est-ce du sale, ou juste des leurres propres ?) :
+**Dénoncer** (2 M€) : tu désignes un rival **et UN de ses trois fronts** (Justice / Presse / Finances). Son casier est **totalement invisible** — tu ne vois ni le contenu, ni même le nombre de cartes : c'est un pari **à l'aveugle** (a-t-il fraudé là… ou pas du tout ?) :
 - **Touché** (au moins une carte sale sur ce front) → **scandale** : la cible perd, en argent, la **SOMME de TOUTES ses cartes sales de ce front** (toutes défaussées). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) qui **retournent au marché**.
 - **Raté** (le front n'a que des leurres propres, ou il est vide/protégé) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** (et il a cramé son action). *Dénoncer est donc un vrai pari.*
 - **Un seul scandale subi par manche** (anti-acharnement).

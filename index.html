@@ -221,7 +221,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
 <div id="setup" class="wrap">
   <div class="brand">
     <h1><span class="em">🗳️</span> Caisse Noire</h1>
-    <p>Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie</b> en dénonçant tes rivaux : choisis un front, la cible paie <b>toute sa corruption cachée</b> là-dessus — mais s'il n'y a que des leurres propres, c'est <b>toi</b> qui paies l'amende. Chacun a une <b>famille interdite secrète</b>. Premier à <b>45 voix</b> déclenche la manche finale.</p>
+    <p>Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie</b> en dénonçant tes rivaux : leur casier est <b>invisible</b>, tu dois <b>deviner</b> le bon front — touché, la cible paie toute sa corruption cachée ; à côté, c'est <b>toi</b> qui paies l'amende. Chacun a une <b>famille interdite secrète</b>. Premier à <b>45 voix</b> déclenche la manche finale.</p>
   </div>
   <div class="field" style="max-width:340px;margin:22px auto 0">
     <label>Ton nom (pseudo)</label>
@@ -534,9 +534,8 @@ function render(){
 }
 function blocName(bloc){ const v=CN.VOTANTS.find(x=>x.bloc===bloc); return v?v.nom:bloc; }
 function setDeck(id,n){ const d=$("#"+id); d.classList.toggle("empty",n===0); d.querySelector(".cnt").textContent=n; }
-function frontsHTML(p){ return CN.FRONTS.map(fr=>{ const prot=p.protect.includes(fr), n=p.financCount[fr];
-  const backs=prot?"protégé":("<div class='fback'></div>".repeat(Math.min(n,5))||"—");
-  return `<div class="front ${prot?"prot":""}">${fr.slice(0,4)}${prot?" 🛡":""}<div class="fbacks">${backs}</div></div>`; }).join(""); }
+function frontsHTML(p){ return CN.FRONTS.map(fr=>{ const prot=p.protect.includes(fr);   // casier adverse INVISIBLE : ni contenu ni nombre
+  return `<div class="front ${prot?"prot":""}">${fr.slice(0,4)}<div class="fbacks">${prot?"🛡":"<span style='opacity:.4'>?</span>"}</div></div>`; }).join(""); }
 function votstripHTML(p){ if(!p.votants.length) return `<span class="osub">—</span>`; return p.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒":""}${v.nom}</span>`).join(""); }
 function myCaserHTML(me){ return CN.FRONTS.map(fr=>{ const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
   const pile=cards.map(c=>`<div class="fcard ${c.clean?"clean":"sale"}">${c.clean?"propre":"⚠"} ${c.amount}</div>`).join("")||"<span class='osub' style='font-size:9px'>vide</span>";
@@ -580,9 +579,9 @@ function playCard(i,card,L){
 function openDenounce(handIdx,L){
   const opts=L.den.filter(a=>a.handIndex===handIdx); if(!opts.length){ toast("Aucune cible dénonçable."); return; }
   modalMode="denounce";
-  let h=`<h2>🔥 Dénoncer — pari sur un front</h2><p class="muted">La cible paie <b>toute sa corruption cachée</b> sur le front choisi. S'il n'y a que des leurres propres (ou rien) → <b>raté</b> : tu perds ta mise + 3 M€ d'amende. Tu vois la hauteur des piles, pas leur contenu.</p><div class="choices">`;
-  opts.forEach(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId); const n=t.financCount[a.front];
-    h+=`<div class="choice" onclick="confirmDenounce(${handIdx},${a.targetId},'${a.front}')"><b>${esc(seatName(a.targetId))}</b> — ${t.voix} voix · <span class="tag ${frontClass[a.front]}">${a.front}</span> <span class="muted">(pile de ${n})</span></div>`; });
+  let h=`<h2>🔥 Dénoncer — DEVINE le bon front</h2><p class="muted">Tu ne vois pas le casier des rivaux : à toi de <b>deviner</b> où ils planquent leur corruption. Touché → la cible paie tout son sale de ce front. Que du propre / vide → <b>raté</b> : tu perds ta mise + 3 M€ d'amende.</p><div class="choices">`;
+  opts.forEach(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId);
+    h+=`<div class="choice" onclick="confirmDenounce(${handIdx},${a.targetId},'${a.front}')"><b>${esc(seatName(a.targetId))}</b> — ${t.voix} voix · <span class="tag ${frontClass[a.front]}">${a.front}</span></div>`; });
   h+=`</div><div style="margin-top:10px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`; showModal(h);
 }
 function confirmDenounce(handIdx,targetId,front){ hideModal(); submit({type:"PLAY_DENOUNCE",handIndex:handIdx,targetId,front}); }

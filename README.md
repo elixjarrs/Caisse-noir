@@ -16,7 +16,7 @@ Ouvre **`index.html`** dans un navigateur (c'est la page d'accueil = le jeu, don
 - **🎲 Solo** — une partie 2–6 joueurs contre l'IA, tout de suite.
 - **🌐 En ligne avec tes potes** — un crée une table et partage le **code à 4 lettres** ; les autres rejoignent ; les sièges vides sont tenus par l'IA. Sync temps réel **sans serveur à héberger** (Supabase Realtime), une seule partie à la fois, **hôte autoritatif**.
 
-Sur la table tu retrouves l'expérience physique : **pioches visibles** (Les Combines, la défausse, la pioche de votants), **marché tournant** de ~8 votants (avec leur **famille** pour bâtir des coalitions), **ton casier 3 fronts FACE CACHÉE** (les rivaux voient le nombre de cartes, pas leur contenu propre/sale), tes **votants** (🔒 = coalition fidèle, involable), ton **rôle secret** (visible de toi seul), les **rivaux** autour de la table, et un **journal** qui raconte chaque dénonciation. **Dénoncer = un pari** (choisis cible + front) ; si tu touches, la cible recrache son argent sale et **rend des votants**. Premier à **30 voix** déclenche la manche finale ; le plus de voix gagne.
+Sur la table tu retrouves l'expérience physique : **pioches visibles** (Les Combines, la défausse, la pioche de votants), **marché tournant** de ~8 votants (avec leur **famille** pour bâtir des coalitions), **ton casier 3 fronts FACE CACHÉE** (les rivaux ne voient **rien** — ni le contenu, ni le nombre de cartes), tes **votants** (🔒 = coalition fidèle, involable), ta **famille interdite secrète** (visible de toi seul), les **rivaux** autour de la table, et un **journal** qui raconte chaque dénonciation. **Dénoncer = un pari à l'aveugle** (devine cible + front) ; si tu touches, la cible recrache **toute** sa corruption de ce front et **rend des votants**. Premier à **45 voix** déclenche la manche finale ; le plus de voix gagne.
 
 > **Jouer en ligne maintenant :** il faut une URL publique (le `localhost` ne suffit pas pour tes potes). Déploie les fichiers statiques (tout le dossier : `index.html` + `src/engine.js`) sur **Vercel**, **GitHub Pages** ou **Netlify**, partage l'URL, chacun l'ouvre, un crée la table, les autres entrent le code. Le temps réel fonctionne depuis n'importe quelle origine. La racine `/` ouvre directement le jeu.
 
@@ -431,14 +431,14 @@ Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**
 | Meeting payant | +6 |
 | Subvention européenne | +6 |
 
-→ Le sale paie **plus** (jusqu'à +9 vs +6), prime du risque. Le propre (3, 6) **recoupe le bas du sale** (3, 6) → face cachée, on ne distingue pas un don d'un pot-de-vin, et la **hauteur des piles ne trahit pas** où tu es vraiment sale. Les autres voient seulement ton argent monter et le **nombre** de cartes par front.
+→ Le sale paie **plus** (jusqu'à +9 vs +6), prime du risque. Le propre (3, 6) **recoupe le bas du sale** (3, 6) → face cachée, on ne distingue pas un don d'un pot-de-vin. Les autres voient seulement **ton argent monter** — jamais le contenu de ton casier, **ni même le nombre de cartes** par front (casier totalement invisible → la dénonciation est un pari à l'aveugle).
 **Ratio : ~2 cartes SALES pour 1 PROPRE** — règle le niveau de bluff (assez de leurres pour douter, corruption dominante).
 
 ## 16.3 Les voix (sur les cartes)
 Les **votants restent face visible** devant toi : **voix = somme de tes cartes votant** (+ bonus de coalition, voir 16.6). Lecture directe par tous. *(Une piste de score commune reste recommandée comme aide de lecture, mais n'est plus la source de vérité.)*
 
 ## 16.4 La dénonciation = un PARI qui frappe l'argent (sur un FRONT entier)
-**Dénoncer** (2 M€) : tu désignes un rival **et UN de ses trois fronts** (Justice / Presse / Finances). Tu vois combien de cartes face cachée y sont empilées, mais pas leur contenu — c'est ton pari (est-ce du sale, ou juste des leurres propres ?) :
+**Dénoncer** (2 M€) : tu désignes un rival **et UN de ses trois fronts** (Justice / Presse / Finances). Son casier est **totalement invisible** — tu ne vois ni le contenu, ni même le nombre de cartes : c'est un pari **à l'aveugle** (a-t-il fraudé là… ou pas du tout ?) :
 - **Touché** (au moins une carte sale sur ce front) → **scandale** : la cible perd, en argent, la **SOMME de TOUTES ses cartes sales de ce front** (toutes défaussées). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) qui **retournent au marché**.
 - **Raté** (le front n'a que des leurres propres, ou il est vide/protégé) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** (et il a cramé son action). *Dénoncer est donc un vrai pari.*
 - **Un seul scandale subi par manche** (anti-acharnement).
