@@ -13,6 +13,8 @@
 8. **Voix lues sur les cartes votant** (face visible). La piste de score devient une simple aide de lecture (facultative).
 9. **Rôle SECRET par joueur = pouvoir + objectif** (2-en-1, face cachée). Objectif accompli → **+3 voix** (révélé à la fin).
 10. **Seuil = 40 − 2 × joueurs** (36/34/32/30/28), calibré par simulation (~10 manches, 97-99 % par le seuil). À raffiner.
+11. **3 fronts seulement** : Justice · Presse · Finances (la Rue est retirée → 3 protections ; les coups Incohérence/Promesse salissent **Presse**). **Montants en multiples de 3** : sale 3/6/9 (mêmes sur chaque front), propre 3/6 (plafond 6).
+12. **Fin de partie** : franchir le seuil déclenche la **manche finale** (tout le monde joue) ; le **plus de voix gagne**, même si renvoyé sous le seuil par une dénonciation de fin de manche.
 
 Spec complète et faisant foi : **`docs/REGLES.md` §16**.
 
@@ -30,11 +32,20 @@ C'est une refonte du cœur (corruption cachée + dénonciation qui frappe l'arge
 patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recalibre.
 
 1) ENGINE (src/engine.js) — refonte v0.6 :
-   a. FINANCEMENT face caché : deux familles de cartes posées face cachée dans le casier
-      du joueur, indistinguables par les autres :
-        - PROPRE (sûr) : Don légal +2, Meeting +3, Débat télévisé +4. Aucun front, non dénonçable.
-        - SALE (corruption) : Petit pot-de-vin +3 (Justice), Faux militants +4 (Rue),
-          Costards +6 (Presse), Emploi fictif +9 (Finances). Posée sur SON front.
+   a. FINANCEMENT face caché : cartes posées face cachée sur un front, indistinguables par
+      les autres. MONTANTS VARIÉS QUI SE CHEVAUCHENT entre fronts (pour qu'on ne puisse pas
+      déduire le montant depuis le front ni l'inverse) :
+        - IL Y A 3 FRONTS : Justice, Presse, Finances (la Rue a été retirée).
+          TOUS LES MONTANTS SONT DES MULTIPLES DE 3 (3/6/9).
+        - SALE (corruption), montant = gain = malus si dénoncé (100 %), posée sur SON front.
+          MÊMES MONTANTS (3/6/9) sur chaque front pour bloquer toute déduction :
+            Justice : Petit pot-de-vin 3, Trafic d'influence 6, Caisse noire judiciaire 9
+            Presse : Petits cadeaux 3, Ménage médiatique 6, Voyage offert 9
+            Finances : Note de frais 3, Rétrocommission 6, Évasion fiscale 9
+        - PROPRE (sûr, jamais dénonçable, sert de LEURRE) posée sur un front au choix.
+          PLAFONNE À 6 (le 9 est réservé au sale = prime du risque) :
+            Don 3, Cotisations 3, Meeting payant 6, Subvention européenne 6
+        - RATIO : ~2 cartes SALES pour 1 PROPRE — règle le bluff.
    b. DÉNONCIATION = pari sur l'argent : action { type:'PLAY_DENOUNCE', targetId, front }.
         - Touché (la cible a ≥1 carte sale sur ce front) : elle perd, en argent, le TOTAL
           sale de ce front (toutes les cartes sales du front sautent) ; si son cash est
@@ -57,9 +68,12 @@ patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recali
       Pouvoir = l'asymétrie de parti (réutilise les 6 partis existants, musclés). Objectif =
       condition (ex. fini sans carte sale en Justice ; détient les Retraités ; a une coalition
       complète…) → +3 voix à la fin si remplie. publicState NE révèle PAS le rôle des autres.
-   g. DÉFENSES : Protection (5 M€, bouclier de front), Blanchiment (3 M€, rend une carte sale
+   g. DÉFENSES : Protection (5 M€, bouclier de front ; 3 fronts -> 3 protections), Blanchiment (3 M€, rend une carte sale
       "propre"), Élément de langage (réactif, annule une dénonciation).
    h. SEUIL : seuil(N) = 40 − 2*N. Garde-fou 16 manches, départ 7 M€, revenu +3.
+   h2. FIN DE PARTIE : quand un joueur atteint le seuil, on TERMINE la manche en cours,
+       puis le PLUS DE VOIX gagne — même s'il est repassé sous le seuil (dénonciation de fin
+       de manche). Ne fige pas la victoire dès que le seuil est touché.
    i. CONFIDENTIALITÉ : publicState(state, playerId) doit masquer aux autres le CONTENU des
       cartes de financement (propre/sale + front) — on n'expose que le total d'argent et le
       NOMBRE de cartes par front (face cachée). Garde le seed secret, le moteur déterministe.
@@ -71,8 +85,10 @@ patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recali
    docs/REGLES.md (§16.7) et README.
 
 3) UI :
-   - catalogue.html : ajoute les cartes financement propre, les 2 cartes de vol, montre la
-     famille sur chaque votant ; mets à jour le bac à sable (nouveau seuil).
+   - catalogue.html : RECONSTRUIS le catalogue jouable sur le modèle v0.6 (l'actuel est encore
+     en v0.5). Référence de contenu/visuel = catalogue-v0.6.html (galerie lecture seule déjà
+     faite : 42 votants par famille, corruption 3 fronts × 3/6/9, financement propre, vol,
+     défenses, coups, rôles + objectifs). Mets à jour le bac à sable avec le seuil 40−2N.
    - index.html : casier de financement FACE CACHÉE (les rivaux voient un dos + le total
      d'argent, pas le contenu) ; dénonciation = choisir cible + front (pari) ; coalitions/
      fidèles affichés ; rôle secret affiché seulement à son propriétaire.

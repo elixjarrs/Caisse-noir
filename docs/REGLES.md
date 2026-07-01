@@ -6,7 +6,7 @@
 > Jeu jouable (solo + en ligne) : `index.html` ; catalogue des cartes + bac à sable d'équilibrage : `catalogue.html` (à ouvrir dans un navigateur).
 > Dernière mise à jour : 27 juin 2026.
 >
-> 🔴 **MODÈLE CIBLE = v0.6 « corruption cachée » → voir §16. C'est ce qui fait foi pour le dev.** Les sections §3–§9 décrivent le modèle v0.5 (corruption visible) ; §16 les **remplace** : corruption cachée, dénonciation qui frappe l'**argent**, voix lues sur les cartes, familles/coalitions, vol d'électorat, rôles secrets (pouvoir + objectif). Seuil v0.6 = **40 − 2×joueurs** (calibré par simulation).
+> 🔴 **MODÈLE CIBLE = v0.6 « corruption cachée » → voir §16. C'est ce qui fait foi pour le dev.** Les sections §3–§9 décrivent le modèle v0.5 (corruption visible) ; §16 les **remplace** : corruption cachée, dénonciation qui frappe l'**argent**, voix lues sur les cartes, familles/coalitions, vol d'électorat, rôles secrets (pouvoir + objectif). Seuil v0.6 = **30 (plat, 2→6 j.)** — calibré par simulation (voir §16.7).
 
 ---
 
@@ -339,30 +339,49 @@ Transfert de **voix** (la carte bloc ne change pas de main ; on déplace les pio
 - Conservés/adaptés : familles → coalitions (+voix), vol d'électorat, incompatibilités, défenses.
 
 ## 16.2 L'argent (roulette individuelle 0–80, visible)
-Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée** :
+Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**. **Montants variés et qui se chevauchent** entre fronts → impossible de déduire le montant depuis le front, ni le front depuis le montant.
 
-| Type | Cartes (exemples) | Argent | Dénonçable ? |
-|---|---|---|---|
-| **Propre** | Don légal / Meeting / Débat télévisé | **+2 / +3 / +4 M€** | ❌ jamais (sûr) |
-| **Sale (corruption)** | Petit pot-de-vin (Justice) / Faux militants (Rue) / Costards (Presse) / Emploi fictif (Finances) | **+3 / +4 / +6 / +9 M€** | ✅ sur **son** front |
+**3 FRONTS de corruption : Justice · Presse · Finances** (la justice, les médias, l'argent — les trois piliers d'un scandale).
 
-→ Le sale rapporte **plus**, mais chaque carte sale est posée (face cachée) sur **son front** et reste une bombe. **Les cartes propres servent de LEURRES** : tu les poses aussi face cachée sur le front de ton choix, pour que la **taille de tes piles ne trahisse pas** où tu es vraiment sale (une grosse pile « Finances » peut n'être que des dons légaux). Comme tout est face cachée, **les autres ne savent pas** si ta carte est un don légal ou un pot-de-vin, ni sur quel front tu as fraudé : ils voient juste ton argent monter et la hauteur de tes piles.
+**Tous les montants sont des multiples de 3 (3 / 6 / 9)**, au rythme du revenu (+3/tour).
+
+**SALE (corruption)** — montant = ce que tu gagnes **et** ce que tu perds si dénoncé (100 %). Posée face cachée sur **son** front. **Mêmes montants (3/6/9) sur chaque front** → un montant ne révèle jamais le front, et un front ne révèle jamais le montant :
+
+| Front | Cartes (montant) |
+|---|---|
+| **Justice** | Petit pot-de-vin (+3) · Trafic d'influence (+6) · Caisse noire judiciaire (+9) |
+| **Presse** | Petits cadeaux (+3) · Ménage médiatique (+6) · Voyage offert (+9) |
+| **Finances** | Note de frais maquillée (+3) · Rétrocommission (+6) · Évasion fiscale (+9) |
+
+**PROPRE (légal, sûr, jamais dénonçable)** — sert aussi de **leurre** (posée face cachée sur un front de ton choix). **Plafonne à +6** (le +9 est réservé au sale = prime du risque, sinon plus personne ne se corromprait) :
+
+| Carte | Argent |
+|---|---|
+| Don d'un militant | +3 |
+| Cotisations du parti | +3 |
+| Meeting payant | +6 |
+| Subvention européenne | +6 |
+
+→ Le sale paie **plus** (jusqu'à +9 vs +6), prime du risque. Le propre (3, 6) **recoupe le bas du sale** (3, 6) → face cachée, on ne distingue pas un don d'un pot-de-vin, et la **hauteur des piles ne trahit pas** où tu es vraiment sale. Les autres voient seulement ton argent monter et le **nombre** de cartes par front.
+**Ratio : ~2 cartes SALES pour 1 PROPRE** — règle le niveau de bluff (assez de leurres pour douter, corruption dominante).
 
 ## 16.3 Les voix (sur les cartes)
 Les **votants restent face visible** devant toi : **voix = somme de tes cartes votant** (+ bonus de coalition, voir 16.6). Lecture directe par tous. *(Une piste de score commune reste recommandée comme aide de lecture, mais n'est plus la source de vérité.)*
 
 ## 16.4 La dénonciation = un PARI qui frappe l'argent
-**Dénoncer** (2 M€) : tu désignes un rival **et UN front** (Justice / Presse / Rue / Finances) — c'est ton pari. On révèle les cartes face cachée de **ce front** :
+**Dénoncer** (2 M€) : tu désignes un rival **et UN front** (Justice / Presse / Finances) — c'est ton pari (1 chance sur 3, brouillée par les leurres). On révèle les cartes face cachée de **ce front** :
 - **Touché** (au moins une carte sale dessus) → la cible **perd de l'argent** = le **total sale de ce front** (toutes les cartes sales du front sautent d'un coup). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) — c'est elle qui décide quels blocs sacrifier — et ces votants **retournent au marché**.
 - **Raté** (le front ne contenait que des leurres / était vide) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** faussement accusée (et il a cramé son action). *Dénoncer est donc un vrai pari.*
 - **Un seul scandale subi par manche** (anti-acharnement).
 
 **Le frein anti-meneur (clé du modèle) :** plus tu as converti d'argent en voix, **moins tu as de cash** → quand on te dénonce, tu paies en **rendant des votants** → tu perds des voix. **Le frein se cible donc tout seul sur le meneur.** À l'inverse, planquer du cash sale = se rendre dénonçable sans avancer : double peine.
 
-**Défenses** (inchangées dans l'esprit) :
-- **Protection** (5 M€) — bouclier permanent sur un front : toute dénonciation y rate.
+**Défenses** (3 fronts → 3 protections) :
+- **Protection** (5 M€) — bouclier permanent sur un front : toute dénonciation y rate. Une par front : **Juge acheté** (Justice), **Médias corrompus** (Presse), **Compte offshore** (Finances).
 - **Blanchiment** (3 M€) — rend une de tes cartes sales **propre** (elle n'est plus dénonçable).
 - **Élément de langage** — réactif : annule une dénonciation.
+
+*(Les coups « Incohérence » et « Promesse intenable », qui ajoutaient une carte sale sur l'ex-front « Rue », la posent désormais sur **Presse**.)*
 
 ## 16.5 Rôle secret = pouvoir + objectif (2-en-1)
 En début de partie, chaque joueur reçoit **1 carte Rôle face cachée** (aléatoire). Elle donne :
@@ -378,10 +397,11 @@ Remplace le choix de parti ouvert + des cartes objectif séparées.
 ## 16.7 Économie & seuil (calibré par simulation v0.6)
 - Départ **7 M€**, revenu **+3/tour**, main **5**, garde-fou **16 manches**.
 - Votants : Petit 4/2, Moyen 8/4, Gros 12/6, Retraités 13/7.
-- **Seuil de victoire = 40 − 2 × nombre de joueurs** → **36 / 34 / 32 / 30 / 28** (2→6 j.).
+- **Seuil de victoire = 30 (PLAT, 2→6 joueurs)** — calibré par `engine.simulate()` sur le moteur v0.6 réel. *(La cible provisoire 40 − 2N s'est révélée trop raide : à 2 joueurs elle donnait ~13,5 manches et seulement 82 % de victoires par le seuil. Les **bonus de coalition** gonflent les voix quand l'électorat est concentré → ça compense le partage entre joueurs, donc une pente n'est pas nécessaire.)*
 - Coûts d'attaque : **dénoncer 2 M€** (+ **amende 3 M€** si raté) · **vol** Débauchage 2 / OPA 4.
-- Résultats sim (frein auto-ciblant, dénonciation = pari avec ~30 % de ratés + amende) : ~10 manches, **97–99 % des parties par le seuil**.
-- ⚠️ Calibrage issu d'une **simulation abstraite** (économie + frein, sans le détail des mains) → **à raffiner via `engine.simulate()`** une fois v0.6 implémenté.
+- Résultats sim (moteur réel, milliers de parties) : **~10,5–11,3 manches** et **≥98 % des parties par le seuil** pour N=2..6 ; **2,8→14,7 dénonciations/partie** (le frein anti-meneur mord). Le seuil est réglable dans `src/engine.js` (`const SEUIL`).
+
+**Fin de partie (important, vu en simulation) :** dès qu'un joueur **atteint le seuil**, on **termine la manche en cours** (tout le monde joue son tour), **puis** on compare → **le plus de voix gagne**, *même s'il est repassé sous le seuil* à cause d'une dénonciation de fin de manche. Ça empêche de « geler » la victoire et donne le climax (le meneur franchit la ligne, toute la table lui tombe dessus, le survivant l'emporte).
 
 ## 16.8 Pourquoi ce modèle
 Il ajoute la **couche de bluff / information cachée** (façon Coup/Sheriff) qui manquait : on ne sait jamais si un rival est propre ou pourri, dénoncer est un **pari risqué**, et la course aux voix se double d'une **guerre psychologique** sur l'argent. Le tout sans procédure lourde.

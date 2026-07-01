@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caisse Noire — Catalogue des cartes (v0.6)</title>
+<style>
+:root{--bg:#11140f;--panel:#1b1f17;--panel2:#232820;--ink:#ece7d6;--muted:#9aa088;--line:#3a4231;--gold:#d9b24a;--green:#4caf6a;--money:#7ec98f;--red:#d4543f;--blue:#5a8fd6;--purple:#9b6cc4;--orange:#e0913a;--justice:#5a8fd6;--presse:#c9743a;--finances:#54a06b;--shadow:0 6px 18px rgba(0,0,0,.45)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+h1,h2,h3{font-family:"Georgia","Times New Roman",serif;letter-spacing:.3px}
+header{padding:18px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#191d14,#141710)}
+header h1{margin:0;font-size:26px;color:var(--gold)}
+header p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:900px}
+.wrap{max-width:1180px;margin:0 auto;padding:22px}
+.filterbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5}
+.chip{padding:6px 12px;border:1px solid var(--line);border-radius:20px;cursor:pointer;font-size:13px;color:var(--muted)}
+.chip.active{background:var(--gold);color:#1a1a1a;border-color:var(--gold);font-weight:700}
+.sec-title{margin:26px 0 2px;color:var(--gold)}
+.sec-sub{color:var(--muted);font-size:13px;margin:0 0 12px;max-width:900px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:12px;padding:11px;position:relative;display:flex;flex-direction:column;box-shadow:var(--shadow);min-height:120px}
+.card .nom{font-weight:800;font-size:14px;line-height:1.15}
+.card .fl{font-size:11.5px;color:var(--gold);font-style:italic;margin-top:5px;opacity:.85}
+.card .desc{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.4;flex:1}
+.card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px}
+.tag{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10.5px;font-weight:700;border:1px solid var(--line);margin-top:4px;align-self:flex-start}
+.t-justice{color:var(--justice);border-color:var(--justice)} .t-presse{color:var(--presse);border-color:var(--presse)} .t-finances{color:var(--finances);border-color:var(--finances)}
+.votant{border-top:3px solid var(--money)} .sale{border-top:3px solid var(--red)} .propre{border-top:3px solid var(--green)} .att{border-top:3px solid var(--purple)} .def{border-top:3px solid var(--blue)} .coup{border-top:3px solid var(--orange)} .role{border-top:3px solid var(--gold)}
+.cout{color:var(--gold);font-weight:800} .voix{color:var(--money);font-weight:800} .malus{color:var(--red);font-weight:800}
+.fam{font-size:10.5px;color:var(--muted)}
+.note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:10px 14px;margin:6px 0 14px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🗳️ Caisse Noire — Catalogue des cartes <span style="color:var(--muted);font-size:15px">(modèle v0.6 « corruption cachée »)</span></h1>
+  <p>Référence en lecture seule. Spec complète : <code>docs/REGLES.md §16</code>. Seuil de victoire = <b>40 − 2×joueurs</b> (36/34/32/30/28). Corruption <b>cachée</b> ; dénonciation = <b>pari qui frappe l'argent</b> ; voix lues sur les votants.</p>
+</header>
+<div class="wrap">
+  <div class="filterbar" id="filter"></div>
+  <div id="body"></div>
+</div>
+<script>
+/* ============ DONNÉES v0.6 ============ */
+const T={P:[4,2],M:[8,4],G:[12,6],E:[13,7]}; // paliers coût/voix
+// Votants : [nom, palier]  groupés par famille
+const FAMS=[
+ ["Le Capital",[["Patronat","G"],["Banquiers","G"],["Promoteurs immobiliers","G"],["Rentiers","M"],["Héritiers","M"]]],
+ ["Le Bloc Public",[["La CGT","G"],["Fonctionnaires","G"],["Soignants","M"],["Profs","M"]]],
+ ["L'Ordre & le Terroir",[["Policiers","M"],["Militaires","M"],["Chasseurs","M"],["Agriculteurs","M"],["Pêcheurs","M"]]],
+ ["La Start-up Nation",[["Start-uppers","M"],["Crypto-bros","P"],["Influenceurs","P"],["Libertariens","P"],["Gamers","P"]]],
+ ["L'Écolo-Bobo",[["Animalistes","P"],["Bobos urbains","P"],["Néo-ruraux","P"],["Les Éveillés","P"]]],
+ ["L'Identité",[["Souverainistes","G"],["Intégristes","G"],["Masculinistes","P"],["Survivalistes","P"]]],
+ ["Les Précaires",[["Chômeurs","M"],["Intermittents","P"],["Étudiants","P"],["Chauffeurs VTC","P"]]],
+ ["La Mobilité",[["Taxis","M"],["Routiers","M"],["Motards","M"]]],
+ ["Indépendants (sans synergie)",[["Retraités","E"],["Lobby pétrolier","G"],["Communauté LGBT","G"],["Lobby pharma","G"],["Francs-maçons","M"],["Diaspora","M"],["Anti-vax","P"],["Complotistes","P"]]],
+];
+// Corruption SALE : 3 fronts × {3,6,9}
+const SALE=[
+ ["Justice",[["Petit pot-de-vin",3],["Trafic d'influence",6],["Caisse noire judiciaire",9]]],
+ ["Presse",[["Petits cadeaux",3],["Ménage médiatique",6],["Voyage offert",9]]],
+ ["Finances",[["Note de frais maquillée",3],["Rétrocommission",6],["Évasion fiscale",9]]],
+];
+const PROPRE=[["Don d'un militant",3],["Cotisations du parti",3],["Meeting payant",6],["Subvention européenne",6]];
+const ATTAQUES=[
+ {n:"Dénonciation",c:"2 M€",d:"PARI : tu désignes un rival + UN front (Justice/Presse/Finances). Touché → il perd le total sale de ce front (paie cash, sinon rend des votants → perd des voix). Raté → tu perds ta mise + 3 M€ d'amende à la cible."},
+ {n:"Débauchage",c:"2 M€",d:"Vol d'électorat (façon Sly Deal) : cible un bloc ISOLÉ d'un rival → −2 voix pour lui, +2 pour toi. Un bloc en coalition complète est involable."},
+ {n:"OPA électorale",c:"4 M€",d:"Vol fort (façon Deal Breaker) : −3 voix pour la cible, +3 pour toi, sur un bloc isolé. Rare."},
+];
+const DEFENSES=[
+ {n:"Juge acheté",t:"t-justice",d:"Protection (5 M€) : bouclier permanent sur le front Justice — toute dénonciation y rate."},
+ {n:"Médias corrompus",t:"t-presse",d:"Protection (5 M€) : bouclier permanent sur le front Presse."},
+ {n:"Compte offshore",t:"t-finances",d:"Protection (5 M€) : bouclier permanent sur le front Finances."},
+ {n:"Blanchiment",t:"",d:"3 M€ : rend une de tes cartes sales PROPRE (elle n'est plus dénonçable)."},
+ {n:"Élément de langage",t:"",d:"RÉACTION : joue-la quand on te dénonce pour annuler le scandale. « C'est plus compliqué que ça. »"},
+];
+const COUPS=[
+ {n:"Remise de campagne",d:"Ton prochain votant coûte 3 M€ de moins."},
+ {n:"Incohérence",d:"Prends un bloc incompatible sans perte de voix, mais ajoute une carte sale sur Presse (hypocrisie)."},
+ {n:"Promesse intenable",d:"+3 voix tout de suite, mais ajoute une carte sale sur Presse."},
+ {n:"Renvoi d'ascenseur",d:"Un service rendu : +3 M€ et pioche 1 carte."},
+];
+const ROLES=[
+ {n:"La Meute",s:"médiatique",d:"Pouvoir : 1ʳᵉ protection Presse gratuite. (Fragile en Justice.)"},
+ {n:"La Lumière",s:"religieux",d:"Pouvoir : Intégristes +1 voix. Bloc interdit : Communauté LGBT."},
+ {n:"Le Cartel",s:"patronal",d:"Pouvoir : +1 M€ de revenu/tour. Bloc interdit : CGT."},
+ {n:"La Vague",s:"populiste",d:"Pouvoir : dénonciation à moitié prix (1 M€)."},
+ {n:"Les Verts pâles",s:"écolo",d:"Pouvoir : Animalistes & Bobos −2 M€. Bloc interdit : Lobby pétrolier."},
+ {n:"La Forteresse",s:"souverainiste",d:"Pouvoir : « Costards & cadeaux » +2 M€. Bloc interdit : Diaspora."},
+];
+const OBJECTIFS=[
+ ["Les Mains Propres","Finis sans aucune carte sale sur le front Justice."],
+ ["Le Faiseur de Rois","Détiens les Retraités à la fin de la partie."],
+ ["Le Pur et Dur","Aie au moins une coalition complète (3 blocs d'une famille)."],
+ ["Le Caméléon","Possède des blocs d'au moins 3 familles différentes."],
+ ["Le Magouilleur","Aie joué au moins 5 cartes de corruption dans la partie."],
+ ["Le Procureur","Sois celui qui a lancé le plus de dénonciations."],
+];
+
+/* ============ RENDU ============ */
+const $=s=>document.querySelector(s);
+const SECTIONS=["Tout","Votants","Corruption","Financement propre","Attaques","Défenses","Coups","Rôles & Objectifs"];
+let cur="Tout";
+function chips(){const f=$("#filter");f.innerHTML="";SECTIONS.forEach(s=>{const c=document.createElement("div");c.className="chip"+(s===cur?" active":"");c.textContent=s;c.onclick=()=>{cur=s;chips();render();};f.appendChild(c);});}
+function sec(t,sub,h){return `<h2 class="sec-title">${t}</h2><p class="sec-sub">${sub}</p><div class="grid">${h}</div>`;}
+function votCard(nom,fam,pal){const[c,v]=T[pal];const tier={P:"Petit",M:"Moyen",G:"Gros",E:"Énorme"}[pal];
+ return `<div class="card votant"><div class="nom">${nom}</div><div class="fam">${tier} · ${fam}</div>
+  <div class="foot"><span class="cout">${c} M€</span><span class="voix">${v} voix</span></div></div>`;}
+function show(s){return cur==="Tout"||cur===s;}
+function render(){let h="";
+ if(show("Votants")){let g="";FAMS.forEach(([fam,list])=>list.forEach(([nom,pal])=>g+=votCard(nom,fam,pal)));
+   h+=sec("Votants — 42 blocs uniques (par famille)","Réunir 3 blocs d'une même famille = coalition complète → +3 voix (puis +1/bloc). Une coalition complète est « fidèle » → involable (protégée du vol). Incompat. DURES : Intégristes✗LGBT · Patronat✗CGT. (+ molles −1 voix, voir règles.)",g);}
+ if(show("Corruption")){let g="";SALE.forEach(([fr,list])=>list.forEach(([nom,m])=>{const tc=fr==="Justice"?"t-justice":fr==="Presse"?"t-presse":"t-finances";
+   g+=`<div class="card sale"><div class="nom">${nom}</div><span class="tag ${tc}">SALE · ${fr}</span>
+     <div class="desc">Tu encaisses <b>+${m} M€</b> (face cachée). Si on te dénonce sur ${fr} : tu <b>recraches ${m} M€</b>.</div>
+     <div class="foot"><span style="color:var(--money)">+${m} M€</span><span class="malus">−${m} M€ si dénoncé</span></div></div>`;}));
+   h+=sec("Corruption (SALE) — 3 fronts × 3/6/9","Jouée FACE CACHÉE sur son front. Mêmes montants (3/6/9) sur chaque front → impossible de déduire le montant depuis le front ni l'inverse. Montant gagné = montant perdu si dénoncé (100 %).",g);}
+ if(show("Financement propre")){let g="";PROPRE.forEach(([nom,m])=>g+=`<div class="card propre"><div class="nom">${nom}</div><span class="tag">PROPRE · sûr</span>
+   <div class="desc">+${m} M€, <b>jamais dénonçable</b>. Posée face cachée sur un front au choix = <b>leurre</b> pour brouiller tes piles.</div>
+   <div class="foot"><span style="color:var(--money)">+${m} M€</span><span style="color:var(--green)">aucun risque</span></div></div>`);
+   h+=sec("Financement PROPRE — leurres (3 / 6)","Argent légal et sûr (plafonne à +6 ; le +9 est réservé au sale = prime du risque). Sert surtout de leurre : face cachée, on ne distingue pas un don d'un pot-de-vin. Ratio ~2 sales pour 1 propre.",g);}
+ if(show("Attaques")){let g="";ATTAQUES.forEach(a=>g+=`<div class="card att"><div class="nom">${a.n}</div><span class="tag">Attaque · ${a.c}</span><div class="desc">${a.d}</div></div>`);
+   h+=sec("Attaques","La dénonciation frappe l'ARGENT (un pari). Le vol transfère des VOIX. On ne subit qu'UNE attaque (dénonciation ou vol) par manche.",g);}
+ if(show("Défenses")){let g="";DEFENSES.forEach(d=>g+=`<div class="card def"><div class="nom">${d.n}</div>${d.t?`<span class="tag ${d.t}">Protection</span>`:`<span class="tag">Défense</span>`}<div class="desc">${d.d}</div></div>`);
+   h+=sec("Défenses (3 fronts → 3 protections)","Protéger un front (bouclier permanent), blanchir une carte sale (la rendre propre), ou annuler une dénonciation en réaction.",g);}
+ if(show("Coups")){let g="";COUPS.forEach(c=>g+=`<div class="card coup"><div class="nom">${c.n}</div><span class="tag">Coup tactique</span><div class="desc">${c.d}</div></div>`);
+   h+=sec("Coups tactiques","Petits effets pour pimenter.",g);}
+ if(show("Rôles & Objectifs")){let g="";ROLES.forEach(r=>g+=`<div class="card role"><div class="nom">${r.n}</div><span class="tag">Rôle · ${r.s}</span><div class="desc">${r.d}</div></div>`);
+   let o="";OBJECTIFS.forEach(([n,d])=>o+=`<div class="card role"><div class="nom">${n}</div><span class="tag">Objectif secret</span><div class="desc">${d} → <b>+3 voix</b> si accompli (révélé à la fin).</div></div>`);
+   h+=sec("Rôles secrets = pouvoir + objectif","Chaque joueur reçoit 1 carte Rôle FACE CACHÉE : un pouvoir (asymétrie de parti) + un objectif secret (+3 voix si accompli).",g)+sec("Exemples d'objectifs secrets","Tirés au hasard, cachés jusqu'à la fin.",o);}
+ $("#body").innerHTML=h;
+}
+chips();render();
+</script>
+</body>
+</html>
