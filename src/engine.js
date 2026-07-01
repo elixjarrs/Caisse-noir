@@ -5,10 +5,10 @@
  * - État 100% sérialisable en JSON (pas de Set/Map) => sync réseau facile.
  *
  * MODÈLE v0.7 (règles : ../docs/REGLES.md §16, fait foi) — évolution de la v0.6 :
- *   1. DÉNONCIATION = pari sur UNE carte : chaque front est une PILE face cachée (ordre gardé).
- *      On révèle la carte du DESSUS. Sale → la cible perd son montant (3/6/9) ; sinon (leurre
- *      propre / pile vide) RATÉ → l'accusateur perd sa mise (2) + amende 3 à la cible.
- *      Les leurres empilés protègent les cartes du dessous → parties plus longues.
+ *   1. DÉNONCIATION = pari sur un FRONT ENTIER : chaque front est une pile face cachée. On désigne
+ *      un front ; la cible perd la SOMME de TOUTES ses cartes sales de ce front (cash, sinon rend
+ *      des votants). Si le front n'a QUE du propre / est vide / protégé → RATÉ : l'accusateur perd
+ *      sa mise (2) + amende 3 à la cible. Les leurres propres appâtent donc un ratage (bluff).
  *   2. PARTI = FAMILLE INTERDITE SECRÈTE : chaque joueur a une famille qu'il ne peut jamais
  *      acheter, connue de lui seul. Aucun autre effet (remplace pouvoirs + objectifs à points).
  *   3. DÉBAUCHAGE / OPA = CARTES : la VICTIME choisit quel votant ISOLÉ elle cède ; le bloc
@@ -181,7 +181,7 @@ function newPlayer(id, forbiddenFamily, name) {
     votants: [], blocs: [],
     financ: { Justice: [], Presse: [], Finances: [] },   // piles ordonnées {clean,amount}
     protect: [], hand: [],
-    attackedThisRound: false, denounceLaunched: 0,
+    attackedThisRound: false, denounceLaunched: 0, failedDenounce: [],
     incoherenceReady: false, discount: false,
   };
 }
@@ -213,10 +213,10 @@ function current(state) { return state.order[state.currentIdx]; }
 function recompute(p) { p.voix = Math.max(0, p.votants.reduce((a, x) => a + x.voix, 0) + coalitionBonus(p.blocs)); }
 function finalScore(p) { return p.voix; }
 
-function topCard(p, fr) { const pile = p.financ[fr]; return pile.length ? pile[pile.length - 1] : null; }
 function frontCount(p, fr) { return p.financ[fr].length; }
+function saleSumFront(p, fr) { return p.financ[fr].reduce((a, c) => a + (c.clean ? 0 : c.amount), 0); }
 function biggestDirty(p) { let best = null; for (const fr of FRONTS) p.financ[fr].forEach((c, i) => { if (!c.clean && (!best || c.amount > best.amount)) best = { front: fr, idx: i, amount: c.amount }; }); return best; }
-function exposedFrontsTop(p) { return FRONTS.filter(fr => !p.protect.includes(fr) && topCard(p, fr) && !topCard(p, fr).clean); }
+function exposedSaleFronts(p) { return FRONTS.filter(fr => !p.protect.includes(fr) && saleSumFront(p, fr) > 0); }
 
 function refillMarket(state) { while (state.market.length < state.marketVisible && state.votantDeck.length > 0) state.market.push(state.votantDeck.pop()); }
 function drawUp(state, p) { while (p.hand.length < CONFIG.hand) { if (state.deck.length === 0) { if (state.discard.length === 0) break; state.deck = shuffle(state.discard, state); state.discard = []; } p.hand.push(state.deck.pop()); } }
@@ -371,7 +371,7 @@ function doBlanch(state, p, i) {
   log(state, `${p.name} blanchit une carte (${big.front})`, 'blanch');
   discardFromHand(state, p, i); spend(state); return { ok: true, state };
 }
-function doDenounce(state, p, i, targetId, front) {   // pari sur la carte du DESSUS
+function doDenounce(state, p, i, targetId, front) {   // frappe TOUTE la corruption du front
   const card = p.hand[i]; if (!card || card.kind !== 'den') return fail(state, 'pas une dénonciation');
   const t = state.players.find(x => x.id === targetId); if (!t || t === p) return fail(state, 'cible invalide');
   if (CONFIG.denounceCost > p.money) return fail(state, "pas assez d'argent");
@@ -379,21 +379,21 @@ function doDenounce(state, p, i, targetId, front) {   // pari sur la carte du DE
   discardFromHand(state, p, i); spend(state);
   const ei = t.hand.findIndex(c => c.kind === 'coup' && c.e === 'element');
   const blocked = t.protect.includes(front) || t.attackedThisRound;
-  const top = blocked ? null : topCard(t, front);
-  if (!blocked && top && !top.clean && ei >= 0) { discardFromHand(state, t, ei); log(state, `${p.name} dénonce ${t.name} (${front})… contré (Élément de langage) !`, 'denounce'); return { ok: true, state }; }
-  if (!top || top.clean) {   // RATÉ (leurre / vide / protégé)
+  const saleSum = blocked ? 0 : saleSumFront(t, front);   // somme de TOUTES les cartes sales du front
+  if (!blocked && saleSum > 0 && ei >= 0) { discardFromHand(state, t, ei); log(state, `${p.name} dénonce ${t.name} (${front})… contré (Élément de langage) !`, 'denounce'); return { ok: true, state }; }
+  if (saleSum <= 0) {   // RATÉ (que du propre / vide / protégé)
+    p.failedDenounce.push(t.id + ':' + front);   // l'accusateur retient son erreur (IA)
     const amende = Math.min(CONFIG.amende, p.money); p.money -= amende; t.money += amende;
-    if (top && top.clean) t.financ[front].pop();   // le leurre révélé est consommé
     log(state, `${p.name} dénonce ${t.name} (${front})… RATÉ : −${amende} M€ d'amende à ${t.name}`, 'denounce');
     return { ok: true, state };
   }
-  // TOUCHÉ : la carte du dessus est sale
-  const amount = top.amount; t.financ[front].pop();
+  // TOUCHÉ : la cible perd TOUTE la corruption du front (les cartes sales sautent)
+  t.financ[front] = t.financ[front].filter(c => c.clean);
   let byVotants = 0;
-  if (t.money >= amount) t.money -= amount;
-  else { const shortfall = amount - t.money; t.money = 0; const need = Math.ceil(shortfall / 2); if (t.votants.length) { state.pending = { kind: 'debt', playerId: t.id, voixNeeded: need }; byVotants = need; } }
+  if (t.money >= saleSum) t.money -= saleSum;
+  else { const shortfall = saleSum - t.money; t.money = 0; const need = Math.ceil(shortfall / 2); if (t.votants.length) { state.pending = { kind: 'debt', playerId: t.id, voixNeeded: need }; byVotants = need; } }
   t.attackedThisRound = true; recompute(t);
-  log(state, `${p.name} dénonce ${t.name} (${front}) : −${amount} M€${byVotants ? ` → rend des votants` : ''}`, 'denounce');
+  log(state, `${p.name} dénonce ${t.name} (${front}) : −${saleSum} M€${byVotants ? ` → rend des votants` : ''}`, 'denounce');
   return { ok: true, state };
 }
 function doPayDebt(state, p, idxs) {
@@ -502,16 +502,16 @@ function botChooseAction(state, playerId) {
   const myMax = Math.max(...state.players.map(q => q.voix));
   const iLead = p.voix >= myMax - 3;
   // 1. défense si je mène et exposé
-  const myExposed = exposedFrontsTop(p);
+  const myExposed = exposedSaleFronts(p);
   if (iLead && myExposed.length) {
     const pi = p.hand.findIndex(c => c.kind === 'pro' && myExposed.includes(c.front)); if (pi >= 0 && CONFIG.protectCost <= p.money) return { type: 'PLAY_PROTECT', handIndex: pi };
     const big = biggestDirty(p); if (big && big.amount >= 6) { const bi = p.hand.findIndex(c => c.kind === 'bla'); if (bi >= 0 && CONFIG.blanchCost <= p.money) return { type: 'PLAY_BLANCH', handIndex: bi }; }
   }
-  // 2. dénoncer le meneur sur son front le plus chargé (≥2 cartes = meilleur pari)
+  // 2. dénoncer le meneur sur son front le plus chargé (≥2 cartes = meilleur pari, hors ratés connus)
   const di = p.hand.findIndex(c => c.kind === 'den');
   if (di >= 0 && CONFIG.denounceCost <= p.money) {
     const tgt = others.filter(q => !q.attackedThisRound && (q.voix >= state.X - 10 || q.voix >= p.voix + 5))
-      .map(q => { const fr = FRONTS.filter(f => !q.protect.includes(f)).sort((a, b) => frontCount(q, b) - frontCount(q, a))[0]; return { q, fr, n: fr ? frontCount(q, fr) : 0 }; })
+      .map(q => { const fr = FRONTS.filter(f => !q.protect.includes(f) && !p.failedDenounce.includes(q.id + ':' + f)).sort((a, b) => frontCount(q, b) - frontCount(q, a))[0]; return { q, fr, n: fr ? frontCount(q, fr) : 0 }; })
       .filter(x => x.fr && x.n >= 2).sort((a, b) => b.q.voix - a.q.voix)[0];
     if (tgt) return { type: 'PLAY_DENOUNCE', handIndex: di, targetId: tgt.q.id, front: tgt.fr };
   }

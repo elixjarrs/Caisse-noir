@@ -221,7 +221,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
 <div id="setup" class="wrap">
   <div class="brand">
     <h1><span class="em">🗳️</span> Caisse Noire</h1>
-    <p>Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie</b> en dénonçant tes rivaux : on révèle <b>une seule carte</b> de leur casier — sale ou simple leurre ? Chacun a une <b>famille interdite secrète</b>. Premier à <b>45 voix</b> déclenche la manche finale.</p>
+    <p>Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie</b> en dénonçant tes rivaux : choisis un front, la cible paie <b>toute sa corruption cachée</b> là-dessus — mais s'il n'y a que des leurres propres, c'est <b>toi</b> qui paies l'amende. Chacun a une <b>famille interdite secrète</b>. Premier à <b>45 voix</b> déclenche la manche finale.</p>
   </div>
   <div class="field" style="max-width:340px;margin:22px auto 0">
     <label>Ton nom (pseudo)</label>
@@ -320,7 +320,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
       </div>
     </div>
     <div id="tableau">
-      <div class="tcol"><div class="zlabel">🗄️ Mon casier — piles par front (⭐ = carte du dessus, dénonçable)</div><div class="mycaser" id="mycaser"></div></div>
+      <div class="tcol"><div class="zlabel">🗄️ Mon casier — une dénonciation frappe TOUT le sale d'un front</div><div class="mycaser" id="mycaser"></div></div>
       <div class="tcol"><div class="zlabel">🗳️ Mes votants (🔒 = coalition fidèle)</div><div class="myvots" id="myvots"></div></div>
     </div>
     <div><div class="zlabel">🃏 Ma main — <span id="handHint" style="text-transform:none;font-weight:600"></span></div><div id="hand"></div></div>
@@ -539,11 +539,11 @@ function frontsHTML(p){ return CN.FRONTS.map(fr=>{ const prot=p.protect.includes
   return `<div class="front ${prot?"prot":""}">${fr.slice(0,4)}${prot?" 🛡":""}<div class="fbacks">${backs}</div></div>`; }).join(""); }
 function votstripHTML(p){ if(!p.votants.length) return `<span class="osub">—</span>`; return p.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒":""}${v.nom}</span>`).join(""); }
 function myCaserHTML(me){ return CN.FRONTS.map(fr=>{ const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
-  const pile=cards.map((c,i)=>`<div class="fcard ${c.clean?"clean":"sale"}${i===cards.length-1?" top":""}">${c.clean?"propre":"⚠"} ${c.amount}</div>`).join("")||"<span class='osub' style='font-size:9px'>vide</span>";
-  const topDirty=cards.length&&!cards[cards.length-1].clean;
+  const pile=cards.map(c=>`<div class="fcard ${c.clean?"clean":"sale"}">${c.clean?"propre":"⚠"} ${c.amount}</div>`).join("")||"<span class='osub' style='font-size:9px'>vide</span>";
+  const sale=cards.reduce((a,c)=>a+(c.clean?0:c.amount),0);
   return `<div class="cslot ${prot?"prot":""}"><span class="tag ${frontClass[fr]}">${fr}</span>
     <div class="pile">${pile}</div>
-    <div class="expo">${prot?"🛡 protégé":topDirty?"⭐ dessus SALE (risqué)":cards.length?"⭐ dessus propre":"✓ sûr"}</div></div>`; }).join(""); }
+    <div class="expo">${prot?"🛡 protégé":sale>0?`⚠️ ${sale} M€ exposés`:cards.length?"✓ que du propre":"✓ vide"}</div></div>`; }).join(""); }
 
 function cardTag(c){
   if(c.kind==="cor") return `<div class="ht"><span class="tag ${frontClass[c.front]}">Corruption · ${c.front} · +${c.gain}M€</span></div>`;
@@ -556,9 +556,9 @@ function cardTag(c){
   return `<div class="ht"><span class="tag">Coup tactique</span></div>`;
 }
 function cardDesc(c){
-  if(c.kind==="cor") return `+${c.gain} M€ (face cachée sur ${c.front}). Si on révèle CETTE carte en te dénonçant, tu recraches ${c.gain} M€.`;
-  if(c.kind==="clean") return `+${c.gain} M€ sûr, jamais dénonçable. Pose-la sur un front pour l'empiler en LEURRE et protéger le sale en dessous.`;
-  if(c.kind==="den") return `PARI : un rival + un front. On révèle la carte du DESSUS. Sale → il paie. Leurre/vide → −2 M€ + 3 d'amende à la cible.`;
+  if(c.kind==="cor") return `+${c.gain} M€ (face cachée sur ${c.front}). Si on te dénonce sur ${c.front}, tu recraches ce montant (avec tout ton sale de ce front).`;
+  if(c.kind==="clean") return `+${c.gain} M€ sûr, jamais dénonçable. Gonfle un front pour bluffer : dénoncer un front tout-propre coûte une amende à l'attaquant.`;
+  if(c.kind==="den") return `PARI : un rival + un front. Il paie TOUT son sale de ce front. Que du propre/vide → −2 M€ + 3 d'amende à la cible.`;
   if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate.`;
   if(c.kind==="bla") return `Rends une de tes cartes sales propre (plus dénonçable).`;
   if(c.kind==="steal") return c.e==="opa"?`OPA : la victime te cède un de ses meilleurs blocs isolés (voix + famille).`:`Débauchage : la victime te cède un bloc isolé de son choix (voix + famille).`;
@@ -580,7 +580,7 @@ function playCard(i,card,L){
 function openDenounce(handIdx,L){
   const opts=L.den.filter(a=>a.handIndex===handIdx); if(!opts.length){ toast("Aucune cible dénonçable."); return; }
   modalMode="denounce";
-  let h=`<h2>🔥 Dénoncer — pari sur UNE carte</h2><p class="muted">On révèle la <b>carte du dessus</b> de la pile choisie. Sale → la cible recrache son montant. Leurre propre / vide → tu perds ta mise + 3 M€ d'amende. Tu vois la hauteur des piles, pas leur contenu.</p><div class="choices">`;
+  let h=`<h2>🔥 Dénoncer — pari sur un front</h2><p class="muted">La cible paie <b>toute sa corruption cachée</b> sur le front choisi. S'il n'y a que des leurres propres (ou rien) → <b>raté</b> : tu perds ta mise + 3 M€ d'amende. Tu vois la hauteur des piles, pas leur contenu.</p><div class="choices">`;
   opts.forEach(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId); const n=t.financCount[a.front];
     h+=`<div class="choice" onclick="confirmDenounce(${handIdx},${a.targetId},'${a.front}')"><b>${esc(seatName(a.targetId))}</b> — ${t.voix} voix · <span class="tag ${frontClass[a.front]}">${a.front}</span> <span class="muted">(pile de ${n})</span></div>`; });
   h+=`</div><div style="margin-top:10px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`; showModal(h);
@@ -596,7 +596,7 @@ function openSteal(handIdx,L){
 function confirmSteal(handIdx,targetId){ hideModal(); submit({type:"PLAY_STEAL",handIndex:handIdx,targetId}); }
 function openCleanFront(handIdx){
   modalMode="clean"; const me=VIEW.players.find(p=>p.id===NET.mySeat);
-  let h=`<h2>🃏 Financement propre — pose un leurre</h2><p class="muted">Argent sûr. Pose-le <b>au-dessus</b> d'un front : il devient la carte du dessus et <b>protège le sale en dessous</b> (une dénonciation ne révélera que ce leurre).</p><div class="fronttabs">`;
+  let h=`<h2>🃏 Financement propre — pose un leurre</h2><p class="muted">Argent sûr. Pose-le sur un front pour <b>gonfler la pile</b> (les rivaux ne savent pas si c'est sale). Un front qui n'a QUE du propre fait <b>rater</b> une dénonciation → amende pour l'attaquant.</p><div class="fronttabs">`;
   CN.FRONTS.forEach(fr=>{ const n=me.financCount[fr]; h+=`<div class="fronttab" onclick="confirmClean(${handIdx},'${fr}')"><span class="tag ${frontClass[fr]}">${fr}</span><div class="muted" style="margin-top:6px;font-size:11px">pile de ${n}</div></div>`; });
   h+=`</div><div style="margin-top:14px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`; showModal(h);
 }

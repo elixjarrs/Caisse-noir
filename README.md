@@ -399,7 +399,7 @@ Transfert de **voix** (la carte bloc ne change pas de main ; on déplace les pio
 ## 16.1 Vue d'ensemble — ce qui change vs v0.5
 - **Corruption CACHÉE** : les cartes de financement (propres ET sales) se jouent **face cachée** dans ton casier, rangées par front.
 - **Financement PROPRE** ajouté : de l'argent sûr, non dénonçable (brouille la lecture).
-- **Dénonciation = perte d'ARGENT** (plus de voix). Tu désignes **un front** de la cible et on révèle **UNE seule carte** (le dessus de la pile) — pari sur une carte, pas sur tout le front.
+- **Dénonciation = perte d'ARGENT** (plus de voix). Tu désignes **un front** de la cible ; touché, elle perd **toute sa corruption cachée de ce front** (pari : sale ou juste des leurres ?).
 - **Voix lues sur les cartes** votant (face visible). Piste de score = simple aide de lecture (facultative).
 - **Asymétrie de parti = FAMILLE INTERDITE SECRÈTE** : chaque parti a une famille qu'il ne peut pas acheter, **connue de lui seul** (remplace pouvoirs visibles + objectifs à points — l'asymétrie reste 100 % cachée).
 - **Débauchage = une carte** (vol de voix) : la **victime choisit** quel votant elle cède.
@@ -437,13 +437,13 @@ Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**
 ## 16.3 Les voix (sur les cartes)
 Les **votants restent face visible** devant toi : **voix = somme de tes cartes votant** (+ bonus de coalition, voir 16.6). Lecture directe par tous. *(Une piste de score commune reste recommandée comme aide de lecture, mais n'est plus la source de vérité.)*
 
-## 16.4 La dénonciation = un PARI qui frappe l'argent (sur UNE carte)
-**Dénoncer** (2 M€) : tu désignes un rival **et UN de ses trois fronts** (Justice / Presse / Finances). Tu vois combien de cartes face cachée y sont empilées, mais pas leur contenu. On révèle **la carte du dessus de cette pile** — c'est ton pari (elle peut être sale… ou un simple leurre propre) :
-- **Touché** (la carte révélée est sale) → **scandale** : la cible perd, en argent, le **montant de CETTE carte** (3, 6 ou 9 ; la carte est défaussée). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) — c'est elle qui décide quels blocs sacrifier — et ces votants **retournent au marché**.
-- **Raté** (la carte révélée est un leurre propre, ou le front est vide) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** faussement accusée (et il a cramé son action). *Dénoncer est donc un vrai pari.*
+## 16.4 La dénonciation = un PARI qui frappe l'argent (sur un FRONT entier)
+**Dénoncer** (2 M€) : tu désignes un rival **et UN de ses trois fronts** (Justice / Presse / Finances). Tu vois combien de cartes face cachée y sont empilées, mais pas leur contenu — c'est ton pari (est-ce du sale, ou juste des leurres propres ?) :
+- **Touché** (au moins une carte sale sur ce front) → **scandale** : la cible perd, en argent, la **SOMME de TOUTES ses cartes sales de ce front** (toutes défaussées). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) qui **retournent au marché**.
+- **Raté** (le front n'a que des leurres propres, ou il est vide/protégé) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** (et il a cramé son action). *Dénoncer est donc un vrai pari.*
 - **Un seul scandale subi par manche** (anti-acharnement).
 
-> **Pourquoi une seule carte (et pas tout le front) ?** Ça rend les **leurres** vraiment payants (empiler du propre sur un front sale protège les cartes du dessous), lisse les swings (on perd 3-9 M€, pas une pile entière), et **allonge la partie** : le meneur encaisse mais ne s'effondre plus d'un coup.
+> **Le rôle des leurres propres :** empilés sur un front, ils gonflent le compteur (les autres voient une pile épaisse sans savoir ce qu'elle vaut). Un front qui n'a **que** du propre appâte une dénonciation **ratée** → l'attaquant paie l'amende. C'est le bluff : cacher son sale, ou faire croire qu'on en a.
 
 **Le frein anti-meneur (clé du modèle) :** plus tu as converti d'argent en voix, **moins tu as de cash** → quand on te dénonce, tu paies en **rendant des votants** → tu perds des voix. **Le frein se cible donc tout seul sur le meneur.** À l'inverse, planquer du cash sale = se rendre dénonçable sans avancer : double peine.
 
