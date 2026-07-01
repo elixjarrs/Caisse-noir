@@ -34,8 +34,8 @@ header p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:900px}
 </head>
 <body>
 <header>
-  <h1>🗳️ Caisse Noire — Catalogue des cartes <span style="color:var(--muted);font-size:15px">(modèle v0.6 « corruption cachée »)</span></h1>
-  <p>Référence en lecture seule. Spec complète : <code>docs/REGLES.md §16</code>. Seuil de victoire = <b>40 − 2×joueurs</b> (36/34/32/30/28). Corruption <b>cachée</b> ; dénonciation = <b>pari qui frappe l'argent</b> ; voix lues sur les votants.</p>
+  <h1>🗳️ Caisse Noire — Catalogue des cartes <span style="color:var(--muted);font-size:15px">(modèle v0.7 « corruption cachée »)</span></h1>
+  <p>Référence en lecture seule. Spec complète : <code>docs/REGLES.md §16</code>. Seuil de victoire = <b>70 − 6×joueurs</b> (58/52/46/40/34). Corruption <b>cachée</b> ; dénonciation = <b>pari sur UNE carte</b> ; parti = <b>famille interdite secrète</b> ; deck ~64 votants ; incompatibilités renforcées.</p>
 </header>
 <div class="wrap">
   <div class="filterbar" id="filter"></div>
@@ -64,9 +64,9 @@ const SALE=[
 ];
 const PROPRE=[["Don d'un militant",3],["Cotisations du parti",3],["Meeting payant",6],["Subvention européenne",6]];
 const ATTAQUES=[
- {n:"Dénonciation",c:"2 M€",d:"PARI : tu désignes un rival + UN front (Justice/Presse/Finances). Touché → il perd le total sale de ce front (paie cash, sinon rend des votants → perd des voix). Raté → tu perds ta mise + 3 M€ d'amende à la cible."},
- {n:"Débauchage",c:"2 M€",d:"Vol d'électorat (façon Sly Deal) : cible un bloc ISOLÉ d'un rival → −2 voix pour lui, +2 pour toi. Un bloc en coalition complète est involable."},
- {n:"OPA électorale",c:"4 M€",d:"Vol fort (façon Deal Breaker) : −3 voix pour la cible, +3 pour toi, sur un bloc isolé. Rare."},
+ {n:"Dénonciation",c:"2 M€",d:"PARI sur UNE carte : tu désignes un rival + UN de ses fronts, on révèle la carte du DESSUS de la pile. Sale → il perd ce montant (3/6/9 ; cash, sinon rend des votants de SON choix → perd des voix). Leurre/vide → RATÉ : tu perds ta mise + 3 M€ d'amende à la cible."},
+ {n:"Débauchage",c:"carte",d:"Vol d'électorat : joue-la sur un rival ; c'est la VICTIME qui choisit quel votant ISOLÉ elle te cède (le bloc passe chez toi, tu gagnes ses voix). Un bloc en coalition complète est involable."},
+ {n:"OPA électorale",c:"carte",d:"Débauchage renforcé : même principe (la victime choisit) mais sur un bloc de plus forte valeur. Rare."},
 ];
 const DEFENSES=[
  {n:"Juge acheté",t:"t-justice",d:"Protection (5 M€) : bouclier permanent sur le front Justice — toute dénonciation y rate."},
@@ -81,26 +81,18 @@ const COUPS=[
  {n:"Promesse intenable",d:"+3 voix tout de suite, mais ajoute une carte sale sur Presse."},
  {n:"Renvoi d'ascenseur",d:"Un service rendu : +3 M€ et pioche 1 carte."},
 ];
-const ROLES=[
- {n:"La Meute",s:"médiatique",d:"Pouvoir : 1ʳᵉ protection Presse gratuite. (Fragile en Justice.)"},
- {n:"La Lumière",s:"religieux",d:"Pouvoir : Intégristes +1 voix. Bloc interdit : Communauté LGBT."},
- {n:"Le Cartel",s:"patronal",d:"Pouvoir : +1 M€ de revenu/tour. Bloc interdit : CGT."},
- {n:"La Vague",s:"populiste",d:"Pouvoir : dénonciation à moitié prix (1 M€)."},
- {n:"Les Verts pâles",s:"écolo",d:"Pouvoir : Animalistes & Bobos −2 M€. Bloc interdit : Lobby pétrolier."},
- {n:"La Forteresse",s:"souverainiste",d:"Pouvoir : « Costards & cadeaux » +2 M€. Bloc interdit : Diaspora."},
-];
-const OBJECTIFS=[
- ["Les Mains Propres","Finis sans aucune carte sale sur le front Justice."],
- ["Le Faiseur de Rois","Détiens les Retraités à la fin de la partie."],
- ["Le Pur et Dur","Aie au moins une coalition complète (3 blocs d'une famille)."],
- ["Le Caméléon","Possède des blocs d'au moins 3 familles différentes."],
- ["Le Magouilleur","Aie joué au moins 5 cartes de corruption dans la partie."],
- ["Le Procureur","Sois celui qui a lancé le plus de dénonciations."],
+const PARTIS=[
+ {n:"La Meute",s:"populiste",d:"Famille interdite : <b>Écolos</b>. Ne pourra jamais courtiser Animalistes, Bobos, Néoruraux, Éveillés."},
+ {n:"La Lumière",s:"religieux",d:"Famille interdite : <b>Précaires</b>. Pas de Chômeurs, Intermittents, Étudiants, Ubers."},
+ {n:"Le Cartel",s:"patronal",d:"Famille interdite : <b>Public</b>. Pas de CGT, Fonctionnaires, Soignants, Profs."},
+ {n:"La Vague",s:"souverainiste",d:"Famille interdite : <b>Tech</b>. Pas de Startuppers, Crypto, Influenceurs, Gamers."},
+ {n:"Les Verts pâles",s:"écolo",d:"Famille interdite : <b>Capital</b>. Pas de Patronat, Banquiers, Promoteurs, Rentiers."},
+ {n:"La Forteresse",s:"identitaire",d:"Famille interdite : <b>Mobilité</b>. Pas de Taxis, Routiers, Motards."},
 ];
 
 /* ============ RENDU ============ */
 const $=s=>document.querySelector(s);
-const SECTIONS=["Tout","Votants","Corruption","Financement propre","Attaques","Défenses","Coups","Rôles & Objectifs"];
+const SECTIONS=["Tout","Votants","Corruption","Financement propre","Attaques","Défenses","Coups","Partis"];
 let cur="Tout";
 function chips(){const f=$("#filter");f.innerHTML="";SECTIONS.forEach(s=>{const c=document.createElement("div");c.className="chip"+(s===cur?" active":"");c.textContent=s;c.onclick=()=>{cur=s;chips();render();};f.appendChild(c);});}
 function sec(t,sub,h){return `<h2 class="sec-title">${t}</h2><p class="sec-sub">${sub}</p><div class="grid">${h}</div>`;}
@@ -126,9 +118,8 @@ function render(){let h="";
    h+=sec("Défenses (3 fronts → 3 protections)","Protéger un front (bouclier permanent), blanchir une carte sale (la rendre propre), ou annuler une dénonciation en réaction.",g);}
  if(show("Coups")){let g="";COUPS.forEach(c=>g+=`<div class="card coup"><div class="nom">${c.n}</div><span class="tag">Coup tactique</span><div class="desc">${c.d}</div></div>`);
    h+=sec("Coups tactiques","Petits effets pour pimenter.",g);}
- if(show("Rôles & Objectifs")){let g="";ROLES.forEach(r=>g+=`<div class="card role"><div class="nom">${r.n}</div><span class="tag">Rôle · ${r.s}</span><div class="desc">${r.d}</div></div>`);
-   let o="";OBJECTIFS.forEach(([n,d])=>o+=`<div class="card role"><div class="nom">${n}</div><span class="tag">Objectif secret</span><div class="desc">${d} → <b>+3 voix</b> si accompli (révélé à la fin).</div></div>`);
-   h+=sec("Rôles secrets = pouvoir + objectif","Chaque joueur reçoit 1 carte Rôle FACE CACHÉE : un pouvoir (asymétrie de parti) + un objectif secret (+3 voix si accompli).",g)+sec("Exemples d'objectifs secrets","Tirés au hasard, cachés jusqu'à la fin.",o);}
+ if(show("Partis")){let g="";PARTIS.forEach(r=>g+=`<div class="card role"><div class="nom">${r.n}</div><span class="tag">Parti · ${r.s}</span><div class="desc">${r.d}</div></div>`);
+   h+=sec("Partis = famille interdite SECRÈTE","Chaque joueur reçoit 1 carte Parti FACE CACHÉE : une famille d'électeurs qu'il ne peut jamais acheter, connue de lui seul. Aucun signal économique — les autres doivent la deviner. (Remplace les anciens pouvoirs + objectifs.)",g);}
  $("#body").innerHTML=h;
 }
 chips();render();

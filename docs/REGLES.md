@@ -6,7 +6,7 @@
 > Jeu jouable (solo + en ligne) : `index.html` ; catalogue des cartes + bac à sable d'équilibrage : `catalogue.html` (à ouvrir dans un navigateur).
 > Dernière mise à jour : 27 juin 2026.
 >
-> 🔴 **MODÈLE CIBLE = v0.6 « corruption cachée » → voir §16. C'est ce qui fait foi pour le dev.** Les sections §3–§9 décrivent le modèle v0.5 (corruption visible) ; §16 les **remplace** : corruption cachée, dénonciation qui frappe l'**argent**, voix lues sur les cartes, familles/coalitions, vol d'électorat, rôles secrets (pouvoir + objectif). Seuil v0.6 = **30 (plat, 2→6 j.)** — calibré par simulation (voir §16.7).
+> 🔴 **MODÈLE CIBLE = v0.7 « corruption cachée » → voir §16. C'est ce qui fait foi pour le dev.** Les sections §3–§9 décrivent le modèle v0.5 (corruption visible) ; §16 les **remplace** : corruption cachée, dénonciation qui frappe l'**argent** en visant **une carte**, voix lues sur les cartes, familles/coalitions + **incompatibilités renforcées**, **débauchage-carte** (la victime choisit), **famille interdite secrète** par parti (remplace pouvoirs + objectifs). **Deck de votants ~64 blocs. Seuil = 45 voix (fixe, tous N)** — calibré par simulation (~14-15 manches, 100 % par le seuil), pour une partie de ~12-15 min (voir §16.7).
 
 ---
 
@@ -326,17 +326,20 @@ Transfert de **voix** (la carte bloc ne change pas de main ; on déplace les pio
 
 ---
 
-# 16. MODÈLE CIBLE v0.6 — « La caisse (vraiment) noire » 🔴 *fait foi pour le dev*
+# 16. MODÈLE CIBLE v0.7 — « La caisse (vraiment) noire » 🔴 *fait foi pour le dev*
 
 > Remplace §3–§9. Le cœur : **la corruption est cachée**. On voit l'argent d'un joueur monter, mais pas s'il s'est enrichi proprement ou par la fraude, ni sur quel front. La dénonciation devient un **pari qui frappe l'ARGENT**. Calibré par simulation (sim v0.6).
 
 ## 16.1 Vue d'ensemble — ce qui change vs v0.5
-- **Corruption CACHÉE** : les cartes de financement (propres ET sales) se jouent **face cachée** dans ton casier.
+- **Corruption CACHÉE** : les cartes de financement (propres ET sales) se jouent **face cachée** dans ton casier, rangées par front.
 - **Financement PROPRE** ajouté : de l'argent sûr, non dénonçable (brouille la lecture).
-- **Dénonciation = perte d'ARGENT** (plus de voix), et c'est un **pari sur un front**.
+- **Dénonciation = perte d'ARGENT** (plus de voix). Tu désignes **un front** de la cible et on révèle **UNE seule carte** (le dessus de la pile) — pari sur une carte, pas sur tout le front.
 - **Voix lues sur les cartes** votant (face visible). Piste de score = simple aide de lecture (facultative).
-- **Rôle SECRET** par joueur = un **pouvoir** + un **objectif** caché (2-en-1).
-- Conservés/adaptés : familles → coalitions (+voix), vol d'électorat, incompatibilités, défenses.
+- **Asymétrie de parti = FAMILLE INTERDITE SECRÈTE** : chaque parti a une famille qu'il ne peut pas acheter, **connue de lui seul** (remplace pouvoirs visibles + objectifs à points — l'asymétrie reste 100 % cachée).
+- **Débauchage = une carte** (vol de voix) : la **victime choisit** quel votant elle cède.
+- **Incompatibilités renforcées** entre votants → progression plus lente, coalitions plus dures à compléter.
+- **Deck de votants agrandi (~64 blocs uniques)** → la partie respire jusqu'à ~15 min.
+- Conservés/adaptés : familles → coalitions (+voix), défenses.
 
 ## 16.2 L'argent (roulette individuelle 0–80, visible)
 Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**. **Montants variés et qui se chevauchent** entre fronts → impossible de déduire le montant depuis le front, ni le front depuis le montant.
@@ -368,11 +371,13 @@ Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**
 ## 16.3 Les voix (sur les cartes)
 Les **votants restent face visible** devant toi : **voix = somme de tes cartes votant** (+ bonus de coalition, voir 16.6). Lecture directe par tous. *(Une piste de score commune reste recommandée comme aide de lecture, mais n'est plus la source de vérité.)*
 
-## 16.4 La dénonciation = un PARI qui frappe l'argent
-**Dénoncer** (2 M€) : tu désignes un rival **et UN front** (Justice / Presse / Finances) — c'est ton pari (1 chance sur 3, brouillée par les leurres). On révèle les cartes face cachée de **ce front** :
-- **Touché** (au moins une carte sale dessus) → la cible **perd de l'argent** = le **total sale de ce front** (toutes les cartes sales du front sautent d'un coup). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) — c'est elle qui décide quels blocs sacrifier — et ces votants **retournent au marché**.
-- **Raté** (le front ne contenait que des leurres / était vide) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** faussement accusée (et il a cramé son action). *Dénoncer est donc un vrai pari.*
+## 16.4 La dénonciation = un PARI qui frappe l'argent (sur UNE carte)
+**Dénoncer** (2 M€) : tu désignes un rival **et UN de ses trois fronts** (Justice / Presse / Finances). Tu vois combien de cartes face cachée y sont empilées, mais pas leur contenu. On révèle **la carte du dessus de cette pile** — c'est ton pari (elle peut être sale… ou un simple leurre propre) :
+- **Touché** (la carte révélée est sale) → **scandale** : la cible perd, en argent, le **montant de CETTE carte** (3, 6 ou 9 ; la carte est défaussée). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) — c'est elle qui décide quels blocs sacrifier — et ces votants **retournent au marché**.
+- **Raté** (la carte révélée est un leurre propre, ou le front est vide) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** faussement accusée (et il a cramé son action). *Dénoncer est donc un vrai pari.*
 - **Un seul scandale subi par manche** (anti-acharnement).
+
+> **Pourquoi une seule carte (et pas tout le front) ?** Ça rend les **leurres** vraiment payants (empiler du propre sur un front sale protège les cartes du dessous), lisse les swings (on perd 3-9 M€, pas une pile entière), et **allonge la partie** : le meneur encaisse mais ne s'effondre plus d'un coup.
 
 **Le frein anti-meneur (clé du modèle) :** plus tu as converti d'argent en voix, **moins tu as de cash** → quand on te dénonce, tu paies en **rendant des votants** → tu perds des voix. **Le frein se cible donc tout seul sur le meneur.** À l'inverse, planquer du cash sale = se rendre dénonçable sans avancer : double peine.
 
@@ -383,23 +388,25 @@ Les **votants restent face visible** devant toi : **voix = somme de tes cartes v
 
 *(Les coups « Incohérence » et « Promesse intenable », qui ajoutaient une carte sale sur l'ex-front « Rue », la posent désormais sur **Presse**.)*
 
-## 16.5 Rôle secret = pouvoir + objectif (2-en-1)
-En début de partie, chaque joueur reçoit **1 carte Rôle face cachée** (aléatoire). Elle donne :
-- un **pouvoir** unique (l'asymétrie de parti, musclée — ex. « La Meute » : 1ʳᵉ protection Presse gratuite ; « La Vague » : dénonciation à 1 M€…) ;
-- un **objectif secret** (ex. « Les Mains Propres » : finis sans carte sale en Justice ; « Le Faiseur de Rois » : détiens les Retraités à la fin ; « Le Pur et Dur » : aie une coalition complète…). Accompli → **+3 voix**, révélé à la fin.
-Remplace le choix de parti ouvert + des cartes objectif séparées.
+## 16.5 Parti = famille interdite SECRÈTE
+En début de partie, chaque joueur reçoit **1 carte Parti face cachée** (aléatoire). Elle indique **une famille d'électeurs qu'il ne peut jamais acheter** — connue de **lui seul**. C'est toute l'asymétrie : invisible, sans aucun signal économique (rien à repérer type « +1 M€/manche »). Les autres doivent **deviner** ta famille interdite à ta façon de jouer.
+- Ça crée un handicap thématique (« le parti anti-écolo ne courtisera jamais les Animalistes ») et de l'information cachée à lire.
+- **Remplace** les anciens pouvoirs de parti visibles **et** les objectifs à points (jugés trop lisibles / obvious).
+- Design : chaque carte Parti = un nom satirique + la famille interdite au dos-révélé. Une famille interdite peut se répéter d'une partie à l'autre ; à distribuer pour qu'aucun joueur n'ait la même sur une partie donnée.
 
-## 16.6 Familles, coalitions & vol *(conservés de §15)*
-- **Familles** : 8 familles (voir §15.1). **3 blocs d'une même famille = +3 voix**, puis **+1 par bloc** en plus.
+## 16.6 Familles, coalitions, incompatibilités & vol
+- **Familles** : 8 familles (voir §15.1), **~64 blocs uniques** répartis dessus. La plupart des familles ont au moins un **gros bloc (12 M€ / 6 voix)** ; quelques familles n'en ont pas (déséquilibre thématique assumé). **3 blocs d'une même famille = +3 voix**, puis **+1 par bloc** en plus.
+- **Incompatibilités renforcées** : de nombreuses **paires de votants s'excluent** (tu ne peux pas détenir les deux — ex. Chasseurs × Animalistes, Patronat × CGT, Flics × Émeutiers…). Ça ralentit la course aux voix, oblige à choisir sa ligne, et **allonge la partie**. *(À l'échelle du moteur : une liste de paires interdites ; à l'achat, on refuse un bloc incompatible avec un bloc déjà détenu.)*
 - **Coalition complète = électorat fidèle → involable** (protégé du vol).
-- **Vol d'électorat** (transfert de voix) sur des **blocs isolés** : **Débauchage** (2 M€, −2/+2) et **OPA électorale** (4 M€, −3/+3). Partage le plafond « 1 attaque subie / manche » avec la dénonciation.
+- **Débauchage = une CARTE** (vol de voix) : tu la joues sur un rival ; **c'est la victime qui choisit** quel **votant isolé** (hors coalition complète) elle te cède — le bloc passe dans ta zone (tu gagnes ses voix, elle les perd). **OPA électorale** (carte plus chère) : même principe sur un bloc de plus forte valeur. Partage le plafond « 1 attaque subie / manche » avec la dénonciation.
 
-## 16.7 Économie & seuil (calibré par simulation v0.6)
-- Départ **7 M€**, revenu **+3/tour**, main **5**, garde-fou **16 manches**.
-- Votants : Petit 4/2, Moyen 8/4, Gros 12/6, Retraités 13/7.
-- **Seuil de victoire = 30 (PLAT, 2→6 joueurs)** — calibré par `engine.simulate()` sur le moteur v0.6 réel. *(La cible provisoire 40 − 2N s'est révélée trop raide : à 2 joueurs elle donnait ~13,5 manches et seulement 82 % de victoires par le seuil. Les **bonus de coalition** gonflent les voix quand l'électorat est concentré → ça compense le partage entre joueurs, donc une pente n'est pas nécessaire.)*
-- Coûts d'attaque : **dénoncer 2 M€** (+ **amende 3 M€** si raté) · **vol** Débauchage 2 / OPA 4.
-- Résultats sim (moteur réel, milliers de parties) : **~10,5–11,3 manches** et **≥98 % des parties par le seuil** pour N=2..6 ; **2,8→14,7 dénonciations/partie** (le frein anti-meneur mord). Le seuil est réglable dans `src/engine.js` (`const SEUIL`).
+## 16.7 Économie & seuil (calibré par simulation v0.7 — cible ~15 min)
+- Départ **7 M€**, revenu **+3/tour**, main **5**, garde-fou **~40 manches** (jamais atteint en pratique).
+- Votants : Petit **4/2**, Moyen **8/4**, Gros **12/6**. **Deck ~64 blocs uniques** (≈ 8 par famille).
+- **Seuil de victoire = 45 voix (FIXE, tous les N)** — calibré par le `simulate()` réel de la v0.7. *(Un seuil fixe en voix donne un nombre de **manches quasi constant** quel que soit le nombre de joueurs : ~14-15 manches, donc chaque joueur joue à peu près autant de tours — c'est plus lisible qu'une formule 70−6N, qui faisait traîner les tables nombreuses.)*
+- Coûts d'attaque : **dénoncer 2 M€** (+ **amende 3 M€** si raté) · **Débauchage / OPA** = cartes.
+- **Résultats sim (v0.7, milliers de parties, N=2..6, seuil 45)** : **100 % des parties par le seuil**, **~14-15 manches** (voix du gagnant ≈ 46). La dénonciation « 1 carte » + les incompatibilités lissent les effondrements → course longue et disputée.
+- Le seuil est réglable dans `src/engine.js` (`const SEUIL_VOIX = 45` ; passe à 40 pour un cran plus rapide).
 
 **Fin de partie (important, vu en simulation) :** dès qu'un joueur **atteint le seuil**, on **termine la manche en cours** (tout le monde joue son tour), **puis** on compare → **le plus de voix gagne**, *même s'il est repassé sous le seuil* à cause d'une dénonciation de fin de manche. Ça empêche de « geler » la victoire et donne le climax (le meneur franchit la ligne, toute la table lui tombe dessus, le survivant l'emporte).
 

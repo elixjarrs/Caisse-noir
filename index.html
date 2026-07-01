@@ -41,7 +41,7 @@ button{font-family:inherit}
 .brand{text-align:center;margin-bottom:6px}
 .brand h1{font-size:40px;color:var(--ink)}
 .brand .em{font-size:40px}
-.brand p{color:var(--muted);max-width:600px;margin:8px auto 0}
+.brand p{color:var(--muted);max-width:620px;margin:8px auto 0}
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
 @media(max-width:620px){.modes{grid-template-columns:1fr}}
 .modecard{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
@@ -118,13 +118,13 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
 .decklbl{font-size:11px;color:var(--muted);font-weight:700;margin-top:6px}
 .discard .layer{background:#f3eee2 !important}
 
-#track{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-end}
-.cell{width:31px;height:42px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface2);position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:3px}
-.cell .num{font-size:9px;color:var(--muted);font-weight:700}
+#track{display:flex;flex-wrap:wrap;gap:3px;align-items:flex-end}
+.cell{width:26px;height:38px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface2);position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:2px}
+.cell .num{font-size:8px;color:var(--muted);font-weight:700}
 .cell.goal{border-color:var(--gold);background:#fdf3d8}
 .cell.goal .num{color:var(--gold-d)}
-.meeples{position:absolute;bottom:3px;left:0;right:0;display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
-.meeple{width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.meeples{position:absolute;bottom:2px;left:0;right:0;display:flex;flex-wrap:wrap;justify-content:center;gap:1px}
+.meeple{width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .meeple.me{box-shadow:0 0 0 2px var(--gold-d)}
 
 #market{display:flex;gap:11px;flex-wrap:wrap}
@@ -132,8 +132,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
 .vcard.buy{cursor:pointer}
 .vcard.buy:hover{transform:translateY(-4px);border-color:var(--gold);border-top-color:var(--money)}
 .vcard.dis{opacity:.5}
-.vcard .vt{font-weight:800;font-size:13.5px;line-height:1.15;font-family:"Fredoka"}
-.vcard .vb{font-size:10px;color:var(--muted);margin-top:2px;font-weight:700}
+.vcard .vt{font-weight:800;font-size:13px;line-height:1.15;font-family:"Fredoka"}
 .vcard .vfam{font-size:9.5px;color:var(--gold-d);font-weight:800;margin-top:2px}
 .vcard .vwarn{font-size:10px;margin-top:4px;min-height:13px;font-weight:700}
 .vcard .vfoot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:8px}
@@ -157,8 +156,8 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
 .myident{flex:1;min-width:150px}
 .myident .nm{font-weight:700;font-size:17px;font-family:"Fredoka"}
 .myrole{font-size:11.5px;margin-top:3px}
-.myrole .pw{color:var(--gold-d);font-weight:800}
-.myrole .obj{color:var(--purple);font-weight:800}
+.myrole .party{color:var(--gold-d);font-weight:800}
+.myrole .forb{color:var(--red);font-weight:800}
 .actpips{display:flex;gap:6px;margin-top:6px;align-items:center}
 .pip{width:14px;height:14px;border-radius:50%;border:2px solid var(--gold)}
 .pip.on{background:var(--gold)}
@@ -168,10 +167,11 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
 .tcol{flex:1;min-width:230px}
 .mycaser{display:flex;gap:7px}
 .cslot{flex:1;border:1.5px solid var(--line2);border-radius:11px;padding:7px 5px;text-align:center;background:var(--surface2)}
-.cslot .pile{display:flex;justify-content:center;gap:3px;margin-top:6px;min-height:26px;align-items:flex-end;flex-wrap:wrap}
-.fcard{width:15px;height:21px;border-radius:3px;border:1.5px solid;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.cslot .pile{display:flex;flex-direction:column-reverse;align-items:center;gap:2px;margin-top:6px;min-height:26px}
+.fcard{width:34px;height:19px;border-radius:3px;border:1.5px solid;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .fcard.sale{border-color:#d98e7d;background:linear-gradient(180deg,#f6b3a4,#e0654f);color:#fff}
 .fcard.clean{border-color:#a9ddc1;background:linear-gradient(180deg,#c9edd8,#8fd4ab);color:#1c5636}
+.fcard.top{box-shadow:0 0 0 2px var(--gold-d)}
 .cslot.prot{border-color:#a9ddc1;background:#e9f7f0}
 .cslot .expo{font-size:9px;font-weight:800;margin-top:4px;min-height:12px}
 .myvots{display:flex;gap:6px;flex-wrap:wrap;min-height:26px}
@@ -221,14 +221,12 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
 <div id="setup" class="wrap">
   <div class="brand">
     <h1><span class="em">🗳️</span> Caisse Noire</h1>
-    <p>Finance-toi <b>en secret</b> (personne ne sait si ton argent est propre ou sale), achète des voix, bâtis des coalitions… et <b>parie</b> en dénonçant tes rivaux. Ton <b>rôle est caché</b> : un pouvoir + un objectif secret. Premier à <b>30 voix</b> déclenche la manche finale.</p>
+    <p>Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie</b> en dénonçant tes rivaux : on révèle <b>une seule carte</b> de leur casier — sale ou simple leurre ? Chacun a une <b>famille interdite secrète</b>. Premier à <b>45 voix</b> déclenche la manche finale.</p>
   </div>
-
   <div class="field" style="max-width:340px;margin:22px auto 0">
     <label>Ton nom (pseudo)</label>
     <input type="text" id="pseudo" maxlength="16" placeholder="ex. Rastignac">
   </div>
-
   <div class="modes">
     <div class="modecard">
       <h3>🎲 Solo</h3>
@@ -236,10 +234,9 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
       <div class="field"><label>Nombre de joueurs</label><div class="seats" id="seatsSolo"></div></div>
       <button class="btn primary big" style="width:100%" onclick="startSolo()">Lancer ▶</button>
     </div>
-
     <div class="modecard">
       <h3>🌐 En ligne avec tes potes</h3>
-      <p>Crée une table, partage le code. Les sièges vides sont tenus par l'IA. Ton rôle est tiré au sort et secret.</p>
+      <p>Crée une table, partage le code. Les sièges vides sont tenus par l'IA. Ta famille interdite est tirée au sort et secrète.</p>
       <button class="btn primary big" style="width:100%" onclick="createTable()">Créer une table</button>
       <div class="field" style="margin-top:18px"><label>…ou rejoindre avec un code</label>
         <div style="display:flex;gap:8px">
@@ -249,8 +246,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
       </div>
     </div>
   </div>
-
-  <div class="note">🔒 Beta sans serveur : l'état transite par le service temps réel. Le secret des mains/rôles n'est pas garanti tant qu'on n'a pas de serveur dédié — jouez entre potes de confiance. · <a href="catalogue.html" style="color:var(--gold-d);font-weight:800">Catalogue &amp; équilibrage</a></div>
+  <div class="note">🔒 Beta sans serveur : l'état transite par le service temps réel. Le secret des mains/familles n'est pas garanti tant qu'on n'a pas de serveur dédié — jouez entre potes de confiance. · <a href="catalogue.html" style="color:var(--gold-d);font-weight:800">Catalogue &amp; équilibrage</a></div>
 </div>
 
 <!-- LOBBY -->
@@ -286,10 +282,8 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
       <button class="btn ghost" onclick="leaveTable()">↺ Quitter</button>
     </div>
   </div>
-
   <div class="turnbar" id="turnbar"></div>
   <div id="opponents"></div>
-
   <div id="center">
     <div class="zone deckcol">
       <div class="deckwrap"><div class="deck" id="deckCombines"><div class="layer"></div><div class="layer"></div><div class="layer"></div><div class="cnt"></div></div><div class="decklbl">Les Combines</div></div>
@@ -298,7 +292,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
     </div>
     <div>
       <div class="zone" style="margin-bottom:14px">
-        <div class="zlabel">🏁 Piste de score — premier à 30 déclenche la manche finale</div>
+        <div class="zlabel">🏁 Piste de score — premier à 45 déclenche la manche finale</div>
         <div id="track"></div>
       </div>
       <div class="zone">
@@ -311,7 +305,6 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
       <div id="logzone"><div id="log"></div></div>
     </div>
   </div>
-
   <div id="me">
     <div class="myhead">
       <div class="coin"><b id="myMoney">0</b><span>M€</span></div>
@@ -327,7 +320,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
       </div>
     </div>
     <div id="tableau">
-      <div class="tcol"><div class="zlabel">🗄️ Mon casier — 3 fronts (face cachée)</div><div class="mycaser" id="mycaser"></div></div>
+      <div class="tcol"><div class="zlabel">🗄️ Mon casier — piles par front (⭐ = carte du dessus, dénonçable)</div><div class="mycaser" id="mycaser"></div></div>
       <div class="tcol"><div class="zlabel">🗳️ Mes votants (🔒 = coalition fidèle)</div><div class="myvots" id="myvots"></div></div>
     </div>
     <div><div class="zlabel">🃏 Ma main — <span id="handHint" style="text-transform:none;font-weight:600"></span></div><div id="hand"></div></div>
@@ -340,7 +333,6 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="src/engine.js"></script>
 <script>
-/* ===================== CONFIG ===================== */
 const SUPA_URL = "https://bcrneqrlgcirziaqmxuq.supabase.co";
 const SUPA_KEY = "sb_publishable_6h8kUSSpjzCIWoPwSjOPmg_0-Hi6Mf-";
 const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
@@ -350,48 +342,27 @@ const $ = s => document.querySelector(s);
 const SEAT_COLORS = ["#e0654f","#4a86d6","#33a36b","#e3a72b","#9b6cc4","#e08a3c"];
 const seatColor = seat => SEAT_COLORS[seat % SEAT_COLORS.length];
 const frontClass = {Justice:"t-justice",Presse:"t-presse",Finances:"t-finances"};
-const PARTY_BONUS = { meute:"1ʳᵉ protection Presse gratuite", lumiere:"Intégristes +1 voix",
-  cartel:"+1 M€ de revenu/tour", vague:"Dénonciation à moitié prix (1 M€)",
-  verts:"Animalistes & Bobos −2 M€", forteresse:"« Costards » +2 M€ (Presse)" };
 
-/* ===================== STATE ===================== */
-let S = null;     // host only
-let VIEW = null;  // ma vue (publicState + legal)
+let S = null, VIEW = null;
 let botTimer = null, botSpeed = 650, gameOverShown = false, modalMode = null;
 let soloSeats = 4, hostSeats = 4;
 const NET = { online:false, isHost:false, channel:null, room:null, clientId:getClientId(), name:"", mySeat:null, seats:[], started:false };
 function getClientId(){ let c=localStorage.getItem("cn_cid"); if(!c){ c="c"+Math.random().toString(36).slice(2,10); localStorage.setItem("cn_cid",c);} return c; }
 
-/* ===================== SETUP ===================== */
-function buildSeatPicker(elId, get, set){
-  const e=$(elId); e.innerHTML="";
-  for(let n=2;n<=6;n++){ const b=document.createElement("button"); b.className="seat"+(n===get()?" on":""); b.textContent=n;
-    b.onclick=()=>{ set(n); buildSeatPicker(elId,get,set); }; e.appendChild(b); }
-}
+/* SETUP */
+function buildSeatPicker(elId, get, set){ const e=$(elId); e.innerHTML=""; for(let n=2;n<=6;n++){ const b=document.createElement("button"); b.className="seat"+(n===get()?" on":""); b.textContent=n; b.onclick=()=>{ set(n); buildSeatPicker(elId,get,set); }; e.appendChild(b); } }
 buildSeatPicker("#seatsSolo", ()=>soloSeats, n=>soloSeats=n);
 function showScreen(name){ ["setup","lobby","table"].forEach(s=>$("#"+s).style.display=(s===name?"block":"none")); }
 function pseudo(){ return ($("#pseudo").value||"").trim(); }
 function nameOk(){ if(!pseudo()){ toast("Entre ton pseudo d'abord 🙂"); return false; } NET.name=pseudo(); return true; }
-
 function seatObj(seat){ return NET.seats.find(s=>s.seat===seat); }
 function isBotSeat(seat){ const s=seatObj(seat); return s?s.isBot:false; }
 function seatName(seat){ const p=VIEW&&VIEW.players.find(x=>x.id===seat); const nm=p?p.name:("Siège "+seat); return isBotSeat(seat)?("🤖 "+nm):nm; }
 
-/* ===================== DRIVING (host) ===================== */
+/* DRIVING (host) */
 function viewFor(seat){ const v=CN.publicState(S,seat); v.legal=CN.legalActions(S,seat); return v; }
-function hostApply(seat, action){
-  if(!S||S.over) return;
-  const r=CN.applyAction(S,seat,action);
-  if(!r.ok){ if(seat===NET.mySeat) toast(r.error); return; }
-  afterApply();
-}
-function afterApply(){
-  VIEW=viewFor(NET.mySeat);
-  if(NET.online&&NET.isHost) broadcastState();
-  render();
-  if(VIEW.over){ onGameOver(); return; }
-  driveHost();
-}
+function hostApply(seat, action){ if(!S||S.over) return; const r=CN.applyAction(S,seat,action); if(!r.ok){ if(seat===NET.mySeat) toast(r.error); return; } afterApply(); }
+function afterApply(){ VIEW=viewFor(NET.mySeat); if(NET.online&&NET.isHost) broadcastState(); render(); if(VIEW.over){ onGameOver(); return; } driveHost(); }
 function driveHost(){
   if(botTimer){ clearTimeout(botTimer); botTimer=null; }
   if(!S||S.over) return;
@@ -400,38 +371,28 @@ function driveHost(){
   if(!isBotSeat(seat)) return;
   botTimer=setTimeout(()=>hostApply(seat, CN.botChooseAction(S,seat)), botSpeed);
 }
-
-/* ===================== SUBMIT ===================== */
-function submit(action){                 // action normale (mon tour)
-  if(!VIEW||VIEW.pending||VIEW.currentPlayerId!==NET.mySeat) return;
-  if(NET.isHost) hostApply(NET.mySeat, action); else NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action}});
-}
-function submitPending(action){          // paiement de dette (hors tour)
-  if(NET.isHost) hostApply(NET.mySeat, action); else NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action}});
-}
+function submit(action){ if(!VIEW||VIEW.pending||VIEW.currentPlayerId!==NET.mySeat) return; if(NET.isHost) hostApply(NET.mySeat, action); else NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action}}); }
+function submitPending(action){ if(NET.isHost) hostApply(NET.mySeat, action); else NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action}}); }
 function endMyTurn(){ submit({type:"END_TURN"}); }
 
-/* ===================== SOLO ===================== */
-function names(total){ const arr=[pseudo()||"Toi"]; for(let i=1;i<total;i++) arr.push("IA "+i); return arr; }
+/* SOLO */
 function startSolo(){
   NET.online=false; NET.isHost=true; NET.mySeat=0; NET.started=true; NET.room=null;
-  const total=soloSeats;
-  NET.seats=[]; for(let i=0;i<total;i++) NET.seats.push({seat:i, clientId:i===0?NET.clientId:null, name:i===0?(pseudo()||"Toi"):("IA "+i), isBot:i!==0});
-  S=CN.createGame({ nPlayers:total, names:names(total) });
+  const total=soloSeats, nm=[]; NET.seats=[];
+  for(let i=0;i<total;i++){ NET.seats.push({seat:i, clientId:i===0?NET.clientId:null, name:i===0?(pseudo()||"Toi"):("IA "+i), isBot:i!==0}); nm.push(i===0?(pseudo()||"Toi"):("IA "+i)); }
+  S=CN.createGame({ nPlayers:total, names:nm });
   botSpeed=+$("#speed").value; $("#speed").onchange=e=>botSpeed=+e.target.value;
   $("#roomPill").style.display="none"; gameOverShown=false; showScreen("table");
   VIEW=viewFor(0); render(); driveHost();
 }
 
-/* ===================== ONLINE ===================== */
+/* ONLINE */
 function genRoom(){ const a="ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let r=""; for(let i=0;i<4;i++) r+=a[Math.floor(Math.random()*a.length)]; return r; }
 function connectChannel(room, asHost){
   NET.online=true; NET.isHost=asHost; NET.room=room; NET.started=false; NET.mySeat=null;
   NET.channel=sb.channel("caisse-"+room,{config:{broadcast:{self:false},presence:{key:NET.clientId}}});
-  NET.channel.on("broadcast",{event:"action"},onAction).on("broadcast",{event:"state"},onState)
-    .on("broadcast",{event:"start"},onStart).on("presence",{event:"sync"},onPresenceSync)
-    .subscribe(st=>{ if(st==="SUBSCRIBED"){ NET.channel.track({clientId:NET.clientId,name:NET.name,isHost:asHost}); enterLobby(asHost,room); }
-      else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT") toast("Connexion temps réel impossible 😕"); });
+  NET.channel.on("broadcast",{event:"action"},onAction).on("broadcast",{event:"state"},onState).on("broadcast",{event:"start"},onStart).on("presence",{event:"sync"},onPresenceSync)
+    .subscribe(st=>{ if(st==="SUBSCRIBED"){ NET.channel.track({clientId:NET.clientId,name:NET.name,isHost:asHost}); enterLobby(asHost,room); } else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT") toast("Connexion temps réel impossible 😕"); });
 }
 function createTable(){ if(!nameOk()) return; connectChannel(genRoom(), true); }
 function joinTable(){ if(!nameOk()) return; const room=($("#joinCode").value||"").trim().toUpperCase(); if(room.length<3){ toast("Code invalide"); return; } connectChannel(room,false); }
@@ -442,14 +403,11 @@ function renderLobby(){ const list=presenceList(); const host=list.find(p=>p.isH
   $("#playersLobby").innerHTML=ord.map(p=>`<div class="prow"><span class="dot"></span><b>${esc(p.name||"?")}</b>${p.isHost?'<span class="host">HÔTE</span>':''}</div>`).join("")||`<div class="muted">Personne pour l'instant…</div>`; }
 function onPresenceSync(){ if(!NET.started){ renderLobby(); return; } if(NET.isHost){ NET.channel.send({type:"broadcast",event:"start",payload:{seats:NET.seats}}); broadcastState(); } }
 function copyCode(){ navigator.clipboard?.writeText(NET.room); toast("Code copié : "+NET.room); }
-
 function hostStart(){
   const list=presenceList(); const host=list.find(p=>p.clientId===NET.clientId)||{clientId:NET.clientId,name:NET.name};
   const others=list.filter(p=>p.clientId!==NET.clientId); const humans=[host,...others];
-  const total=Math.min(6,Math.max(2,Math.max(hostSeats,humans.length)));
-  NET.seats=[]; const nm=[];
-  for(let i=0;i<total;i++){ if(i<humans.length){ NET.seats.push({seat:i,clientId:humans[i].clientId,name:humans[i].name||("Joueur "+(i+1)),isBot:false}); nm.push(humans[i].name||("Joueur "+(i+1))); }
-    else { NET.seats.push({seat:i,clientId:null,name:"IA "+(i),isBot:true}); nm.push("IA "+i); } }
+  const total=Math.min(6,Math.max(2,Math.max(hostSeats,humans.length))); NET.seats=[]; const nm=[];
+  for(let i=0;i<total;i++){ if(i<humans.length){ NET.seats.push({seat:i,clientId:humans[i].clientId,name:humans[i].name||("Joueur "+(i+1)),isBot:false}); nm.push(humans[i].name||("Joueur "+(i+1))); } else { NET.seats.push({seat:i,clientId:null,name:"IA "+i,isBot:true}); nm.push("IA "+i); } }
   NET.mySeat=0; NET.started=true; gameOverShown=false;
   S=CN.createGame({ nPlayers:total, names:nm, seed:(Math.random()*0x7fffffff)>>>0 });
   botSpeed=+$("#speed").value; $("#speed").onchange=e=>botSpeed=+e.target.value;
@@ -459,13 +417,10 @@ function hostStart(){
 }
 function broadcastState(){ const views={}; NET.seats.filter(s=>!s.isBot&&s.clientId).forEach(s=>views[s.seat]=viewFor(s.seat)); NET.channel.send({type:"broadcast",event:"state",payload:{views,seats:NET.seats}}); }
 function onAction({payload}){ if(NET.isHost) hostApply(payload.seat, payload.action); }
-function onStart({payload}){ if(NET.isHost) return; NET.seats=payload.seats; NET.started=true; gameOverShown=false;
-  const me=NET.seats.find(s=>s.clientId===NET.clientId); NET.mySeat=me?me.seat:null;
-  botSpeed=+$("#speed").value; $("#roomPill").style.display="inline-block";
-  if(NET.mySeat===null){ showScreen("lobby"); toast("Partie en cours — attends la prochaine."); return; } showScreen("table"); }
+function onStart({payload}){ if(NET.isHost) return; NET.seats=payload.seats; NET.started=true; gameOverShown=false; const me=NET.seats.find(s=>s.clientId===NET.clientId); NET.mySeat=me?me.seat:null; botSpeed=+$("#speed").value; $("#roomPill").style.display="inline-block"; if(NET.mySeat===null){ showScreen("lobby"); toast("Partie en cours — attends la prochaine."); return; } showScreen("table"); }
 function onState({payload}){ if(NET.isHost) return; NET.seats=payload.seats; const v=payload.views[NET.mySeat]; if(v){ VIEW=v; render(); if(VIEW.over) onGameOver(); } }
 
-/* ===================== LEGAL MAP ===================== */
+/* LEGAL */
 function legalMap(){
   const acts=(VIEW&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat&&VIEW.legal)?VIEW.legal:[];
   const buy=new Set(),hand={},den=[],steal=[]; let canRecycle=false,canEnd=false;
@@ -480,34 +435,32 @@ function legalMap(){
   return {buy,hand,den,steal,canRecycle,canEnd};
 }
 function push(o,k,v){ (o[k]=o[k]||[]).push(v); }
-function softWith(bloc,owned){ for(const[a,b]of CN.SOFT){ if(bloc===a&&owned.includes(b))return b; if(bloc===b&&owned.includes(a))return a; } return null; }
-function hardWith(bloc,owned){ for(const[a,b]of CN.HARD){ if(bloc===a&&owned.includes(b))return b; if(bloc===b&&owned.includes(a))return a; } return null; }
-function myMise(){ const me=VIEW.players.find(p=>p.id===NET.mySeat); return (me.role&&me.role.partyId==="vague")?1:2; }
+function incompatWith(bloc,owned){ for(const[a,b]of CN.INCOMPAT){ if(bloc===a&&owned.includes(b))return b; if(bloc===b&&owned.includes(a))return a; } return null; }
 
-/* ===================== RENDER ===================== */
+/* RENDER */
 function render(){
   if(!VIEW||NET.mySeat===null) return;
   const me=VIEW.players.find(p=>p.id===NET.mySeat); if(!me) return;
   const myTurn=!VIEW.over&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat;
   const L=legalMap();
+  // décision en attente pour moi (dette de dénonciation OU vol à subir)
+  if(VIEW.pending&&VIEW.pending.playerId===NET.mySeat){
+    if(VIEW.pending.kind==="debt"&&modalMode!=="paydebt") openPayDebt();
+    else if(VIEW.pending.kind==="cede"&&modalMode!=="cede") openCede();
+  }
 
-  // dette en attente pour moi -> modal de paiement
-  if(VIEW.pending&&VIEW.pending.playerId===NET.mySeat){ if(modalMode!=="paydebt") openPayDebt(); }
-
-  $("#meta").innerHTML=`Manche <b>${VIEW.turn}</b>/${VIEW.guardrail} · Objectif <b>${VIEW.X} voix</b> · Combines <b>${VIEW.deckCount}</b> · Votants restants <b>${VIEW.votantsLeft}</b>`;
+  $("#meta").innerHTML=`Manche <b>${VIEW.turn}</b> · Objectif <b>${VIEW.X} voix</b> · Combines <b>${VIEW.deckCount}</b> · Votants restants <b>${VIEW.votantsLeft}</b>`;
   if(NET.online) $("#roomPill").textContent="Table "+NET.room;
 
   const tb=$("#turnbar");
   if(VIEW.over){ tb.className="turnbar"; tb.textContent="Partie terminée."; }
-  else if(VIEW.pending){ tb.className="turnbar final"; tb.textContent="⚖️ "+seatName(VIEW.pending.playerId)+" doit rendre des votants (scandale)…"; }
+  else if(VIEW.pending){ tb.className="turnbar final"; tb.textContent=(VIEW.pending.kind==="cede"?"🎯 ":"⚖️ ")+seatName(VIEW.pending.playerId)+(VIEW.pending.kind==="cede"?" doit céder un électeur…":" doit rendre des votants…"); }
   else if(myTurn){ tb.className="turnbar mine"; tb.textContent=VIEW.finalRound?"🏁 Manche finale — à toi de jouer !":"🎯 À toi de jouer !"; }
   else { tb.className="turnbar"+(VIEW.finalRound?" final":""); tb.textContent=(VIEW.finalRound?"🏁 Manche finale — ":"⏳ ")+"au tour de "+seatName(VIEW.currentPlayerId); }
 
-  /* opponents */
   const opp=$("#opponents"); opp.innerHTML="";
   VIEW.players.filter(p=>p.id!==NET.mySeat).forEach(p=>{
-    const acting=!VIEW.over&&VIEW.currentPlayerId===p.id;
-    const inDebt=VIEW.pending&&VIEW.pending.playerId===p.id;
+    const acting=!VIEW.over&&VIEW.currentPlayerId===p.id; const inDebt=VIEW.pending&&VIEW.pending.playerId===p.id;
     const d=document.createElement("div"); d.className="opp"+(acting?" turn":"")+(inDebt?" debt":"");
     d.innerHTML=`<div class="ohead"><span class="dot" style="background:${seatColor(p.id)}"></span>
         <div><div class="onm">${esc(seatName(p.id))}</div><div class="osub">${p.handCount} cartes en main</div></div></div>
@@ -516,40 +469,34 @@ function render(){
       ${p.coalitions.length?`<div>${p.coalitions.map(f=>`<span class="coachip">🔒 ${f}</span>`).join(" ")}</div>`:""}
       <div class="votstrip">${votstripHTML(p)}</div>
       <div class="handbacks">${"<div class='cback'></div>".repeat(Math.min(p.handCount,7))}</div>
-      <div class="nowp">${inDebt?"⚖️ rend des votants…":acting?"▶ en train de jouer…":""}</div>`;
+      <div class="nowp">${inDebt?"⚠️ subit une attaque…":acting?"▶ en train de jouer…":""}</div>`;
     opp.appendChild(d);
   });
 
   setDeck("deckCombines",VIEW.deckCount); setDeck("deckDiscard",VIEW.discardCount); setDeck("deckVotants",VIEW.votantsLeft);
 
-  /* track */
   const track=$("#track"); track.innerHTML="";
   for(let i=0;i<=VIEW.X;i++){ const cell=document.createElement("div"); cell.className="cell"+(i===VIEW.X?" goal":""); let mp="";
     VIEW.players.forEach(p=>{ if(Math.min(p.voix,VIEW.X)===i) mp+=`<div class="meeple${p.id===NET.mySeat?" me":""}" style="background:${seatColor(p.id)}" title="${esc(seatName(p.id))} (${p.voix})"></div>`; });
     cell.innerHTML=`<span class="num">${i}</span><div class="meeples">${mp}</div>`; track.appendChild(cell); }
 
-  /* market */
   const mk=$("#market"); mk.innerHTML="";
   VIEW.market.forEach((c,i)=>{
-    const ban=(me.role&&(CN.PARTIES.find(x=>x.id===me.role.partyId)||{}).ban)===c.bloc;
-    const hard=hardWith(c.bloc,me.blocs), soft=softWith(c.bloc,me.blocs);
+    const forb=c.family===me.forbiddenFamily; const inc=incompatWith(c.bloc,me.blocs);
     const canBuy=myTurn&&L.buy.has(i);
     const d=document.createElement("div"); d.className="vcard"+(canBuy?" buy":"")+(myTurn&&!canBuy?" dis":"");
-    let warn=ban?`<span style="color:var(--red)">✗ interdit pour toi</span>`:hard?`<span style="color:var(--red)">✗ incompatible (${hard})</span>`:soft?`<span style="color:var(--gold-d)">−1 : bancal (${soft})</span>`:"";
-    d.innerHTML=`<div class="tier">${c.tier}</div><div class="vt">${c.nom}</div><div class="vb">${c.bloc}</div>
-      <div class="vfam">${c.family?("👥 "+c.family):"— indépendant"}</div><div class="vwarn">${warn}</div>
-      <div class="vfoot"><span class="cost">${c.cost} M€</span><span class="vx">${c.voix}<span style="font-size:10px"> v</span></span></div>`;
+    let warn=forb?`<span style="color:var(--red)">⛔ ta famille interdite</span>`:inc?`<span style="color:var(--red)">✗ exclut ${blocName(inc)}</span>`:"";
+    d.innerHTML=`<div class="tier">${c.tier}</div><div class="vt">${c.nom}</div><div class="vfam">👥 ${c.family}</div>
+      <div class="vwarn">${warn}</div><div class="vfoot"><span class="cost">${c.cost} M€</span><span class="vx">${c.voix}<span style="font-size:10px"> v</span></span></div>`;
     if(canBuy) d.onclick=()=>submit({type:"BUY_VOTANT",marketIndex:i});
     mk.appendChild(d);
   });
 
   $("#log").innerHTML=VIEW.log.slice(0,80).map(e=>`<div class="${e.tag||""}">${esc(e.msg)}</div>`).join("");
 
-  /* my area */
   $("#me").className=myTurn?"":"notmine";
-  $("#myMoney").textContent=me.money; $("#myVoix").textContent=me.voix;
-  $("#myName").textContent=me.name+" (toi)";
-  if(me.role) $("#myRole").innerHTML=`<span class="pw">⚡ ${esc(me.role.party)}</span> · ${esc(PARTY_BONUS[me.role.partyId]||"")}<br><span class="obj">🎯 Objectif secret :</span> ${esc(me.role.objectiveDesc)} (+3)`;
+  $("#myMoney").textContent=me.money; $("#myVoix").textContent=me.voix; $("#myName").textContent=me.name+" (toi)";
+  if(me.forbiddenFamily) $("#myRole").innerHTML=`<span class="party">🎭 ${esc(me.partyName||"")}</span> · <span class="forb">⛔ interdit : ${esc(me.forbiddenFamily)}</span>`;
   const pips=$("#actpips");
   if(myTurn){ let h=`<span class="osub" style="margin-right:4px">Actions :</span>`; for(let k=0;k<CN.CONFIG.actions;k++) h+=`<span class="pip${k<VIEW.actionsLeft?" on":""}"></span>`; pips.innerHTML=h; }
   else pips.innerHTML=`<span class="osub">${VIEW.over?"Partie terminée":VIEW.pending?"scandale en cours…":"…patiente"}</span>`;
@@ -562,48 +509,48 @@ function render(){
     const d=document.createElement("div"); d.className="hcard k-"+card.kind+(ok?" play":(myTurn?" dis":""));
     d.innerHTML=`<div class="hn">${card.nom}</div>${cardTag(card)}<div class="hd">${cardDesc(card)}</div>`;
     if(ok) d.onclick=()=>playCard(i,card,L); hand.appendChild(d); });
-  $("#handHint").textContent=VIEW.pending?"scandale : règle d'abord ta dette":myTurn?(VIEW.actionsLeft>0?"joue une carte ou achète un votant":"plus d'action — termine ton tour"):"ce n'est pas ton tour";
+  $("#handHint").textContent=VIEW.pending?"réaction en cours…":myTurn?(VIEW.actionsLeft>0?"joue une carte ou achète un votant":"plus d'action — termine ton tour"):"ce n'est pas ton tour";
   $("#recycleBtn").disabled=!(myTurn&&L.canRecycle); $("#endBtn").disabled=!(myTurn&&L.canEnd);
 }
-
+function blocName(bloc){ const v=CN.VOTANTS.find(x=>x.bloc===bloc); return v?v.nom:bloc; }
 function setDeck(id,n){ const d=$("#"+id); d.classList.toggle("empty",n===0); d.querySelector(".cnt").textContent=n; }
 function frontsHTML(p){ return CN.FRONTS.map(fr=>{ const prot=p.protect.includes(fr), n=p.financCount[fr];
-  const backs=prot?"":"<div class='fback'></div>".repeat(Math.min(n,5));
-  return `<div class="front ${prot?"prot":""}">${fr.slice(0,4)}${prot?" 🛡":""}<div class="fbacks">${prot?"protégé":(backs||"—")}</div></div>`; }).join(""); }
+  const backs=prot?"protégé":("<div class='fback'></div>".repeat(Math.min(n,5))||"—");
+  return `<div class="front ${prot?"prot":""}">${fr.slice(0,4)}${prot?" 🛡":""}<div class="fbacks">${backs}</div></div>`; }).join(""); }
 function votstripHTML(p){ if(!p.votants.length) return `<span class="osub">—</span>`; return p.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒":""}${v.nom}</span>`).join(""); }
 function myCaserHTML(me){ return CN.FRONTS.map(fr=>{ const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
-  const pile=cards.map(c=>`<div class="fcard ${c.clean?"clean":"sale"}">${c.amount}</div>`).join("")||"<span class='osub' style='font-size:9px'>vide</span>";
-  const sale=cards.reduce((a,c)=>a+(c.clean?0:c.amount),0);
+  const pile=cards.map((c,i)=>`<div class="fcard ${c.clean?"clean":"sale"}${i===cards.length-1?" top":""}">${c.clean?"propre":"⚠"} ${c.amount}</div>`).join("")||"<span class='osub' style='font-size:9px'>vide</span>";
+  const topDirty=cards.length&&!cards[cards.length-1].clean;
   return `<div class="cslot ${prot?"prot":""}"><span class="tag ${frontClass[fr]}">${fr}</span>
     <div class="pile">${pile}</div>
-    <div class="expo">${prot?"🛡 protégé":sale>0?`⚠️ ${sale} M€ exposés`:"✓ sûr"}</div></div>`; }).join(""); }
+    <div class="expo">${prot?"🛡 protégé":topDirty?"⭐ dessus SALE (risqué)":cards.length?"⭐ dessus propre":"✓ sûr"}</div></div>`; }).join(""); }
 
 function cardTag(c){
   if(c.kind==="cor") return `<div class="ht"><span class="tag ${frontClass[c.front]}">Corruption · ${c.front} · +${c.gain}M€</span></div>`;
   if(c.kind==="clean") return `<div class="ht"><span class="tag t-clean">Propre · +${c.gain}M€ · sûr</span></div>`;
-  if(c.kind==="den") return `<div class="ht"><span class="tag" style="color:var(--red);border-color:#f4ccc3;background:#fdeeeb">Dénoncer · pari · ${myMise()}M€</span></div>`;
+  if(c.kind==="den") return `<div class="ht"><span class="tag" style="color:var(--red);border-color:#f4ccc3;background:#fdeeeb">Dénoncer · pari · 2M€</span></div>`;
   if(c.kind==="pro") return `<div class="ht"><span class="tag ${frontClass[c.front]}">Protéger ${c.front} · 5M€</span></div>`;
   if(c.kind==="bla") return `<div class="ht"><span class="tag">Blanchir · 3M€</span></div>`;
-  if(c.kind==="steal") return `<div class="ht"><span class="tag" style="color:var(--purple);border-color:#dcc9ee;background:#f5eefc">${c.e==="opa"?"OPA · 4M€":"Débauchage · 2M€"}</span></div>`;
+  if(c.kind==="steal") return `<div class="ht"><span class="tag" style="color:var(--purple);border-color:#dcc9ee;background:#f5eefc">${c.e==="opa"?"OPA électorale":"Débauchage"}</span></div>`;
   if(c.e==="element") return `<div class="ht"><span class="tag" style="color:var(--blue);border-color:#c5d8f4;background:#eef4fc">Réaction (auto)</span></div>`;
   return `<div class="ht"><span class="tag">Coup tactique</span></div>`;
 }
 function cardDesc(c){
-  if(c.kind==="cor") return `+${c.gain} M€ (face cachée sur ${c.front}). Si on te dénonce sur ${c.front}, tu recraches ${c.gain} M€.`;
-  if(c.kind==="clean") return `+${c.gain} M€ sûr, jamais dénonçable. Posé face cachée sur un front-leurre au choix.`;
-  if(c.kind==="den") return `PARI : un rival + un front. Touché → il perd l'argent sale du front. Raté → −mise + 3 M€ d'amende à la cible.`;
+  if(c.kind==="cor") return `+${c.gain} M€ (face cachée sur ${c.front}). Si on révèle CETTE carte en te dénonçant, tu recraches ${c.gain} M€.`;
+  if(c.kind==="clean") return `+${c.gain} M€ sûr, jamais dénonçable. Pose-la sur un front pour l'empiler en LEURRE et protéger le sale en dessous.`;
+  if(c.kind==="den") return `PARI : un rival + un front. On révèle la carte du DESSUS. Sale → il paie. Leurre/vide → −2 M€ + 3 d'amende à la cible.`;
   if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate.`;
   if(c.kind==="bla") return `Rends une de tes cartes sales propre (plus dénonçable).`;
-  if(c.kind==="steal") return c.e==="opa"?`Vole 3 voix (−3/+3) sur un bloc ISOLÉ d'un rival.`:`Vole 2 voix (−2/+2) sur un bloc ISOLÉ d'un rival.`;
+  if(c.kind==="steal") return c.e==="opa"?`OPA : la victime te cède un de ses meilleurs blocs isolés (voix + famille).`:`Débauchage : la victime te cède un bloc isolé de son choix (voix + famille).`;
   if(c.e==="remise") return `Ton prochain votant coûte 3 M€ de moins.`;
-  if(c.e==="incoherence") return `Prends un bloc incompatible sans perte (+1 carte sale Presse).`;
+  if(c.e==="incoherence") return `Prends un bloc incompatible sans blocage (+1 carte sale Presse).`;
   if(c.e==="promesse") return `+3 voix tout de suite (+1 carte sale Presse).`;
   if(c.e==="element") return `Auto en réaction : annule une dénonciation contre toi. Garde-la !`;
   if(c.e==="renvoi") return `+3 M€ et pioche 1 carte.`;
   return "";
 }
 
-/* ===================== JOUER UNE CARTE ===================== */
+/* JOUER UNE CARTE */
 function playCard(i,card,L){
   if(card.kind==="den"){ openDenounce(i,L); return; }
   if(card.kind==="steal"){ openSteal(i,L); return; }
@@ -611,37 +558,31 @@ function playCard(i,card,L){
   submit({type: card.kind==="cor"?"PLAY_FINANCE":card.kind==="pro"?"PLAY_PROTECT":card.kind==="bla"?"PLAY_BLANCH":"PLAY_COUP", handIndex:i});
 }
 function openDenounce(handIdx,L){
-  const opts=L.den.filter(a=>a.handIndex===handIdx);
-  if(!opts.length){ toast("Aucune cible dénonçable."); return; }
+  const opts=L.den.filter(a=>a.handIndex===handIdx); if(!opts.length){ toast("Aucune cible dénonçable."); return; }
   modalMode="denounce";
-  let h=`<h2>🔥 Dénoncer — c'est un PARI</h2><p class="muted">Tu ne vois que le <b>nombre de cartes cachées</b> par front (propre ou sale ?). Touché : la cible recrache l'argent sale. Raté : tu perds ta mise + 3 M€ d'amende à la cible.</p><div class="choices">`;
+  let h=`<h2>🔥 Dénoncer — pari sur UNE carte</h2><p class="muted">On révèle la <b>carte du dessus</b> de la pile choisie. Sale → la cible recrache son montant. Leurre propre / vide → tu perds ta mise + 3 M€ d'amende. Tu vois la hauteur des piles, pas leur contenu.</p><div class="choices">`;
   opts.forEach(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId); const n=t.financCount[a.front];
-    h+=`<div class="choice" onclick="confirmDenounce(${handIdx},${a.targetId},'${a.front}')"><b>${esc(seatName(a.targetId))}</b> — ${t.voix} voix · <span class="tag ${frontClass[a.front]}">${a.front}</span> <span class="muted">(${n} carte${n>1?"s":""} cachée${n>1?"s":""})</span></div>`; });
+    h+=`<div class="choice" onclick="confirmDenounce(${handIdx},${a.targetId},'${a.front}')"><b>${esc(seatName(a.targetId))}</b> — ${t.voix} voix · <span class="tag ${frontClass[a.front]}">${a.front}</span> <span class="muted">(pile de ${n})</span></div>`; });
   h+=`</div><div style="margin-top:10px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`; showModal(h);
 }
 function confirmDenounce(handIdx,targetId,front){ hideModal(); submit({type:"PLAY_DENOUNCE",handIndex:handIdx,targetId,front}); }
-
 function openSteal(handIdx,L){
-  const opts=L.steal.filter(a=>a.handIndex===handIdx);
-  if(!opts.length){ toast("Aucun bloc isolé à voler (coalitions involables)."); return; }
+  const opts=L.steal.filter(a=>a.handIndex===handIdx); if(!opts.length){ toast("Aucune cible (pas de bloc isolé cédable)."); return; }
   modalMode="steal";
-  let h=`<h2>🎯 Voler des voix</h2><p class="muted">Cible un <b>bloc isolé</b> (hors coalition complète). Les coalitions complètes sont involables.</p><div class="choices">`;
-  opts.forEach(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId);
-    h+=`<div class="choice" onclick="confirmSteal(${handIdx},${a.targetId},'${esc(a.blocCible)}')"><b>${esc(seatName(a.targetId))}</b> — ${t.voix} voix · bloc <b>${esc(a.blocCible)}</b></div>`; });
+  let h=`<h2>🎯 Voler un électeur</h2><p class="muted">Choisis ta cible : <b>c'est elle qui décidera</b> quel bloc isolé (hors coalition complète) te céder. Le bloc passe dans ta zone.</p><div class="choices">`;
+  opts.forEach(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId); h+=`<div class="choice" onclick="confirmSteal(${handIdx},${a.targetId})"><b>${esc(seatName(a.targetId))}</b> — ${t.voix} voix</div>`; });
   h+=`</div><div style="margin-top:10px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`; showModal(h);
 }
-function confirmSteal(handIdx,targetId,bloc){ hideModal(); submit({type:"PLAY_STEAL",handIndex:handIdx,targetId,blocCible:bloc}); }
-
+function confirmSteal(handIdx,targetId){ hideModal(); submit({type:"PLAY_STEAL",handIndex:handIdx,targetId}); }
 function openCleanFront(handIdx){
-  modalMode="clean";
-  const me=VIEW.players.find(p=>p.id===NET.mySeat);
-  let h=`<h2>🃏 Financement propre — pose un leurre</h2><p class="muted">Cet argent est sûr. Choisis sur quel front le poser <b>face cachée</b> (personne ne saura si c'est propre ou sale). Astuce : pose-le où tu as déjà du sale pour brouiller.</p><div class="fronttabs">`;
-  CN.FRONTS.forEach(fr=>{ const n=me.financCount[fr]; h+=`<div class="fronttab" onclick="confirmClean(${handIdx},'${fr}')"><span class="tag ${frontClass[fr]}">${fr}</span><div class="muted" style="margin-top:6px;font-size:11px">${n} carte${n>1?"s":""}</div></div>`; });
+  modalMode="clean"; const me=VIEW.players.find(p=>p.id===NET.mySeat);
+  let h=`<h2>🃏 Financement propre — pose un leurre</h2><p class="muted">Argent sûr. Pose-le <b>au-dessus</b> d'un front : il devient la carte du dessus et <b>protège le sale en dessous</b> (une dénonciation ne révélera que ce leurre).</p><div class="fronttabs">`;
+  CN.FRONTS.forEach(fr=>{ const n=me.financCount[fr]; h+=`<div class="fronttab" onclick="confirmClean(${handIdx},'${fr}')"><span class="tag ${frontClass[fr]}">${fr}</span><div class="muted" style="margin-top:6px;font-size:11px">pile de ${n}</div></div>`; });
   h+=`</div><div style="margin-top:14px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`; showModal(h);
 }
 function confirmClean(handIdx,front){ hideModal(); submit({type:"PLAY_FINANCE_CLEAN",handIndex:handIdx,front}); }
 
-/* ===================== RECYCLER ===================== */
+/* RECYCLER */
 let recSel=[];
 function openRecycle(){
   if(!VIEW||VIEW.pending||VIEW.currentPlayerId!==NET.mySeat) return; const me=VIEW.players.find(p=>p.id===NET.mySeat); recSel=[]; modalMode="recycle";
@@ -654,45 +595,51 @@ function renderRecList(){ const me=VIEW.players.find(p=>p.id===NET.mySeat); cons
     d.onclick=()=>{ if(sel)recSel=recSel.filter(x=>x!==i); else if(recSel.length<2)recSel.push(i); renderRecList(); }; c.appendChild(d); }); }
 function confirmRecycle(){ if(!recSel.length){ hideModal(); return; } hideModal(); submit({type:"RECYCLE",handIndexes:recSel.slice()}); }
 
-/* ===================== PAYER LA DETTE (dénoncé) ===================== */
+/* PAYER LA DETTE (dénoncé) */
 let payDebtSel=[];
-function openPayDebt(){
-  modalMode="paydebt"; payDebtSel=[]; renderPayDebt();
-}
+function openPayDebt(){ modalMode="paydebt"; payDebtSel=[]; renderPayDebt(); }
 function renderPayDebt(){
   const me=VIEW.players.find(p=>p.id===NET.mySeat); if(!me||!VIEW.pending){ hideModal(); return; }
-  const need=VIEW.pending.voixNeeded;
-  const sel=payDebtSel.reduce((a,i)=>a+(me.votants[i]?me.votants[i].voix:0),0);
-  let h=`<h2>⚖️ Scandale ! Rends des votants</h2><p class="muted">Tu ne peux pas tout payer en argent. Choisis les votants à rendre (ils retournent au marché). Il te faut couvrir <b>${need} voix</b> — perds-en le moins possible !</p><div class="choices">`;
-  me.votants.forEach((v,i)=>{ const s=payDebtSel.includes(i);
-    h+=`<div class="choice${s?" sel":""}" onclick="togglePay(${i})">${s?"☑":"☐"} <b>${v.fidele?"🔒 ":""}${esc(v.nom)}</b> — ${v.voix} voix${v.fidele?' <span class="muted">(coalition)</span>':""}</div>`; });
+  const need=VIEW.pending.voixNeeded; const sel=payDebtSel.reduce((a,i)=>a+(me.votants[i]?me.votants[i].voix:0),0);
+  let h=`<h2>⚖️ Scandale ! Rends des votants</h2><p class="muted">Tu ne peux pas tout payer en argent. Choisis les votants à rendre (ils retournent au marché). Couvre <b>${need} voix</b> — perds-en le moins possible !</p><div class="choices">`;
+  me.votants.forEach((v,i)=>{ const s=payDebtSel.includes(i); h+=`<div class="choice${s?" sel":""}" onclick="togglePay(${i})">${s?"☑":"☐"} <b>${v.fidele?"🔒 ":""}${esc(v.nom)}</b> — ${v.voix} voix</div>`; });
   h+=`</div><p style="margin-top:10px;font-weight:800;color:${sel>=need?"var(--money)":"var(--red)"}">Sélectionné : ${sel} / ${need} voix</p>
     <div style="margin-top:8px"><button class="btn primary" onclick="confirmPayDebt()" ${sel>=need||me.votants.length===payDebtSel.length?"":"disabled"}>Rendre ces votants</button></div>`;
   const m=$("#modal"); m.className="modal debt"; m.innerHTML=h; $("#overlay").style.display="flex";
 }
 function togglePay(i){ if(payDebtSel.includes(i)) payDebtSel=payDebtSel.filter(x=>x!==i); else payDebtSel.push(i); renderPayDebt(); }
-function confirmPayDebt(){ const idx=payDebtSel.slice(); modalMode=null; $("#modal").className="modal"; hideModal(); submitPending({type:"PAY_DEBT",votantIndexes:idx}); }
+function confirmPayDebt(){ const idx=payDebtSel.slice(); modalMode=null; hideModal(); submitPending({type:"PAY_DEBT",votantIndexes:idx}); }
 
-/* ===================== FIN ===================== */
+/* CÉDER UN BLOC (victime d'un vol) */
+function openCede(){
+  modalMode="cede"; const me=VIEW.players.find(p=>p.id===NET.mySeat);
+  const opts=(VIEW.legal||[]).filter(a=>a.type==="CEDE_BLOC");
+  const attacker=VIEW.pending?seatName(VIEW.pending.attackerId):"?"; const opa=VIEW.pending&&VIEW.pending.mode==="opa";
+  let h=`<h2>🎯 On te débauche un électeur !</h2><p class="muted">${esc(attacker)} lance ${opa?"une <b>OPA</b> (tes meilleurs blocs)":"un <b>débauchage</b>"}. Choisis quel bloc <b>isolé</b> tu cèdes (il part avec ses voix chez l'attaquant).</p><div class="choices">`;
+  opts.forEach(a=>{ const v=me.votants.find(x=>x.bloc===a.bloc); h+=`<div class="choice" onclick="confirmCede('${esc(a.bloc)}')"><b>${esc(v?v.nom:a.bloc)}</b> — ${v?v.voix:"?"} voix</div>`; });
+  h+=`</div>`;
+  const m=$("#modal"); m.className="modal debt"; m.innerHTML=h; $("#overlay").style.display="flex";
+}
+function confirmCede(bloc){ modalMode=null; hideModal(); submitPending({type:"CEDE_BLOC",bloc}); }
+
+/* FIN */
 function onGameOver(){
   if(gameOverShown) return; gameOverShown=true; modalMode=null;
-  const mine=VIEW.winner===NET.mySeat;
-  const ranked=VIEW.players.slice().sort((a,b)=>b.finalScore-a.finalScore);
+  const mine=VIEW.winner===NET.mySeat; const ranked=VIEW.players.slice().sort((a,b)=>b.finalScore-a.finalScore);
   let h=`<h2>${mine?"🏆 Tu remportes l'élection !":"🗳️ "+esc(seatName(VIEW.winner))+" l'emporte"}</h2>
-    <p class="muted" style="margin-top:4px">${VIEW.endReason==="seuil"?"Le plus de voix en fin de manche finale.":"Fin au garde-fou — décompte des voix."} Rôles révélés :</p>
-    <table class="reveal"><tr><th>Joueur</th><th>Score</th><th>Parti</th><th>Objectif secret</th></tr>`;
-  ranked.forEach(p=>{ h+=`<tr class="${p.id===VIEW.winner?"win":""}"><td>${esc(seatName(p.id))}</td><td><b>${p.finalScore}</b> <span class="muted">(${p.voix}${p.objectiveMet?"+3":""})</span></td><td>${esc(p.role?p.role.party:"?")}</td><td>${p.objectiveMet?"✅ ":"❌ "}${esc(p.role?p.role.objective:"?")}</td></tr>`; });
+    <p class="muted" style="margin-top:4px">${VIEW.endReason==="seuil"?"Le plus de voix en fin de manche finale.":"Fin au garde-fou — décompte des voix."} Familles interdites révélées :</p>
+    <table class="reveal"><tr><th>Joueur</th><th>Voix</th><th>Parti</th><th>Famille interdite</th></tr>`;
+  ranked.forEach(p=>{ h+=`<tr class="${p.id===VIEW.winner?"win":""}"><td>${esc(seatName(p.id))}</td><td><b>${p.finalScore}</b></td><td>${esc(p.partyName||"?")}</td><td>⛔ ${esc(p.forbiddenFamily||"?")}</td></tr>`; });
   h+=`</table><div class="choices" style="margin-top:14px">`;
-  if(NET.isHost) h+=`<div class="choice" onclick="hideModal();rematch()">↺ Relancer une partie</div>`;
-  else h+=`<div class="muted">En attente de l'hôte pour relancer…</div>`;
+  if(NET.isHost) h+=`<div class="choice" onclick="hideModal();rematch()">↺ Relancer une partie</div>`; else h+=`<div class="muted">En attente de l'hôte pour relancer…</div>`;
   h+=`<div class="choice" onclick="hideModal();leaveTable()">← Quitter la table</div></div>`;
   showModal(h);
 }
 function rematch(){ if(!NET.isHost) return; if(NET.online) hostStart(); else startSolo(); }
 
-/* ===================== UTILS ===================== */
+/* UTILS */
 function showModal(h){ const m=$("#modal"); m.className="modal"; m.innerHTML=h; $("#overlay").style.display="flex"; }
-function hideModal(){ $("#overlay").style.display="none"; if(modalMode!=="paydebt") modalMode=null; }
+function hideModal(){ $("#overlay").style.display="none"; if(modalMode!=="paydebt"&&modalMode!=="cede") modalMode=null; }
 let toastT=null;
 function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2200); }
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }

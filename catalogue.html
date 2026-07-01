@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caisse Noire — Catalogue &amp; équilibrage (v0.6)</title>
+<title>Caisse Noire — Catalogue &amp; équilibrage (v0.7)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@ body{margin:0;color:var(--ink);font:15px/1.55 "Nunito",system-ui,sans-serif;back
 h1,h2,h3{font-family:"Fredoka",sans-serif;margin:0;font-weight:600}
 header{padding:22px;text-align:center}
 header h1{font-size:32px}
-header p{color:var(--muted);max-width:820px;margin:8px auto 0;font-size:13.5px}
+header p{color:var(--muted);max-width:840px;margin:8px auto 0;font-size:13.5px}
 header a{color:var(--gold-d);font-weight:800}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px 40px}
 .filterbar{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin:6px 0 18px;position:sticky;top:0;background:linear-gradient(180deg,#f8f2e6,#f8f2e6 70%,transparent);padding:12px 0;z-index:5}
@@ -28,17 +28,17 @@ header a{color:var(--gold-d);font-weight:800}
 .chip.active{background:linear-gradient(180deg,#f0b53d,var(--gold));color:#3a2a06;border-color:var(--gold-d)}
 .sec-title{margin:26px 0 2px;font-size:22px}
 .sec-sub{color:var(--muted);font-size:13px;margin:0 0 14px;max-width:900px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(184px,1fr));gap:12px}
-.card{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);min-height:112px;border-top:4px solid var(--line2)}
+.famhead{font-family:Fredoka;font-weight:700;color:var(--gold-d);margin:18px 0 6px;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:11px}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);min-height:104px;border-top:4px solid var(--line2)}
 .card .nom{font-weight:800;font-size:14px;line-height:1.15;font-family:"Fredoka"}
 .card .desc{font-size:11.5px;color:var(--muted);margin-top:7px;line-height:1.4;flex:1;font-weight:600}
 .card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:9px;font-size:12px}
 .tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10.5px;font-weight:800;border:1.5px solid var(--line2);color:var(--muted);background:var(--surface2);margin-top:5px;align-self:flex-start}
 .t-justice{color:var(--justice);border-color:#c5d8f4;background:#eef4fc}.t-presse{color:var(--presse);border-color:#f3ddc2;background:#fdf3e6}.t-finances{color:var(--finances);border-color:#bfe5d1;background:#e9f7f0}
 .cout{color:var(--gold-d);font-weight:800}.voix{color:var(--money);font-weight:800}.malus{color:var(--red);font-weight:800}
-.fam{font-size:10.5px;color:var(--gold-d);font-weight:800;margin-top:2px}
 .card.votant{border-top-color:var(--money)}.card.sale{border-top-color:var(--red)}.card.propre{border-top-color:var(--money)}
-.card.att{border-top-color:var(--purple)}.card.def{border-top-color:var(--blue)}.card.coup{border-top-color:var(--gold)}.card.role{border-top-color:var(--gold)}
+.card.att{border-top-color:var(--purple)}.card.def{border-top-color:var(--blue)}.card.coup{border-top-color:var(--gold)}.card.fam{border-top-color:var(--gold)}
 .panel{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow-sm);margin-top:8px}
 .btn{background:linear-gradient(180deg,#f0b53d,var(--gold));color:#3a2a06;border:1.5px solid var(--gold-d);padding:10px 18px;border-radius:999px;cursor:pointer;font-weight:800;font-size:14px}
 select{background:var(--surface);border:1.5px solid var(--line2);border-radius:10px;padding:7px 10px;font:inherit}
@@ -46,110 +46,90 @@ table.bal{border-collapse:collapse;width:100%;font-size:13.5px;margin-top:12px}
 table.bal th,table.bal td{border:1px solid var(--line);padding:8px 10px;text-align:left}
 table.bal th{background:var(--surface2);color:var(--gold-d);font-family:Fredoka}
 .kpi{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:8px}
-.kpi div b{display:block;font-size:24px;color:var(--gold-d);font-family:Fredoka}
-.kpi div span{font-size:12px;color:var(--muted)}
+.kpi div b{display:block;font-size:24px;color:var(--gold-d);font-family:Fredoka}.kpi div span{font-size:12px;color:var(--muted)}
+.pairs{display:flex;flex-wrap:wrap;gap:8px}
+.pair{background:var(--surface);border:1.5px solid #f0c0b5;color:var(--red);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:700}
 </style>
 </head>
 <body>
 <header>
-  <h1>🗳️ Caisse Noire — Catalogue <span style="color:var(--muted);font-size:15px">(v0.6 « corruption cachée »)</span></h1>
-  <p>Référence en lecture seule, générée depuis le moteur <code>src/engine.js</code>. Corruption <b>cachée</b> · dénonciation = <b>pari qui frappe l'argent</b> · voix lues sur les votants · rôles secrets. Seuil de victoire = <b>30</b> (2→6 joueurs). · <a href="index.html">▶ Jouer</a></p>
+  <h1>🗳️ Caisse Noire — Catalogue <span style="color:var(--muted);font-size:15px">(v0.7 « corruption cachée »)</span></h1>
+  <p>Généré depuis le moteur <code>src/engine.js</code>. Dénonciation = pari sur <b>une carte</b> (le dessus de la pile) · <b>famille interdite secrète</b> par joueur · débauchage/OPA = cartes (la victime cède un bloc) · <b>incompatibilités renforcées</b>. Seuil = <b>45 voix</b>. · <a href="index.html">▶ Jouer</a></p>
 </header>
-<div class="wrap">
-  <div class="filterbar" id="filter"></div>
-  <div id="body"></div>
-</div>
+<div class="wrap"><div class="filterbar" id="filter"></div><div id="body"></div></div>
 
 <script src="src/engine.js"></script>
 <script>
 const CN = window.CaisseNoire;
 const $ = s => document.querySelector(s);
 const frontClass = {Justice:"t-justice",Presse:"t-presse",Finances:"t-finances"};
-const TIER = {Petit:"Petit",Moyen:"Moyen",Gros:"Gros"};
-
-const SECTIONS = ["Tout","Votants","Corruption","Propre","Attaques","Défenses","Coups","Rôles & Objectifs","Équilibrage"];
+const blocName = b => { const v=CN.VOTANTS.find(x=>x.bloc===b); return v?v.nom:b; };
+const SECTIONS = ["Tout","Votants","Incompatibilités","Corruption","Propre","Attaques","Défenses","Coups","Partis","Équilibrage"];
 let cur = "Tout";
 function chips(){ const f=$("#filter"); f.innerHTML=""; SECTIONS.forEach(s=>{ const c=document.createElement("div"); c.className="chip"+(s===cur?" active":""); c.textContent=s; c.onclick=()=>{cur=s;chips();render();}; f.appendChild(c); }); }
-function sec(t,sub,h){ return `<h2 class="sec-title">${t}</h2><p class="sec-sub">${sub}</p><div class="grid">${h}</div>`; }
 const show = s => cur==="Tout"||cur===s;
 const combines = k => CN.COMBINES_DEF.filter(c=>c.kind===k);
-
-function votCard(v){ const fam=CN.FAMILIES[v.bloc]||"indépendant";
-  return `<div class="card votant"><div class="nom">${v.nom}</div><div class="fam">👥 ${fam}</div>
-    <div class="tag">${TIER[v.tier]||v.tier} · ${v.bloc}</div>
-    <div class="foot"><span class="cout">${v.cost} M€</span><span class="voix">${v.voix} voix</span></div></div>`; }
+function votCard(v){ return `<div class="card votant"><div class="nom">${v.nom}</div><div class="tag">${v.tier} · ${v.bloc}</div><div class="foot"><span class="cout">${v.cost} M€</span><span class="voix">${v.voix} voix</span></div></div>`; }
 
 function render(){
   let h="";
   if(show("Votants")){
-    let g=""; const byFam={};
-    CN.VOTANTS.forEach(v=>{ const f=CN.FAMILIES[v.bloc]||"Indépendants (sans synergie)"; (byFam[f]=byFam[f]||[]).push(v); });
-    Object.keys(CN.FAMILY_DEF).concat(["Indépendants (sans synergie)"]).forEach(f=>{ (byFam[f]||[]).forEach(v=>g+=votCard(v)); });
-    const pool=CN.VOTANTS.reduce((a,v)=>a+v.voix,0);
-    h+=sec(`Votants — ${CN.VOTANTS.length} blocs uniques (${pool} voix)`,
-      "Réunir <b>3 blocs d'une même famille</b> = coalition complète → <b>+3 voix</b> (puis +1/bloc). Une coalition complète est <b>fidèle → involable</b> (protégée du vol). Incompat. DURES : Intégristes✗LGBT · Patronat✗CGT (+ molles −1 voix).", g);
+    h+=`<h2 class="sec-title">Votants — 64 blocs uniques (8 familles × 8)</h2><p class="sec-sub">Réunir <b>3 blocs d'une même famille</b> = coalition complète → <b>+3 voix</b> (puis +1/bloc), et ces blocs deviennent <b>fidèles → involables</b> (protégés du vol). Chaque joueur a une <b>famille interdite secrète</b> qu'il ne peut jamais acheter.</p>`;
+    Object.keys(CN.FAMILY_DEF).forEach(fam=>{ const list=CN.VOTANTS.filter(v=>v.family===fam);
+      h+=`<div class="famhead">👥 ${fam} <span style="color:var(--muted);font-weight:600;font-size:12px">(${list.length})</span></div><div class="grid">${list.map(votCard).join("")}</div>`; });
+  }
+  if(show("Incompatibilités")){
+    h+=`<h2 class="sec-title">Incompatibilités exclusives (${CN.INCOMPAT.length} paires)</h2><p class="sec-sub">Tu ne peux <b>pas détenir les deux</b> blocs d'une paire (achat refusé). Ça t'oblige à choisir ta ligne et ralentit la course. <i>(Seule la carte « Incohérence » passe outre.)</i></p>
+      <div class="pairs">${CN.INCOMPAT.map(([a,b])=>`<span class="pair">${blocName(a)} ✗ ${blocName(b)}</span>`).join("")}</div>`;
   }
   if(show("Corruption")){
     let g=""; ["Justice","Presse","Finances"].forEach(fr=>{ combines("cor").filter(c=>c.front===fr).sort((a,b)=>a.gain-b.gain).forEach(c=>{
-      g+=`<div class="card sale"><div class="nom">${c.nom}</div><span class="tag ${frontClass[fr]}">SALE · ${fr}</span>
-        <div class="desc">Tu encaisses <b>+${c.gain} M€</b> (face cachée). Si on te dénonce sur ${fr} : tu <b>recraches ${c.gain} M€</b>.</div>
-        <div class="foot"><span class="voix">+${c.gain} M€</span><span class="malus">−${c.gain} si dénoncé</span></div></div>`; }); });
-    h+=sec("Corruption (SALE) — 3 fronts × 3/6/9",
-      "Jouée <b>face cachée</b> sur son front. Mêmes montants (3/6/9) sur chaque front → impossible de déduire le montant depuis le front. Montant gagné = montant perdu si dénoncé.", g);
+      g+=`<div class="card sale"><div class="nom">${c.nom}</div><span class="tag ${frontClass[fr]}">SALE · ${fr}</span><div class="desc">+<b>${c.gain} M€</b> face cachée. Si on révèle CETTE carte en te dénonçant : tu recraches ${c.gain} M€.</div><div class="foot"><span class="voix">+${c.gain} M€</span><span class="malus">−${c.gain} si révélée</span></div></div>`; }); });
+    h+=`<h2 class="sec-title">Corruption (SALE) — 3 fronts × 3/6/9</h2><p class="sec-sub">Posée <b>face cachée</b> sur son front (une pile ordonnée). La dénonciation ne révèle que la <b>carte du dessus</b> → empiler un leurre propre par-dessus protège le sale en dessous.</p><div class="grid">${g}</div>`;
   }
   if(show("Propre")){
-    let g=""; combines("clean").sort((a,b)=>a.gain-b.gain).forEach(c=>{
-      g+=`<div class="card propre"><div class="nom">${c.nom}</div><span class="tag t-finances">PROPRE · sûr</span>
-        <div class="desc">+${c.gain} M€, <b>jamais dénonçable</b>. Posée face cachée sur un front <b>au choix</b> = leurre pour brouiller tes piles.</div>
-        <div class="foot"><span class="voix">+${c.gain} M€</span><span style="color:var(--money);font-weight:800">aucun risque</span></div></div>`; });
-    h+=sec("Financement PROPRE — leurres (3 / 6)","Argent légal et sûr (plafonne à +6 ; le +9 est réservé au sale = prime du risque). Sert de leurre : face cachée, on ne distingue pas un don d'un pot-de-vin. Ratio ~2 sales pour 1 propre.", g);
+    let g=""; combines("clean").sort((a,b)=>a.gain-b.gain).forEach(c=>g+=`<div class="card propre"><div class="nom">${c.nom}</div><span class="tag t-finances">PROPRE · sûr</span><div class="desc">+${c.gain} M€, jamais dénonçable. Posée face cachée sur un front = <b>leurre</b> pour protéger tes cartes sales.</div><div class="foot"><span class="voix">+${c.gain} M€</span><span style="color:var(--money);font-weight:800">aucun risque</span></div></div>`);
+    h+=`<h2 class="sec-title">Financement PROPRE — leurres (3 / 6)</h2><p class="sec-sub">Argent sûr (plafonne à +6 ; le +9 est réservé au sale). Face cachée, on ne distingue pas un don d'un pot-de-vin. Ratio ~2 sales pour 1 propre.</p><div class="grid">${g}</div>`;
   }
   if(show("Attaques")){
-    const deb=combines("steal").find(c=>c.e==="debauchage"), opa=combines("steal").find(c=>c.e==="opa");
+    const deb=combines("steal").find(c=>c.e==="debauchage"), opa=combines("steal").find(c=>c.e==="opa"), den=combines("den")[0];
     const g=`
-      <div class="card att"><div class="nom">Dénonciation</div><span class="tag">Attaque · 2 M€</span><div class="desc"><b>PARI</b> : un rival + UN front. Touché → il perd le total sale du front (cash, sinon rend des votants → perd des voix, retour marché). Raté → tu perds ta mise + <b>3 M€ d'amende</b> à la cible.</div></div>
-      <div class="card att"><div class="nom">Débauchage ×${deb.n}</div><span class="tag">Attaque · 2 M€</span><div class="desc">Vol : cible un bloc <b>ISOLÉ</b> d'un rival → −2 voix pour lui, +2 pour toi.</div></div>
-      <div class="card att"><div class="nom">OPA électorale ×${opa.n}</div><span class="tag">Attaque · 4 M€</span><div class="desc">Vol fort : −3 voix pour la cible, +3 pour toi, sur un bloc isolé.</div></div>`;
-    h+=sec("Attaques","La dénonciation frappe l'ARGENT (un pari). Le vol transfère des VOIX. On ne subit qu'UNE attaque (dénonciation ou vol) par manche.", g);
+      <div class="card att"><div class="nom">Dénonciation ×${den.n}</div><span class="tag">Attaque · 2 M€</span><div class="desc"><b>PARI sur UNE carte</b> : un rival + un front, on révèle le <b>dessus</b>. Sale → il paie le montant. Leurre/vide → tu perds ta mise + <b>3 M€ d'amende</b>.</div></div>
+      <div class="card att"><div class="nom">Débauchage ×${deb.n}</div><span class="tag">Attaque · carte</span><div class="desc">La <b>victime choisit</b> quel bloc <b>isolé</b> elle te cède (voix + famille). Une coalition complète est involable.</div></div>
+      <div class="card att"><div class="nom">OPA électorale ×${opa.n}</div><span class="tag">Attaque · carte</span><div class="desc">Comme le débauchage, mais la victime doit céder un de ses <b>meilleurs</b> blocs isolés.</div></div>`;
+    h+=`<h2 class="sec-title">Attaques</h2><p class="sec-sub">La dénonciation frappe l'ARGENT (un pari sur une carte). Le vol transfère un <b>bloc entier</b>. On ne subit qu'UNE attaque par manche.</p><div class="grid">${g}</div>`;
   }
   if(show("Défenses")){
     let g=""; combines("pro").forEach(c=>g+=`<div class="card def"><div class="nom">${c.nom}</div><span class="tag ${frontClass[c.front]}">Protection · 5 M€</span><div class="desc">Bouclier permanent sur ${c.front} — toute dénonciation y rate.</div></div>`);
-    g+=`<div class="card def"><div class="nom">Blanchiment</div><span class="tag">Défense · 3 M€</span><div class="desc">Rend une de tes cartes sales <b>propre</b> (elle n'est plus dénonçable).</div></div>`;
-    g+=`<div class="card def"><div class="nom">Élément de langage</div><span class="tag" style="color:var(--blue);border-color:#c5d8f4;background:#eef4fc">Réaction</span><div class="desc">Joue-la quand on te dénonce pour <b>annuler</b> le scandale. « C'est plus compliqué que ça. »</div></div>`;
-    h+=sec("Défenses (3 fronts → 3 protections)","Protéger un front, blanchir une carte sale, ou annuler une dénonciation en réaction.", g);
+    g+=`<div class="card def"><div class="nom">Blanchiment</div><span class="tag">Défense · 3 M€</span><div class="desc">Rend une de tes cartes sales <b>propre</b> (plus dénonçable).</div></div>`;
+    g+=`<div class="card def"><div class="nom">Élément de langage</div><span class="tag" style="color:var(--blue);border-color:#c5d8f4;background:#eef4fc">Réaction</span><div class="desc">Joue-la quand on te dénonce pour <b>annuler</b> le scandale.</div></div>`;
+    h+=`<h2 class="sec-title">Défenses (3 fronts → 3 protections)</h2><p class="sec-sub">Protéger un front, blanchir une carte, ou annuler une dénonciation en réaction.</p><div class="grid">${g}</div>`;
   }
   if(show("Coups")){
-    const d={remise:"Ton prochain votant coûte 3 M€ de moins.",incoherence:"Prends un bloc incompatible sans perte de voix, mais +1 carte sale sur Presse.",promesse:"+3 voix tout de suite, mais +1 carte sale sur Presse.",renvoi:"+3 M€ et pioche 1 carte."};
+    const d={remise:"Ton prochain votant coûte 3 M€ de moins.",incoherence:"Prends un bloc incompatible malgré l'exclusion, mais +1 carte sale sur Presse.",promesse:"+3 voix tout de suite, mais +1 carte sale sur Presse.",renvoi:"+3 M€ et pioche 1 carte."};
     let g=""; combines("coup").filter(c=>c.e!=="element").forEach(c=>g+=`<div class="card coup"><div class="nom">${c.nom} ×${c.n}</div><span class="tag">Coup tactique</span><div class="desc">${d[c.e]||""}</div></div>`);
-    h+=sec("Coups tactiques","Petits effets pour pimenter.", g);
+    h+=`<h2 class="sec-title">Coups tactiques</h2><p class="sec-sub">Petits effets pour pimenter.</p><div class="grid">${g}</div>`;
   }
-  if(show("Rôles & Objectifs")){
-    const bonus={meute:"1ʳᵉ protection Presse gratuite. (Fragile en Justice.)",lumiere:"Intégristes +1 voix. Interdit : Communauté LGBT.",cartel:"+1 M€ de revenu/tour. Interdit : CGT.",vague:"Dénonciation à moitié prix (1 M€).",verts:"Animalistes & Bobos −2 M€. Interdit : Lobby pétrolier.",forteresse:"« Costards » +2 M€ (Presse). Interdit : Diaspora."};
-    let g=""; CN.PARTIES.forEach(p=>g+=`<div class="card role"><div class="nom">${p.nom}</div><span class="tag">Rôle · ${p.sub}</span><div class="desc">${bonus[p.id]||""}</div></div>`);
-    let o=""; CN.OBJECTIVES.forEach(ob=>o+=`<div class="card role"><div class="nom">${ob.nom}</div><span class="tag" style="color:var(--purple);border-color:#dcc9ee;background:#f5eefc">Objectif secret</span><div class="desc">${ob.desc} → <b>+3 voix</b> si accompli (révélé à la fin).</div></div>`);
-    h+=sec("Rôles secrets = pouvoir + objectif","Chaque joueur reçoit 1 rôle FACE CACHÉE : un pouvoir (parti) + un objectif secret. Tirés au hasard, cachés jusqu'à la fin.", g)+sec("Objectifs secrets","", o);
+  if(show("Partis")){
+    let g=""; CN.FAMILY_LIST.forEach(fam=>g+=`<div class="card fam"><div class="nom">${CN.PARTY_BY_FAMILY[fam]||"?"}</div><span class="tag" style="color:var(--red);border-color:#f0c0b5;background:#fdeeeb">Famille interdite</span><div class="desc">⛔ Ne peut jamais acheter : <b>${fam}</b>. C'est <b>toute</b> l'asymétrie — secrète, sans aucun signal économique. Les autres doivent la deviner.</div></div>`);
+    h+=`<h2 class="sec-title">Partis = famille interdite SECRÈTE</h2><p class="sec-sub">Chaque joueur reçoit 1 carte Parti face cachée (une famille qu'il ne peut jamais acheter, connue de lui seul). Remplace les anciens pouvoirs et objectifs à points. Révélée à la fin.</p><div class="grid">${g}</div>`;
   }
   if(show("Équilibrage")){
-    h+=`<h2 class="sec-title">📊 Bac à sable d'équilibrage</h2><p class="sec-sub">Des milliers de parties simulées avec le vrai moteur v0.6 (corruption cachée, dénonciation-pari, coalitions, rôles secrets). Seuil <b>30</b> (plat).</p>
-      <div class="panel">
-        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
-          <label>Parties / config <select id="mcGames"><option>300</option><option selected>800</option><option>1500</option></select></label>
-          <button class="btn" onclick="runMC()">Simuler 2→6 joueurs</button>
-          <span id="mcStatus" class="muted"></span>
-        </div>
-        <div id="mcResult" class="muted" style="margin-top:12px">Clique sur « Simuler ».</div>
-      </div>`;
+    h+=`<h2 class="sec-title">📊 Bac à sable d'équilibrage</h2><p class="sec-sub">Milliers de parties simulées avec le moteur v0.7. Seuil <b>45 voix</b> (fixe).</p>
+      <div class="panel"><div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <label>Parties / config <select id="mcGames"><option>200</option><option selected>500</option><option>1000</option></select></label>
+        <button class="btn" onclick="runMC()">Simuler 2→6 joueurs</button><span id="mcStatus" class="muted"></span></div>
+        <div id="mcResult" class="muted" style="margin-top:12px">Clique sur « Simuler ».</div></div>`;
   }
   $("#body").innerHTML=h;
 }
 function runMC(){
   const games=+$("#mcGames").value; $("#mcStatus").textContent="Calcul en cours…";
-  setTimeout(()=>{
-    let rows="";
-    for(const N of [2,3,4,5,6]){ const r=CN.simulate(N,games,4242+N); rows+=`<tr><td><b>${N} joueurs</b></td><td>${r.seuil}</td><td>${r.avgTurns} manches</td><td>${r.pctSeuil} %</td><td>${r.avgDenonc}</td><td>${r.seatSpread} pts</td></tr>`; }
-    $("#mcResult").innerHTML=`<div class="kpi"><div><b>30</b><span>seuil (plat)</span></div><div><b>~11</b><span>manches moy.</span></div><div><b>≥98%</b><span>par le seuil</span></div></div>
+  setTimeout(()=>{ let rows="";
+    for(const N of [2,3,4,5,6]){ const r=CN.simulate(N,games,4242+N); rows+=`<tr><td><b>${N} joueurs</b></td><td>${r.seuil}</td><td>${r.avgManches} manches</td><td>${r.pctSeuil} %</td><td>${r.avgDenonc}</td><td>${r.seatSpread} pts</td></tr>`; }
+    $("#mcResult").innerHTML=`<div class="kpi"><div><b>45</b><span>seuil (fixe)</span></div><div><b>~14-15</b><span>manches</span></div><div><b>100%</b><span>par le seuil</span></div></div>
       <table class="bal"><tr><th>Config</th><th>Seuil</th><th>Durée moy.</th><th>% par le seuil</th><th>Dénonc./partie</th><th>Écart sièges*</th></tr>${rows}</table>
-      <p class="sec-sub" style="margin-top:10px">*Écart entre le siège qui gagne le plus et le moins. ${games} parties/config. Seuil plat 30 calibré (les bonus de coalition compensent le partage de l'électorat).</p>`;
+      <p class="sec-sub" style="margin-top:10px">*Écart entre le siège qui gagne le plus et le moins. ${games} parties/config. Le seuil fixe garde un nombre de manches ~constant quel que soit N.</p>`;
     $("#mcStatus").textContent="Terminé ✓";
   },30);
 }
