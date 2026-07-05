@@ -94,6 +94,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
 .front .fbacks{display:flex;gap:2px;justify-content:center;margin-top:3px;min-height:14px}
 .fback{width:9px;height:13px;border-radius:2px;border:1px solid var(--line2);background:repeating-linear-gradient(45deg,#f0e6cf,#f0e6cf 2px,#e7d9b8 2px,#e7d9b8 4px)}
 .front.prot{border-color:#a9ddc1;color:var(--finances);background:#e9f7f0}
+.secretcaser{margin-top:9px;font-size:11px;font-weight:700;color:var(--muted);background:var(--surface2);border:1.5px dashed var(--line2);border-radius:9px;padding:6px 8px;text-align:center}
 .votstrip{display:flex;gap:4px;flex-wrap:wrap;margin-top:9px;min-height:14px}
 .vchip{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:#e9f7f0;border:1.5px solid #bfe5d1;color:var(--finances);white-space:nowrap}
 .vchip.fidele{background:#fdf3d8;border-color:#eBd08a;color:var(--gold-d)}
@@ -246,7 +247,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold)}
       </div>
     </div>
   </div>
-  <div class="note">🔒 Beta sans serveur : l'état transite par le service temps réel. Le secret des mains/familles n'est pas garanti tant qu'on n'a pas de serveur dédié — jouez entre potes de confiance. · <a href="catalogue.html" style="color:var(--gold-d);font-weight:800">Catalogue &amp; équilibrage</a></div>
+  <div class="note">🔒 Beta sans serveur : l'état transite par le service temps réel. Le secret des mains/familles n'est pas garanti tant qu'on n'a pas de serveur dédié — jouez entre potes de confiance. · <a href="catalogue.html" style="color:var(--gold-d);font-weight:800">Catalogue &amp; équilibrage</a><br><span style="font-weight:800;color:var(--gold-d)">🏷️ build : casier-invisible-2</span> <span class="muted">(si tu ne vois pas ce tag, ton navigateur est en cache → Cmd+Shift+R)</span></div>
 </div>
 
 <!-- LOBBY -->
@@ -534,8 +535,10 @@ function render(){
 }
 function blocName(bloc){ const v=CN.VOTANTS.find(x=>x.bloc===bloc); return v?v.nom:bloc; }
 function setDeck(id,n){ const d=$("#"+id); d.classList.toggle("empty",n===0); d.querySelector(".cnt").textContent=n; }
-function frontsHTML(p){ return CN.FRONTS.map(fr=>{ const prot=p.protect.includes(fr);   // casier adverse INVISIBLE : ni contenu ni nombre
-  return `<div class="front ${prot?"prot":""}">${fr.slice(0,4)}<div class="fbacks">${prot?"🛡":"<span style='opacity:.4'>?</span>"}</div></div>`; }).join(""); }
+function frontsHTML(p){   // casier adverse TOTALEMENT INVISIBLE : aucun front détaillé, juste les boucliers (publics)
+  const shields=CN.FRONTS.filter(fr=>p.protect.includes(fr));
+  return `<div class="secretcaser">🗄️ casier secret${shields.length?` · ${shields.map(f=>"🛡 "+f.slice(0,4)).join(" ")}`:""}</div>`;
+}
 function votstripHTML(p){ if(!p.votants.length) return `<span class="osub">—</span>`; return p.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒":""}${v.nom}</span>`).join(""); }
 function myCaserHTML(me){ return CN.FRONTS.map(fr=>{ const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
   const pile=cards.map(c=>`<div class="fcard ${c.clean?"clean":"sale"}">${c.clean?"propre":"⚠"} ${c.amount}</div>`).join("")||"<span class='osub' style='font-size:9px'>vide</span>";
