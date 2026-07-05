@@ -141,4 +141,13 @@ Navigateur (pote) ─┘
 ## Incohérences repérées à trancher
 
 1. **Dénonciation** : « 1 carte + nombre de cartes visible » (§16.1, prompt, catalogue) **vs** « tout le front, casier totalement invisible, à l'aveugle » (§16.4 actuel). → à unifier.
+   **✅ TRANCHÉ (juillet 2026, décision EJ)** : c'est la version **§16.4** qui fait foi — casier **totalement invisible** (ni contenu ni nombre de cartes), dénonciation **à l'aveugle**, touché = la cible perd **tout le sale du front**. C'est ce qui est implémenté (moteur + UI) ; les mentions « 1 carte » ailleurs sont historiques.
 2. **Online** : Supabase sans serveur (README) **vs** Node serveur (DEV.md). → choisir (Node recommandé pour le vrai secret des cartes).
+   **✅ TRANCHÉ pour la beta** : on reste sur **Supabase hôte-autoritatif** (déployé, ça marche entre potes). La piste **Node/Render reste la cible** quand on voudra un vrai secret cryptographique des mains — brief prêt dans `DEV.md`.
+
+## ⚠️ Valeurs périmées dans ce doc (l'implémentation v0.7 fait foi)
+
+- **Seuil = 45 voix FIXE** pour 2→6 joueurs (calibré par simulation) — pas « 70 − joueurs » (§A3).
+- **Incompatibilités = paires EXCLUSIVES** (achat refusé, pas de « molle −1 voix »).
+- **Lobby en ligne : pas de choix de parti** — la famille interdite est tirée au sort et secrète (§16.5).
+- **UX appliquée (build table-v1)** : table plein écran sans scroll (zooms partout), main en éventail, cartes papier (titre + illustration par type + règle + phrase drôle), thème feutre/bois sobre, piste-réglette, journal en panneau + zoom.

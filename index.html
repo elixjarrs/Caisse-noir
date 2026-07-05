@@ -6,325 +6,305 @@
 <title>Caisse Noire — la table</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ============ PALETTE « table de jeu » : bois · feutre · papier · encre ============ */
 :root{
-  --bg:#f4efe4; --bg2:#efe8d8; --surface:#ffffff; --surface2:#faf6ec;
-  --ink:#33302a; --muted:#8c8678; --line:#e9e2d3; --line2:#ddd4c1;
-  --gold:#e3a72b; --gold-d:#c98f18; --money:#33a36b; --red:#e0654f; --blue:#4a86d6; --purple:#9b6cc4;
-  --justice:#4a86d6; --presse:#e08a3c; --finances:#33a36b;
-  --shadow:0 6px 20px rgba(80,60,20,.10); --shadow-sm:0 3px 10px rgba(80,60,20,.08);
-  --r:16px;
+  --wood:#4a3826; --wood2:#3b2c1d;
+  --felt:#31493c; --felt-d:#26382e; --felt-line:rgba(255,255,255,.09);
+  --paper:#f5edd8; --paper2:#ecdfc2; --paper-edge:#c9b98f;
+  --ink:#2e2a20; --ink-soft:#6d6350; --ink-faint:#948a72;
+  --gold:#c39a4a; --gold-d:#96762f;
+  --sale:#a04b38; --clean:#4f7d5f; --atk:#7d3b3b; --def:#54718f; --bla:#6b7f95; --steal:#7d6390; --coup:#a8843b;
+  --justice:#54718f; --presse:#b07d41; --finances:#4f7d5f;
+  --shadow:0 8px 22px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;color:var(--ink);font:15px/1.55 "Nunito",system-ui,sans-serif;
-  background:radial-gradient(120% 100% at 50% 0%, #fbf7ee 0%, var(--bg) 55%, var(--bg2) 100%);min-height:100vh}
-h1,h2,h3,h4{font-family:"Fredoka",sans-serif;margin:0;font-weight:600;letter-spacing:.2px}
-.muted{color:var(--muted)}
+body{margin:0;color:var(--ink);font:14px/1.5 "Nunito",system-ui,sans-serif;min-height:100vh;
+  background:linear-gradient(rgba(20,12,5,.35),rgba(20,12,5,.5)),repeating-linear-gradient(90deg,#55402c 0 210px,#4e3a28 210px 420px),var(--wood)}
+body.ingame{overflow:hidden}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0;font-weight:700;letter-spacing:.2px}
+.muted{color:var(--ink-soft)} .small{font-size:12px}
 button{font-family:inherit}
-.btn{background:var(--surface);color:var(--ink);border:1.5px solid var(--line2);padding:10px 18px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;transition:.14s;box-shadow:var(--shadow-sm)}
-.btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--gold)}
-.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
-.btn.primary{background:linear-gradient(180deg,#f0b53d,var(--gold));color:#3a2a06;border-color:var(--gold-d)}
-.btn.ghost{background:transparent;box-shadow:none;border-color:transparent;color:var(--muted)}
-.btn.ghost:hover:not(:disabled){border-color:var(--line2)}
-.btn.big{font-size:16px;padding:13px 26px}
-.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:800;background:var(--surface2);border:1.5px solid var(--line2);color:var(--muted)}
-.t-justice{color:var(--justice);border-color:#c5d8f4;background:#eef4fc}
-.t-presse{color:var(--presse);border-color:#f3ddc2;background:#fdf3e6}
-.t-finances{color:var(--finances);border-color:#bfe5d1;background:#e9f7f0}
-.t-clean{color:var(--money);border-color:#bfe5d1;background:#e9f7f0}
-.wrap{max-width:760px;margin:0 auto;padding:34px 20px}
+.btn{background:var(--paper);color:var(--ink);border:1px solid var(--paper-edge);padding:9px 16px;border-radius:10px;cursor:pointer;font-weight:800;font-size:13.5px;box-shadow:0 2px 0 rgba(0,0,0,.25);transition:.12s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:disabled,.btn.off{opacity:.45;cursor:not-allowed}
+.btn.primary{background:linear-gradient(180deg,#d3ab5c,var(--gold));border-color:var(--gold-d);color:#2c1f08}
+.btn.ghost{background:transparent;border-color:rgba(255,255,255,.25);color:#e8dfc8;box-shadow:none}
+.tag{display:inline-block;padding:1px 8px;border-radius:20px;font-size:10.5px;font-weight:800;border:1px solid var(--paper-edge);color:var(--ink-soft);background:rgba(255,255,255,.35)}
+.t-justice{color:var(--justice);border-color:var(--justice)} .t-presse{color:var(--presse);border-color:var(--presse)} .t-finances{color:var(--finances);border-color:var(--finances)}
 
-/* SETUP */
-.brand{text-align:center;margin-bottom:6px}
-.brand h1{font-size:40px;color:var(--ink)}
-.brand .em{font-size:40px}
-.brand p{color:var(--muted);max-width:620px;margin:8px auto 0}
-.modes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
-@media(max-width:620px){.modes{grid-template-columns:1fr}}
-.modecard{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
-.modecard h3{font-size:20px;display:flex;align-items:center;gap:8px}
-.modecard p{color:var(--muted);font-size:13.5px;margin:6px 0 14px;min-height:38px}
+/* ============ ÉCRANS SETUP / LOBBY (nappe centrale) ============ */
+.wrap{max-width:720px;margin:0 auto;padding:30px 20px}
+.mat{background:radial-gradient(120% 120% at 50% 0%,var(--felt) 0%,var(--felt-d) 90%);border:10px solid var(--wood2);outline:2px solid rgba(0,0,0,.5);border-radius:22px;box-shadow:var(--shadow),inset 0 0 60px rgba(0,0,0,.35);padding:26px;color:#efe8d2}
+.mat h1{color:#f0e3bd;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.mat .sub{color:#cfc6a8;font-size:13.5px}
 .field{margin:14px 0}
-.field>label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.7px}
-input[type=text]{width:100%;padding:11px 14px;border:1.5px solid var(--line2);border-radius:12px;font:inherit;background:var(--surface2);color:var(--ink)}
-input[type=text]:focus{outline:none;border-color:var(--gold)}
+.field>label{display:block;font-size:11px;font-weight:800;color:#cfc6a8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px}
+input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge);border-radius:10px;font:inherit;background:var(--paper);color:var(--ink)}
 .seats{display:flex;gap:7px;flex-wrap:wrap}
-.seat{width:42px;height:42px;border-radius:12px;border:1.5px solid var(--line2);background:var(--surface);cursor:pointer;font-weight:800;font-size:15px;color:var(--ink);box-shadow:var(--shadow-sm)}
-.seat.on{background:linear-gradient(180deg,#f0b53d,var(--gold));color:#3a2a06;border-color:var(--gold-d)}
-.note{font-size:12px;color:var(--muted);background:var(--surface2);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:14px}
-
-/* LOBBY */
-.lobbybox{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);margin-top:18px}
-.roomcode{display:flex;align-items:center;gap:12px;justify-content:center;margin:6px 0 4px}
-.roomcode b{font-family:"Fredoka";font-size:38px;letter-spacing:6px;color:var(--gold-d);background:var(--surface2);border:2px dashed var(--line2);border-radius:14px;padding:6px 18px}
-.players-l{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-.prow{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface2)}
-.prow .dot{width:12px;height:12px;border-radius:50%;background:var(--money);flex:none}
-.prow .host{margin-left:auto;font-size:11px;font-weight:800;color:var(--gold-d)}
-
-/* TABLE */
-#table{display:none;max-width:1300px;margin:0 auto;padding:12px 16px 30px}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-.topbar .ttl{font-family:"Fredoka";font-size:22px}
-.topbar .meta{font-size:12.5px;color:var(--muted)}
-.topbar .meta b{color:var(--ink)}
-.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.tools select{background:var(--surface);color:var(--ink);border:1.5px solid var(--line2);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px}
-.roompill{font-size:12px;font-weight:800;color:var(--gold-d);background:var(--surface2);border:1.5px solid var(--line2);border-radius:999px;padding:6px 12px}
-.turnbar{text-align:center;font-family:"Fredoka";font-size:16px;padding:8px;border-radius:12px;margin-bottom:12px;background:var(--surface);border:1.5px solid var(--line);box-shadow:var(--shadow-sm)}
-.turnbar.mine{background:linear-gradient(180deg,#fff7e4,#fdedcb);border-color:var(--gold)}
-.turnbar.final{background:linear-gradient(180deg,#fdeeeb,#f9ddd6);border-color:var(--red);color:#a23}
-
-#opponents{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
-.opp{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:11px 13px;min-width:196px;flex:1;max-width:258px;box-shadow:var(--shadow-sm);transition:.15s}
-.opp.turn{border-color:var(--gold);box-shadow:0 0 0 2px rgba(227,167,43,.3),var(--shadow)}
-.opp.debt{border-color:var(--red);box-shadow:0 0 0 2px rgba(224,101,79,.35)}
-.ohead{display:flex;align-items:center;gap:8px}
-.dot{width:14px;height:14px;border-radius:50%;flex:none;border:2px solid rgba(0,0,0,.06)}
-.onm{font-weight:800;font-size:14px;line-height:1.1;font-family:"Fredoka"}
-.osub{font-size:11px;color:var(--muted);font-weight:600}
-.statline{display:flex;justify-content:space-between;margin-top:8px;font-size:14px}
-.statline .v{color:var(--money);font-weight:800}
-.statline .m{color:var(--gold-d);font-weight:800}
-.fronts{display:flex;gap:5px;margin-top:9px}
-.front{flex:1;text-align:center;font-size:9.5px;font-weight:800;padding:4px 2px;border-radius:7px;border:1.5px solid var(--line2);color:var(--muted);background:var(--surface2)}
-.front .fbacks{display:flex;gap:2px;justify-content:center;margin-top:3px;min-height:14px}
-.fback{width:9px;height:13px;border-radius:2px;border:1px solid var(--line2);background:repeating-linear-gradient(45deg,#f0e6cf,#f0e6cf 2px,#e7d9b8 2px,#e7d9b8 4px)}
-.front.prot{border-color:#a9ddc1;color:var(--finances);background:#e9f7f0}
-.secretcaser{margin-top:9px;font-size:11px;font-weight:700;color:var(--muted);background:var(--surface2);border:1.5px dashed var(--line2);border-radius:9px;padding:6px 8px;text-align:center}
-.votstrip{display:flex;gap:4px;flex-wrap:wrap;margin-top:9px;min-height:14px}
-.vchip{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:#e9f7f0;border:1.5px solid #bfe5d1;color:var(--finances);white-space:nowrap}
-.vchip.fidele{background:#fdf3d8;border-color:#eBd08a;color:var(--gold-d)}
-.coachip{font-size:9.5px;font-weight:800;padding:1px 7px;border-radius:999px;background:#fdf3d8;border:1.5px solid #eBd08a;color:var(--gold-d);margin-top:6px;display:inline-block}
-.handbacks{display:flex;gap:3px;margin-top:9px}
-.cback{width:15px;height:21px;border-radius:4px;border:1.5px solid var(--line2);background:repeating-linear-gradient(45deg,#f0e6cf,#f0e6cf 3px,#e7d9b8 3px,#e7d9b8 6px)}
-.nowp{font-size:11px;color:var(--gold-d);font-weight:800;margin-top:7px;min-height:14px}
-
-#center{display:grid;grid-template-columns:140px 1fr 240px;gap:14px;align-items:start}
-@media(max-width:960px){#center{grid-template-columns:1fr}}
-.zone{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow-sm)}
-.zlabel{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:800;margin-bottom:11px}
-.deckcol{display:flex;flex-direction:column;gap:14px;align-items:center}
-@media(max-width:960px){.deckcol{flex-direction:row;justify-content:space-around;flex-wrap:wrap}}
-.deckwrap{text-align:center}
-.deck{position:relative;width:72px;height:100px;margin:0 auto}
-.deck .layer{position:absolute;inset:0;border-radius:11px;border:1.5px solid var(--line2);background:repeating-linear-gradient(45deg,#f0e6cf,#f0e6cf 4px,#e7d9b8 4px,#e7d9b8 8px);box-shadow:var(--shadow-sm)}
-.deck .layer:nth-child(1){transform:translate(4px,4px);opacity:.55}
-.deck .layer:nth-child(2){transform:translate(2px,2px);opacity:.8}
-.deck .cnt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Fredoka";font-weight:700;font-size:24px;color:var(--gold-d);z-index:2}
-.deck.empty .layer{background:none;border-style:dashed}
-.decklbl{font-size:11px;color:var(--muted);font-weight:700;margin-top:6px}
-.discard .layer{background:#f3eee2 !important}
-
-#track{display:flex;flex-wrap:wrap;gap:3px;align-items:flex-end}
-.cell{width:26px;height:38px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface2);position:relative;display:flex;align-items:flex-start;justify-content:center;padding-top:2px}
-.cell .num{font-size:8px;color:var(--muted);font-weight:700}
-.cell.goal{border-color:var(--gold);background:#fdf3d8}
-.cell.goal .num{color:var(--gold-d)}
-.meeples{position:absolute;bottom:2px;left:0;right:0;display:flex;flex-wrap:wrap;justify-content:center;gap:1px}
-.meeple{width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.25)}
-.meeple.me{box-shadow:0 0 0 2px var(--gold-d)}
-
-#market{display:flex;gap:11px;flex-wrap:wrap}
-.vcard{width:128px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:11px;position:relative;box-shadow:var(--shadow-sm);transition:.13s;border-top:4px solid #cfe6d8}
-.vcard.buy{cursor:pointer}
-.vcard.buy:hover{transform:translateY(-4px);border-color:var(--gold);border-top-color:var(--money)}
-.vcard.dis{opacity:.5}
-.vcard .vt{font-weight:800;font-size:13px;line-height:1.15;font-family:"Fredoka"}
-.vcard .vfam{font-size:9.5px;color:var(--gold-d);font-weight:800;margin-top:2px}
-.vcard .vwarn{font-size:10px;margin-top:4px;min-height:13px;font-weight:700}
-.vcard .vfoot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:8px}
-.vcard .cost{color:var(--gold-d);font-weight:800}
-.vcard .vx{color:var(--money);font-weight:800;font-size:16px;font-family:"Fredoka"}
-.vcard .tier{position:absolute;top:9px;right:10px;font-size:9px;color:var(--muted);font-weight:700}
-
-#logzone{max-height:360px;overflow:auto}
-#log div{padding:5px 0;border-bottom:1px dashed var(--line);font-size:12px;font-weight:600}
-#log .den{color:var(--red)}#log .buy{color:var(--money)}#log .win{color:var(--gold-d);font-weight:800}#log .income{color:var(--muted)}
-
-#me{margin-top:14px;background:var(--surface);border:2px solid var(--gold);border-radius:20px;padding:16px 18px;box-shadow:var(--shadow)}
-#me.notmine{border-color:var(--line);box-shadow:var(--shadow-sm)}
-.myhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.coin{width:60px;height:60px;border-radius:50%;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--gold);background:radial-gradient(circle at 38% 32%,#fff3d4,#f3d180);box-shadow:var(--shadow-sm)}
-.coin b{font-family:"Fredoka";font-size:19px;color:var(--gold-d);line-height:1}
-.coin span{font-size:9px;color:#9a7d2c;font-weight:800}
-.scorebox{display:flex;flex-direction:column;align-items:center;justify-content:center;width:60px;height:60px;border-radius:16px;border:2.5px solid var(--money);background:#e9f7f0}
-.scorebox b{font-family:"Fredoka";font-size:21px;color:var(--money);line-height:1}
-.scorebox span{font-size:9px;color:#2a7d52;font-weight:800}
-.myident{flex:1;min-width:150px}
-.myident .nm{font-weight:700;font-size:17px;font-family:"Fredoka"}
-.myrole{font-size:11.5px;margin-top:3px}
-.myrole .party{color:var(--gold-d);font-weight:800}
-.myrole .forb{color:var(--red);font-weight:800}
-.actpips{display:flex;gap:6px;margin-top:6px;align-items:center}
-.pip{width:14px;height:14px;border-radius:50%;border:2px solid var(--gold)}
-.pip.on{background:var(--gold)}
-.myactions{display:flex;gap:8px;flex-wrap:wrap}
-
-#tableau{display:flex;gap:20px;flex-wrap:wrap;margin:16px 0}
-.tcol{flex:1;min-width:230px}
-.mycaser{display:flex;gap:7px}
-.cslot{flex:1;border:1.5px solid var(--line2);border-radius:11px;padding:7px 5px;text-align:center;background:var(--surface2)}
-.cslot .pile{display:flex;flex-direction:column-reverse;align-items:center;gap:2px;margin-top:6px;min-height:26px}
-.fcard{width:34px;height:19px;border-radius:3px;border:1.5px solid;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
-.fcard.sale{border-color:#d98e7d;background:linear-gradient(180deg,#f6b3a4,#e0654f);color:#fff}
-.fcard.clean{border-color:#a9ddc1;background:linear-gradient(180deg,#c9edd8,#8fd4ab);color:#1c5636}
-.fcard.top{box-shadow:0 0 0 2px var(--gold-d)}
-.cslot.prot{border-color:#a9ddc1;background:#e9f7f0}
-.cslot .expo{font-size:9px;font-weight:800;margin-top:4px;min-height:12px}
-.myvots{display:flex;gap:6px;flex-wrap:wrap;min-height:26px}
-.myvchip{font-size:11.5px;font-weight:800;padding:4px 10px;border-radius:999px;background:#e9f7f0;border:1.5px solid #bfe5d1;color:var(--finances)}
-.myvchip.fidele{background:#fdf3d8;border-color:#eBd08a;color:var(--gold-d)}
-
-#hand{display:flex;gap:11px;flex-wrap:wrap;padding-top:4px}
-.hcard{width:134px;min-height:112px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:11px;position:relative;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);transition:.13s;border-top:4px solid var(--line2)}
-.hcard.play{cursor:pointer}
-.hcard.play:hover{transform:translateY(-6px);border-color:var(--gold)}
-.hcard.dis{opacity:.5}
-.hcard .hn{font-weight:800;font-size:13px;line-height:1.15;font-family:"Fredoka"}
-.hcard .hd{font-size:10.5px;color:var(--muted);margin-top:7px;flex:1;line-height:1.38;font-weight:600}
-.hcard .ht{margin-top:6px}
-.hcard.k-cor{border-top-color:var(--red)}
-.hcard.k-clean{border-top-color:var(--money)}
-.hcard.k-den{border-top-color:var(--red)}
-.hcard.k-pro{border-top-color:var(--finances)}
-.hcard.k-bla{border-top-color:var(--blue)}
-.hcard.k-steal{border-top-color:var(--purple)}
-.hcard.k-coup{border-top-color:var(--gold)}
-
-#overlay{position:fixed;inset:0;background:rgba(60,45,15,.42);display:none;align-items:center;justify-content:center;z-index:40;padding:16px;backdrop-filter:blur(2px)}
-.modal{background:var(--surface);border:2px solid var(--gold);border-radius:20px;padding:24px;max-width:540px;width:100%;box-shadow:0 20px 60px rgba(60,45,15,.3);max-height:90vh;overflow:auto}
-.modal.debt{border-color:var(--red)}
-.modal h2{color:var(--ink);margin-bottom:6px;font-size:24px}
-.choices{display:flex;flex-direction:column;gap:8px;margin-top:14px}
-.choice{padding:12px 14px;border:1.5px solid var(--line2);border-radius:12px;cursor:pointer;transition:.12s;font-weight:700}
-.choice:hover{border-color:var(--gold);background:var(--surface2)}
-.choice.sel{border-color:var(--red);background:#fdeeeb}
-.fronttabs{display:flex;gap:8px;margin-top:12px}
-.fronttab{flex:1;padding:12px 8px;border:1.5px solid var(--line2);border-radius:12px;cursor:pointer;text-align:center;font-weight:800}
-.fronttab:hover{border-color:var(--gold);background:var(--surface2)}
-.reveal{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
-.reveal td,.reveal th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
-.reveal th{font-size:11px;color:var(--muted);text-transform:uppercase}
-.reveal .win{background:#fdf3d8;font-weight:800}
-#toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:999px;font-weight:800;z-index:60;opacity:0;transition:.2s;pointer-events:none;box-shadow:var(--shadow);max-width:90%}
-#toast.show{opacity:1}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
+.seat{width:40px;height:40px;border-radius:10px;border:1px solid var(--paper-edge);background:var(--paper);cursor:pointer;font-weight:800;font-size:15px;color:var(--ink)}
+.seat.on{background:linear-gradient(180deg,#d3ab5c,var(--gold));border-color:var(--gold-d)}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+@media(max-width:640px){.modes{grid-template-columns:1fr}}
+.modecard{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px}
+.modecard h3{font-size:18px;color:#f0e3bd}
+.modecard p{color:#cfc6a8;font-size:12.5px;margin:6px 0 12px}
+.note{font-size:11.5px;color:#bdb494;border-top:1px dashed rgba(255,255,255,.2);margin-top:16px;padding-top:10px}
+.note a{color:var(--gold);font-weight:800}
+.roomcode{display:flex;align-items:center;gap:12px;justify-content:center;margin:8px 0}
+.roomcode b{font-family:Georgia,serif;font-size:36px;letter-spacing:6px;color:#f0e3bd;background:rgba(0,0,0,.3);border:2px dashed rgba(255,255,255,.3);border-radius:12px;padding:6px 18px}
+.players-l{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.prow{display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(0,0,0,.2);color:#efe8d2}
+.prow .dot{width:11px;height:11px;border-radius:50%;background:var(--clean);flex:none}
+.prow .host{margin-left:auto;font-size:10.5px;font-weight:800;color:var(--gold)}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============ LA TABLE (plein écran, sans scroll) ============ */
+#table{display:none;grid-template-rows:44px auto minmax(0,1fr) 264px;gap:8px;height:100vh;padding:10px 14px 8px;
+  background:radial-gradient(130% 120% at 50% -10%,var(--felt) 0%,var(--felt-d) 85%);border:12px solid var(--wood2);outline:3px solid rgba(0,0,0,.55);border-radius:20px;box-shadow:inset 0 0 90px rgba(0,0,0,.45)}
+@media(max-height:600px),(max-width:860px){ body.ingame{overflow:auto} #table{height:auto;grid-template-rows:auto auto auto auto} }
+
+/* HUD */
+#hud{display:flex;align-items:center;gap:14px;color:#e8dfc8}
+#hud .ttl{font-family:Georgia,serif;font-size:19px;color:#f0e3bd;white-space:nowrap}
+#hud .meta{font-size:12px;color:#bdb494;white-space:nowrap}
+#hud .meta b{color:#f0e3bd}
+#turninfo{flex:1;text-align:center;font-family:Georgia,serif;font-size:15.5px;color:#e8dfc8;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#turninfo.mine{color:#f4d689} #turninfo.final{color:#e8a08c}
+.tools{display:flex;gap:7px;align-items:center}
+.tools select{background:rgba(0,0,0,.3);color:#e8dfc8;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:5px 8px;font:inherit;font-size:12px}
+.roompill{font-size:11px;font-weight:800;color:var(--gold);background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 10px}
+
+/* adversaires */
+#opponents{display:flex;gap:8px;justify-content:center;min-height:0}
+.opp{background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.13);border-radius:12px;padding:8px 11px;flex:1;max-width:230px;min-width:0;color:#e8dfc8;cursor:pointer;transition:.12s;position:relative}
+.opp:hover{border-color:var(--gold)}
+.opp.turn{border-color:var(--gold);box-shadow:0 0 14px rgba(195,154,74,.35)}
+.opp.debt{border-color:var(--sale);box-shadow:0 0 14px rgba(160,75,56,.4)}
+.ohead{display:flex;align-items:center;gap:7px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;border:2px solid rgba(0,0,0,.35)}
+.onm{font-weight:800;font-size:13px;font-family:Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ostats{display:flex;justify-content:space-between;font-size:12.5px;margin-top:4px}
+.ostats .v{color:#a8d3b2;font-weight:800} .ostats .m{color:#f4d689;font-weight:800}
+.oinfo{font-size:10.5px;color:#bdb494;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oflag{font-size:10px;font-weight:800;color:var(--gold);min-height:13px;margin-top:3px}
+
+/* centre : pioches | marché+piste | journal */
+#center{display:grid;grid-template-columns:84px minmax(0,1fr) 225px;gap:10px;min-height:0}
+.deckcol{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center}
+.minideck{text-align:center;cursor:default}
+.minideck .stack{position:relative;width:52px;height:72px;margin:0 auto}
+.minideck .stack i{position:absolute;inset:0;border-radius:7px;border:1px solid #8d7a52;background:repeating-linear-gradient(45deg,#7a6a49 0 4px,#6b5d40 4px 8px);box-shadow:0 2px 4px rgba(0,0,0,.4)}
+.minideck .stack i:nth-child(1){transform:translate(3px,3px);opacity:.6}
+.minideck .stack i:nth-child(2){transform:translate(1.5px,1.5px);opacity:.8}
+.minideck .stack.flat i{background:#e8dcbc}
+.minideck .cnt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;font-size:19px;color:#f0e3bd;text-shadow:0 1px 3px #000;z-index:2}
+.minideck .lbl{font-size:9.5px;color:#bdb494;font-weight:700;margin-top:4px}
+
+#midcol{display:flex;flex-direction:column;gap:8px;min-width:0;min-height:0}
+/* piste de score : une réglette */
+#trackwrap{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:6px 14px 4px}
+#track{position:relative;height:30px}
+#track .rail{position:absolute;left:0;right:0;top:14px;height:4px;border-radius:3px;background:rgba(255,255,255,.18)}
+#track .tick{position:absolute;top:0;transform:translateX(-50%);font-size:8.5px;color:#a99f83;text-align:center}
+#track .tick i{display:block;width:1px;height:6px;background:rgba(255,255,255,.3);margin:11px auto 1px}
+#track .goalflag{position:absolute;right:-6px;top:-2px;font-size:13px}
+#track .mp{position:absolute;top:9px;width:13px;height:13px;border-radius:50%;border:2px solid rgba(0,0,0,.4);transform:translateX(-50%);box-shadow:0 1px 3px rgba(0,0,0,.5);transition:left .4s}
+#track .mp.me{outline:2px solid #f0e3bd}
+/* marché */
+.mklabel{font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:#bdb494;font-weight:800}
+#market{display:flex;gap:8px;flex-wrap:wrap;align-content:flex-start;min-height:0}
+
+/* journal */
+#sidecol{background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;color:#d8cfae;display:flex;flex-direction:column;min-height:0}
+#sidecol .ptitle{font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:#bdb494;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+#sidecol .ptitle span{cursor:pointer;color:var(--gold);font-size:10px}
+#logmini{margin-top:6px;overflow:hidden;font-size:11.5px;line-height:1.45}
+#logmini div{padding:3px 0;border-bottom:1px dashed rgba(255,255,255,.12)}
+#logmini .den{color:#e8a08c}#logmini .buy{color:#a8d3b2}#logmini .win{color:#f4d689;font-weight:800}#logmini .income{color:#a99f83}
+
+/* ============ MA ZONE ============ */
+#me{display:grid;grid-template-rows:46px minmax(0,1fr);gap:4px;min-height:0}
+#mybar{display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:5px 14px;color:#e8dfc8}
+#mybar.mine{border-color:var(--gold);box-shadow:0 0 16px rgba(195,154,74,.25)}
+.roulette{display:flex;align-items:baseline;gap:5px}
+.roulette b{font-family:Georgia,serif;font-size:21px;color:#f4d689}
+.roulette span{font-size:10px;color:#bdb494;font-weight:800}
+.voixbox b{font-family:Georgia,serif;font-size:21px;color:#a8d3b2}
+.forb{font-size:11.5px;color:#e8a08c;font-weight:700}
+.forb b{color:#f0c2b2}
+.actpips{display:flex;gap:5px;align-items:center;margin-left:auto}
+.pip{width:12px;height:12px;border-radius:50%;border:2px solid var(--gold)}
+.pip.on{background:var(--gold)}
+#myrow{display:grid;grid-template-columns:215px minmax(0,1fr) 215px;gap:10px;min-height:0}
+.sidebox{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 11px;color:#d8cfae;cursor:pointer;transition:.12s;overflow:hidden}
+.sidebox:hover{border-color:var(--gold)}
+.sidebox .ptitle{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#bdb494;font-weight:800;margin-bottom:5px}
+.caserline{display:flex;justify-content:space-between;font-size:11.5px;padding:2.5px 0}
+.caserline .warn{color:#e8a08c;font-weight:800} .caserline .safe{color:#a8d3b2;font-weight:700}
+.votsum{font-size:11.5px;line-height:1.5}
+.votsum b{color:#a8d3b2}
+.coach{font-size:10px;color:var(--gold);font-weight:800}
+
+/* la MAIN en éventail */
+#handwrap{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:0}
+#hand{display:flex;align-items:flex-end;justify-content:center;height:100%}
+.hc{width:142px;height:192px;margin:0 -24px;transform:rotate(var(--r)) translateY(var(--y));transform-origin:50% 120%;transition:transform .18s,box-shadow .18s;cursor:pointer;position:relative;z-index:1}
+.hc:hover{transform:translateY(-36px) rotate(0deg) scale(1.07);z-index:20}
+.hc.dis{filter:grayscale(.5) brightness(.85)}
+
+/* ============ CARTES (papier) ============ */
+.cface{width:100%;height:100%;background:linear-gradient(168deg,#f8f1de,var(--paper) 45%,var(--paper2));border:1px solid var(--paper-edge);border-radius:11px;box-shadow:0 4px 10px rgba(0,0,0,.35);display:flex;flex-direction:column;padding:9px 10px;position:relative;overflow:hidden}
+.cface::before{content:"";position:absolute;inset:4px;border:1px solid rgba(150,118,47,.35);border-radius:8px;pointer-events:none}
+.cface .c-name{font-family:Georgia,serif;font-weight:700;font-size:13px;line-height:1.12;color:var(--ink);display:block}
+.cface .c-art{text-align:center;font-size:33px;margin:5px 0 3px;filter:sepia(.25) saturate(.85)}
+.cface .c-art .med{display:inline-flex;width:52px;height:52px;border-radius:50%;align-items:center;justify-content:center;background:rgba(0,0,0,.06);border:1px solid rgba(150,118,47,.3)}
+.cface .c-stat{text-align:center;font-size:11px;font-weight:800;color:var(--ink)}
+.cface .c-rule{font-size:9.8px;color:var(--ink-soft);line-height:1.35;margin-top:4px;flex:1;overflow:hidden}
+.cface .c-flav{font-size:9px;font-style:italic;color:var(--ink-faint);border-top:1px dashed var(--paper-edge);padding-top:3px;margin-top:3px}
+.cface .ribbon{position:absolute;top:0;left:0;right:0;height:4px}
+.k-cor .ribbon{background:var(--sale)} .k-clean .ribbon{background:var(--clean)} .k-den .ribbon{background:var(--atk)}
+.k-pro .ribbon{background:var(--def)} .k-bla .ribbon{background:var(--bla)} .k-steal .ribbon{background:var(--steal)} .k-coup .ribbon{background:var(--coup)} .votant .ribbon{background:var(--gold-d)}
+.cface.big{width:250px;height:340px;padding:14px}
+.cface.big .c-name{font-size:18px}
+.cface.big .c-art{font-size:56px;margin:12px 0 8px}
+.cface.big .c-art .med{width:92px;height:92px}
+.cface.big .c-stat{font-size:14px}
+.cface.big .c-rule{font-size:12.5px;margin-top:8px}
+.cface.big .c-flav{font-size:11px;padding-top:6px}
+/* votant marché (mini) */
+.mkc{width:104px;height:140px;cursor:pointer;transition:.14s;position:relative;z-index:1}
+.mkc:hover{transform:translateY(-5px) scale(1.04);z-index:5}
+.mkc .cface{padding:7px 8px}
+.mkc .c-name{font-size:11px}
+.mkc .c-art{font-size:24px;margin:2px 0}
+.mkc .c-art .med{width:40px;height:40px}
+.mkc.dis{filter:grayscale(.55) brightness(.85)}
+.cface .c-fam{text-align:center;font-size:9px;color:var(--ink-faint);font-weight:700}
+.cface .c-foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:auto}
+.cface .cost{font-weight:800;color:var(--gold-d);font-size:11px}
+.cface .vx{font-family:Georgia,serif;font-weight:700;color:var(--clean);font-size:15px}
+.cface.big .cost{font-size:15px} .cface.big .vx{font-size:22px}
+.mkwarn{position:absolute;top:7px;right:7px;font-size:12px;z-index:2}
+
+/* ============ MODALES (zoom) ============ */
+#overlay{position:fixed;inset:0;background:rgba(15,10,4,.66);display:none;align-items:center;justify-content:center;z-index:40;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:linear-gradient(170deg,#f8f1de,var(--paper2));border:1px solid var(--paper-edge);outline:6px solid var(--wood2);border-radius:16px;padding:20px;max-width:640px;width:auto;min-width:340px;box-shadow:0 24px 70px rgba(0,0,0,.6);max-height:92vh;overflow:auto;color:var(--ink)}
+.modal.debt{outline-color:#5c2c20}
+.modal h2{font-size:21px;margin-bottom:4px}
+.modal .muted{color:var(--ink-soft)}
+.zoomwrap{display:flex;gap:18px;align-items:flex-start}
+.zoomact{flex:1;min-width:240px;display:flex;flex-direction:column;gap:8px}
+.choices{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.choice{padding:10px 13px;border:1px solid var(--paper-edge);border-radius:10px;cursor:pointer;font-weight:700;background:rgba(255,255,255,.5);transition:.1s;font-size:13px}
+.choice:hover{border-color:var(--gold-d);background:#fff}
+.choice.sel{border-color:var(--sale);background:#f6e2da}
+.btnrow{display:flex;gap:7px;flex-wrap:wrap}
+.reveal{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+.reveal td,.reveal th{padding:6px 8px;border-bottom:1px solid var(--paper-edge);text-align:left}
+.reveal th{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase}
+.reveal .win{background:#f2e4bd;font-weight:800}
+.vlist{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.vchip{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(79,125,95,.14);border:1px solid rgba(79,125,95,.4);color:#33553f}
+.vchip.fidele{background:rgba(195,154,74,.16);border-color:var(--gold-d);color:#6b5423}
+#toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);background:#221a0e;color:#f0e3bd;padding:10px 20px;border-radius:12px;font-weight:800;z-index:60;opacity:0;transition:.2s;pointer-events:none;box-shadow:var(--shadow);max-width:90%;border:1px solid var(--gold-d)}
+#toast.show{opacity:1}
 </style>
 </head>
 <body>
 
 <!-- SETUP -->
 <div id="setup" class="wrap">
-  <div class="brand">
-    <h1><span class="em">🗳️</span> Caisse Noire</h1>
-    <p>Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie</b> en dénonçant tes rivaux : leur casier est <b>invisible</b>, tu dois <b>deviner</b> le bon front — touché, la cible paie toute sa corruption cachée ; à côté, c'est <b>toi</b> qui paies l'amende. Chacun a une <b>famille interdite secrète</b>. Premier à <b>45 voix</b> déclenche la manche finale.</p>
-  </div>
-  <div class="field" style="max-width:340px;margin:22px auto 0">
-    <label>Ton nom (pseudo)</label>
-    <input type="text" id="pseudo" maxlength="16" placeholder="ex. Rastignac">
-  </div>
-  <div class="modes">
-    <div class="modecard">
-      <h3>🎲 Solo</h3>
-      <p>Une partie tout de suite contre l'IA — pour découvrir la mécanique cachée.</p>
-      <div class="field"><label>Nombre de joueurs</label><div class="seats" id="seatsSolo"></div></div>
-      <button class="btn primary big" style="width:100%" onclick="startSolo()">Lancer ▶</button>
-    </div>
-    <div class="modecard">
-      <h3>🌐 En ligne avec tes potes</h3>
-      <p>Crée une table, partage le code. Les sièges vides sont tenus par l'IA. Ta famille interdite est tirée au sort et secrète.</p>
-      <button class="btn primary big" style="width:100%" onclick="createTable()">Créer une table</button>
-      <div class="field" style="margin-top:18px"><label>…ou rejoindre avec un code</label>
-        <div style="display:flex;gap:8px">
-          <input type="text" id="joinCode" maxlength="5" placeholder="CODE" style="text-transform:uppercase;letter-spacing:3px;font-weight:800;font-family:Fredoka">
-          <button class="btn" onclick="joinTable()" style="white-space:nowrap">Rejoindre</button>
+  <div class="mat">
+    <h1 style="font-size:34px;text-align:center">🗳️ Caisse Noire</h1>
+    <p class="sub" style="text-align:center;max-width:560px;margin:8px auto 0">Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie à l'aveugle</b> en dénonçant : le casier des rivaux est invisible. Chacun a une <b>famille interdite secrète</b>. Premier à <b>45 voix</b> déclenche la manche finale.</p>
+    <div class="field" style="max-width:320px;margin:20px auto 4px"><label>Ton nom (pseudo)</label><input type="text" id="pseudo" maxlength="16" placeholder="ex. Rastignac"></div>
+    <div class="modes">
+      <div class="modecard">
+        <h3>🎲 Solo</h3><p>Contre l'IA, tout de suite.</p>
+        <div class="field"><label>Nombre de joueurs</label><div class="seats" id="seatsSolo"></div></div>
+        <button class="btn primary" style="width:100%" onclick="startSolo()">Lancer ▶</button>
+      </div>
+      <div class="modecard">
+        <h3>🌐 En ligne</h3><p>Crée une table, partage le code. Sièges vides = IA.</p>
+        <button class="btn primary" style="width:100%" onclick="createTable()">Créer une table</button>
+        <div class="field" style="margin-top:12px"><label>…ou rejoindre</label>
+          <div style="display:flex;gap:7px"><input type="text" id="joinCode" maxlength="5" placeholder="CODE" style="text-transform:uppercase;letter-spacing:3px;font-weight:800"><button class="btn" onclick="joinTable()">Go</button></div>
         </div>
       </div>
     </div>
+    <div class="note">🔒 Beta sans serveur : le secret des mains n'est pas garanti — jouez entre potes. · <a href="catalogue.html">Catalogue &amp; équilibrage</a> · <b style="color:var(--gold)">🏷️ build : table-v1</b></div>
   </div>
-  <div class="note">🔒 Beta sans serveur : l'état transite par le service temps réel. Le secret des mains/familles n'est pas garanti tant qu'on n'a pas de serveur dédié — jouez entre potes de confiance. · <a href="catalogue.html" style="color:var(--gold-d);font-weight:800">Catalogue &amp; équilibrage</a><br><span style="font-weight:800;color:var(--gold-d)">🏷️ build : casier-invisible-2</span> <span class="muted">(si tu ne vois pas ce tag, ton navigateur est en cache → Cmd+Shift+R)</span></div>
 </div>
 
 <!-- LOBBY -->
 <div id="lobby" class="wrap" style="display:none">
-  <div class="brand"><h1 style="font-size:30px">Salle d'attente</h1></div>
-  <div class="lobbybox">
-    <div id="lobbyHostBox">
-      <div class="muted" style="text-align:center;font-weight:700">Partage ce code à tes potes</div>
-      <div class="roomcode"><b id="roomCodeBig">—</b><button class="btn" onclick="copyCode()">📋 Copier</button></div>
+  <div class="mat">
+    <h1 style="text-align:center;font-size:26px">Salle d'attente</h1>
+    <div id="lobbyHostBox"><div style="text-align:center;font-weight:700;color:#cfc6a8;margin-top:8px">Partage ce code à tes potes</div>
+      <div class="roomcode"><b id="roomCodeBig">—</b><button class="btn" onclick="copyCode()">📋 Copier</button></div></div>
+    <div id="lobbyGuestBox" style="display:none;text-align:center;color:#cfc6a8">
+      <p style="font-weight:700">Table <b id="roomCodeGuest" style="color:var(--gold)"></b></p>
+      <p><span class="spinner"></span> En attente du lancement par l'hôte…</p></div>
+    <div class="field" style="margin-top:14px"><label>À table</label><div class="players-l" id="playersLobby"></div></div>
+    <div id="hostControls" style="margin-top:14px;display:none">
+      <div class="field"><label>Total de sièges (vides → IA)</label><div class="seats" id="seatsHost"></div></div>
+      <button class="btn primary" style="width:100%" onclick="hostStart()">Lancer la partie ▶</button>
     </div>
-    <div id="lobbyGuestBox" style="display:none;text-align:center" class="muted">
-      <p style="font-weight:700">Connecté à la table <b id="roomCodeGuest" style="color:var(--gold-d)"></b></p>
-      <p><span class="spinner"></span> En attente du lancement par l'hôte…</p>
-    </div>
-    <div class="zlabel" style="margin-top:18px">À table</div>
-    <div class="players-l" id="playersLobby"></div>
-    <div id="hostControls" style="margin-top:18px;display:none">
-      <div class="field"><label>Total de sièges (les vides → IA)</label><div class="seats" id="seatsHost"></div></div>
-      <button class="btn primary big" style="width:100%" onclick="hostStart()">Lancer la partie ▶</button>
-    </div>
-    <div style="text-align:center;margin-top:14px"><button class="btn ghost" onclick="leaveTable()">← Quitter</button></div>
+    <div style="text-align:center;margin-top:12px"><button class="btn ghost" onclick="leaveTable()">← Quitter</button></div>
   </div>
 </div>
 
-<!-- TABLE -->
+<!-- LA TABLE -->
 <div id="table">
-  <div class="topbar">
-    <div><div class="ttl">🗳️ Caisse Noire</div><div class="meta" id="meta"></div></div>
+  <div id="hud">
+    <div><div class="ttl">🗳️ Caisse Noire</div></div>
+    <div class="meta" id="meta"></div>
+    <div id="turninfo"></div>
     <div class="tools">
       <span class="roompill" id="roomPill" style="display:none"></span>
-      <span class="muted" style="font-size:12px;font-weight:700">Rythme IA</span>
-      <select id="speed"><option value="1100">🐢</option><option value="650" selected>🙂</option><option value="220">⚡</option></select>
+      <select id="speed" title="Rythme IA"><option value="1100">🐢</option><option value="650" selected>🙂</option><option value="220">⚡</option></select>
       <button class="btn ghost" onclick="leaveTable()">↺ Quitter</button>
     </div>
   </div>
-  <div class="turnbar" id="turnbar"></div>
+
   <div id="opponents"></div>
+
   <div id="center">
-    <div class="zone deckcol">
-      <div class="deckwrap"><div class="deck" id="deckCombines"><div class="layer"></div><div class="layer"></div><div class="layer"></div><div class="cnt"></div></div><div class="decklbl">Les Combines</div></div>
-      <div class="deckwrap"><div class="deck discard" id="deckDiscard"><div class="layer"></div><div class="cnt"></div></div><div class="decklbl">Défausse</div></div>
-      <div class="deckwrap"><div class="deck" id="deckVotants"><div class="layer"></div><div class="layer"></div><div class="cnt"></div></div><div class="decklbl">Pioche votants</div></div>
+    <div class="deckcol">
+      <div class="minideck"><div class="stack" id="deckCombines"><i></i><i></i><i></i><span class="cnt"></span></div><div class="lbl">Combines</div></div>
+      <div class="minideck"><div class="stack flat" id="deckDiscard"><i></i><span class="cnt"></span></div><div class="lbl">Défausse</div></div>
+      <div class="minideck"><div class="stack" id="deckVotants"><i></i><i></i><span class="cnt"></span></div><div class="lbl">Votants</div></div>
     </div>
-    <div>
-      <div class="zone" style="margin-bottom:14px">
-        <div class="zlabel">🏁 Piste de score — premier à 45 déclenche la manche finale</div>
-        <div id="track"></div>
-      </div>
-      <div class="zone">
-        <div class="zlabel">🛒 Marché des votants <span style="text-transform:none;font-weight:600">— clique pour acheter (1 action)</span></div>
-        <div id="market"></div>
-      </div>
+    <div id="midcol">
+      <div id="trackwrap"><div id="track"></div></div>
+      <div class="mklabel">🛒 Marché des votants — clique une carte pour zoomer</div>
+      <div id="market"></div>
     </div>
-    <div class="zone">
-      <div class="zlabel">📰 Journal de campagne</div>
-      <div id="logzone"><div id="log"></div></div>
+    <div id="sidecol">
+      <div class="ptitle">📰 Journal <span onclick="openJournal()">tout voir ↗</span></div>
+      <div id="logmini"></div>
     </div>
   </div>
+
   <div id="me">
-    <div class="myhead">
-      <div class="coin"><b id="myMoney">0</b><span>M€</span></div>
-      <div class="scorebox"><b id="myVoix">0</b><span>VOIX</span></div>
-      <div class="myident">
-        <div class="nm" id="myName"></div>
-        <div class="myrole" id="myRole"></div>
-        <div class="actpips" id="actpips"></div>
-      </div>
-      <div class="myactions">
-        <button class="btn" id="recycleBtn" onclick="openRecycle()">♻ Recycler</button>
-        <button class="btn primary" id="endBtn" onclick="endMyTurn()">Terminer mon tour ▶</button>
-      </div>
+    <div id="mybar">
+      <div class="roulette"><b id="myMoney">0</b><span>M€</span></div>
+      <div class="voixbox roulette"><b id="myVoix">0</b><span>VOIX</span></div>
+      <div style="font-family:Georgia,serif;font-weight:700" id="myName"></div>
+      <div class="forb" id="myForb"></div>
+      <div class="actpips" id="actpips"></div>
+      <button class="btn" id="recycleBtn" onclick="openRecycle()">♻ Recycler</button>
+      <button class="btn primary" id="endBtn" onclick="endMyTurn()">Fin de tour ▶</button>
     </div>
-    <div id="tableau">
-      <div class="tcol"><div class="zlabel">🗄️ Mon casier — une dénonciation frappe TOUT le sale d'un front</div><div class="mycaser" id="mycaser"></div></div>
-      <div class="tcol"><div class="zlabel">🗳️ Mes votants (🔒 = coalition fidèle)</div><div class="myvots" id="myvots"></div></div>
+    <div id="myrow">
+      <div class="sidebox" onclick="openMyCasier()"><div class="ptitle">🗄️ Mon casier (secret) — zoom ↗</div><div id="mycaser"></div></div>
+      <div id="handwrap"><div id="hand"></div></div>
+      <div class="sidebox" onclick="openMyVotants()"><div class="ptitle">🗳️ Mes votants — zoom ↗</div><div id="myvots" class="votsum"></div></div>
     </div>
-    <div><div class="zlabel">🃏 Ma main — <span id="handHint" style="text-transform:none;font-weight:600"></span></div><div id="hand"></div></div>
   </div>
 </div>
 
@@ -340,32 +320,64 @@ const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 const CN = window.CaisseNoire;
 const $ = s => document.querySelector(s);
 
-const SEAT_COLORS = ["#e0654f","#4a86d6","#33a36b","#e3a72b","#9b6cc4","#e08a3c"];
+const SEAT_COLORS = ["#c96d54","#6d94bd","#5fa87a","#d4ab5c","#9b7fb5","#c98b54"];
 const seatColor = seat => SEAT_COLORS[seat % SEAT_COLORS.length];
 const frontClass = {Justice:"t-justice",Presse:"t-presse",Finances:"t-finances"};
 
+/* ---- habillage : une illustration PAR TYPE + une phrase drôle par carte ---- */
+const TYPE_ART = { cor:"💸", clean:"🧾", den:"📣", pro:"🛡️", bla:"🧼", steal:"🎣", coup:"🎭" };
+const FAM_ART = { "Le Capital":"🏦", "Le Bloc Public":"🏛️", "L'Ordre & le Terroir":"🚜", "La Start-up Nation":"🚀",
+  "L'Écolo-Bobo":"🌿", "L'Identité":"🏰", "Les Précaires":"✊", "La Mobilité":"🚗" };
+const FLAVOR = {
+  "Petit pot-de-vin":"Une enveloppe oubliée sur un coin de bureau.",
+  "Trafic d'influence":"Un coup de fil au bon greffier.",
+  "Caisse noire judiciaire":"Le dossier s'est égaré. Ballot.",
+  "Petits cadeaux":"Un stylo, une montre, trois costumes.",
+  "Ménage médiatique":"L'éditorialiste mange dans ta main.",
+  "Voyage offert":"Grand reportage tous frais payés aux Seychelles.",
+  "Note de frais maquillée":"Le homard passe en fournitures de bureau.",
+  "Rétrocommission":"Le contrat repasse par Genève.",
+  "Évasion fiscale":"Ton argent bronze aux Caïmans.",
+  "Don d'un militant":"Lui, au moins, il y croit.",
+  "Cotisations du parti":"Les petits ruisseaux font les grandes campagnes.",
+  "Meeting payant":"Entrée 20 balles, drapeau offert.",
+  "Subvention européenne":"Merci Bruxelles.",
+  "Dénonciation":"Balance son front.",
+  "Juge acheté":"La justice est aveugle. Surtout bien payée.",
+  "Médias corrompus":"Rien à voir ici, circulez.",
+  "Compte offshore":"Quel argent ?",
+  "Blanchiment":"Passé à la machine, ressorti tout propre.",
+  "Débauchage":"Viens chez nous, on a des mandats.",
+  "OPA électorale":"Rachat hostile d'électeurs consentants.",
+  "Élément de langage":"C'est plus compliqué que ça.",
+  "Remise de campagne":"Prix de gros sur la démocratie.",
+  "Incohérence":"L'important, c'est de gagner.",
+  "Promesse intenable":"On rasera gratis.",
+  "Renvoi d'ascenseur":"Un service en vaut deux.",
+};
+
+/* ===================== STATE (identique à avant) ===================== */
 let S = null, VIEW = null;
 let botTimer = null, botSpeed = 650, gameOverShown = false, modalMode = null;
 let soloSeats = 4, hostSeats = 4;
-// anti double-action (invités) : verrou pendant la latence réseau + dédup côté hôte
+const NET = { online:false, isHost:false, channel:null, room:null, clientId:getClientId(), name:"", mySeat:null, seats:[], started:false };
+function getClientId(){ let c=localStorage.getItem("cn_cid"); if(!c){ c="c"+Math.random().toString(36).slice(2,10); localStorage.setItem("cn_cid",c);} return c; }
 let busy = false, busyTimer = null, aidCounter = 0;
 const seenAid = new Set();
 function nextAid(){ return NET.clientId + ":" + (++aidCounter); }
 function setBusy(){ busy = true; clearTimeout(busyTimer); busyTimer = setTimeout(()=>{ busy=false; render(); }, 3000); }
-const NET = { online:false, isHost:false, channel:null, room:null, clientId:getClientId(), name:"", mySeat:null, seats:[], started:false };
-function getClientId(){ let c=localStorage.getItem("cn_cid"); if(!c){ c="c"+Math.random().toString(36).slice(2,10); localStorage.setItem("cn_cid",c);} return c; }
 
-/* SETUP */
+/* ===================== ÉCRANS ===================== */
 function buildSeatPicker(elId, get, set){ const e=$(elId); e.innerHTML=""; for(let n=2;n<=6;n++){ const b=document.createElement("button"); b.className="seat"+(n===get()?" on":""); b.textContent=n; b.onclick=()=>{ set(n); buildSeatPicker(elId,get,set); }; e.appendChild(b); } }
 buildSeatPicker("#seatsSolo", ()=>soloSeats, n=>soloSeats=n);
-function showScreen(name){ ["setup","lobby","table"].forEach(s=>$("#"+s).style.display=(s===name?"block":"none")); }
+function showScreen(name){ ["setup","lobby"].forEach(s=>$("#"+s).style.display=(s===name?"block":"none")); $("#table").style.display=(name==="table"?"grid":"none"); document.body.classList.toggle("ingame", name==="table"); }
 function pseudo(){ return ($("#pseudo").value||"").trim(); }
 function nameOk(){ if(!pseudo()){ toast("Entre ton pseudo d'abord 🙂"); return false; } NET.name=pseudo(); return true; }
 function seatObj(seat){ return NET.seats.find(s=>s.seat===seat); }
 function isBotSeat(seat){ const s=seatObj(seat); return s?s.isBot:false; }
 function seatName(seat){ const p=VIEW&&VIEW.players.find(x=>x.id===seat); const nm=p?p.name:("Siège "+seat); return isBotSeat(seat)?("🤖 "+nm):nm; }
 
-/* DRIVING (host) */
+/* ===================== DRIVING (hôte) — inchangé ===================== */
 function viewFor(seat){ const v=CN.publicState(S,seat); v.legal=CN.legalActions(S,seat); return v; }
 function hostApply(seat, action){ if(!S||S.over) return; const r=CN.applyAction(S,seat,action); if(!r.ok){ if(seat===NET.mySeat) toast(r.error); return; } afterApply(); }
 function afterApply(){ VIEW=viewFor(NET.mySeat); if(NET.online&&NET.isHost) broadcastState(); render(); if(VIEW.over){ onGameOver(); return; } driveHost(); }
@@ -380,17 +392,17 @@ function driveHost(){
 function submit(action){
   if(!VIEW||VIEW.pending||VIEW.currentPlayerId!==NET.mySeat||busy) return;
   if(NET.isHost){ hostApply(NET.mySeat, action); return; }
-  setBusy(); render();   // verrou : plus d'envoi tant que l'hôte n'a pas renvoyé l'état
+  setBusy(); render();
   NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action,aid:nextAid()}});
 }
 function submitPending(action){
   if(NET.isHost){ hostApply(NET.mySeat, action); return; }
-  if(busy) return; setBusy();   // pas de render() ici (éviterait de rouvrir la modale de réaction)
+  if(busy) return; setBusy();
   NET.channel.send({type:"broadcast",event:"action",payload:{seat:NET.mySeat,action,aid:nextAid()}});
 }
 function endMyTurn(){ submit({type:"END_TURN"}); }
 
-/* SOLO */
+/* ===================== SOLO / ONLINE — inchangé ===================== */
 function startSolo(){
   NET.online=false; NET.isHost=true; NET.mySeat=0; NET.started=true; NET.room=null;
   const total=soloSeats, nm=[]; NET.seats=[];
@@ -400,8 +412,6 @@ function startSolo(){
   $("#roomPill").style.display="none"; gameOverShown=false; showScreen("table");
   VIEW=viewFor(0); render(); driveHost();
 }
-
-/* ONLINE */
 function genRoom(){ const a="ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let r=""; for(let i=0;i<4;i++) r+=a[Math.floor(Math.random()*a.length)]; return r; }
 function connectChannel(room, asHost){
   NET.online=true; NET.isHost=asHost; NET.room=room; NET.started=false; NET.mySeat=null;
@@ -415,7 +425,7 @@ function leaveTable(){ if(botTimer)clearTimeout(botTimer); if(NET.channel){ sb.r
 function enterLobby(asHost, room){ showScreen("lobby"); $("#lobbyHostBox").style.display=asHost?"block":"none"; $("#lobbyGuestBox").style.display=asHost?"none":"block"; $("#hostControls").style.display=asHost?"block":"none"; $("#roomCodeBig").textContent=room; $("#roomCodeGuest").textContent=room; if(asHost) buildSeatPicker("#seatsHost",()=>hostSeats,n=>hostSeats=n); renderLobby(); }
 function presenceList(){ if(!NET.channel) return []; return Object.values(NET.channel.presenceState()).map(a=>a[0]).filter(Boolean); }
 function renderLobby(){ const list=presenceList(); const host=list.find(p=>p.isHost); const ord=host?[host,...list.filter(p=>p!==host)]:list;
-  $("#playersLobby").innerHTML=ord.map(p=>`<div class="prow"><span class="dot"></span><b>${esc(p.name||"?")}</b>${p.isHost?'<span class="host">HÔTE</span>':''}</div>`).join("")||`<div class="muted">Personne pour l'instant…</div>`; }
+  $("#playersLobby").innerHTML=ord.map(p=>`<div class="prow"><span class="dot"></span><b>${esc(p.name||"?")}</b>${p.isHost?'<span class="host">HÔTE</span>':''}</div>`).join("")||`<div class="prow">Personne pour l'instant…</div>`; }
 function onPresenceSync(){ if(!NET.started){ renderLobby(); return; } if(NET.isHost){ NET.channel.send({type:"broadcast",event:"start",payload:{seats:NET.seats}}); broadcastState(); } }
 function copyCode(){ navigator.clipboard?.writeText(NET.room); toast("Code copié : "+NET.room); }
 function hostStart(){
@@ -433,233 +443,305 @@ function hostStart(){
 function broadcastState(){ const views={}; NET.seats.filter(s=>!s.isBot&&s.clientId).forEach(s=>views[s.seat]=viewFor(s.seat)); NET.channel.send({type:"broadcast",event:"state",payload:{views,seats:NET.seats}}); }
 function onAction({payload}){
   if(!NET.isHost) return;
-  const aid=payload.aid;                          // dédup : ignore une action livrée en double
+  const aid=payload.aid;
   if(aid){ if(seenAid.has(aid)) return; seenAid.add(aid); if(seenAid.size>300) seenAid.clear(); }
   hostApply(payload.seat, payload.action);
 }
 function onStart({payload}){ if(NET.isHost) return; NET.seats=payload.seats; NET.started=true; gameOverShown=false; const me=NET.seats.find(s=>s.clientId===NET.clientId); NET.mySeat=me?me.seat:null; botSpeed=+$("#speed").value; $("#roomPill").style.display="inline-block"; if(NET.mySeat===null){ showScreen("lobby"); toast("Partie en cours — attends la prochaine."); return; } showScreen("table"); }
 function onState({payload}){ if(NET.isHost) return; NET.seats=payload.seats; const v=payload.views[NET.mySeat]; if(v){ VIEW=v; busy=false; clearTimeout(busyTimer); render(); if(VIEW.over) onGameOver(); } }
 
-/* LEGAL */
+/* ===================== LEGAL — inchangé ===================== */
 function legalMap(){
   const acts=(VIEW&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat&&VIEW.legal)?VIEW.legal:[];
   const buy=new Set(),hand={},den=[],steal=[]; let canRecycle=false,canEnd=false;
   for(const a of acts){
     if(a.type==="BUY_VOTANT") buy.add(a.marketIndex);
-    else if(a.type==="PLAY_DENOUNCE"){ den.push(a); push(hand,a.handIndex,a); }
-    else if(a.type==="PLAY_STEAL"){ steal.push(a); push(hand,a.handIndex,a); }
+    else if(a.type==="PLAY_DENOUNCE"){ den.push(a); pushm(hand,a.handIndex,a); }
+    else if(a.type==="PLAY_STEAL"){ steal.push(a); pushm(hand,a.handIndex,a); }
     else if(a.type==="RECYCLE") canRecycle=true;
     else if(a.type==="END_TURN") canEnd=true;
-    else if(a.handIndex!=null) push(hand,a.handIndex,a);
+    else if(a.handIndex!=null) pushm(hand,a.handIndex,a);
   }
   return {buy,hand,den,steal,canRecycle,canEnd};
 }
-function push(o,k,v){ (o[k]=o[k]||[]).push(v); }
-function incompatWith(bloc,owned){ for(const[a,b]of CN.INCOMPAT){ if(bloc===a&&owned.includes(b))return b; if(bloc===b&&owned.includes(a))return a; } return null; }
+function pushm(o,k,v){ (o[k]=o[k]||[]).push(v); }
+function uiIncompat(bloc,owned){ for(const[a,b]of CN.INCOMPAT){ if(bloc===a&&owned.includes(b))return b; if(bloc===b&&owned.includes(a))return a; } return null; }
+function blocName(bloc){ const v=CN.VOTANTS.find(x=>x.bloc===bloc); return v?v.nom:bloc; }
 
-/* RENDER */
+/* ===================== CARTES (faces papier) ===================== */
+function cardStatLine(c){
+  if(c.kind==="cor") return `+${c.gain} M€ · <span class="tag ${frontClass[c.front]}">${c.front}</span>`;
+  if(c.kind==="clean") return `+${c.gain} M€ · sûr`;
+  if(c.kind==="den") return `2 M€ · attaque`;
+  if(c.kind==="pro") return `5 M€ · <span class="tag ${frontClass[c.front]}">${c.front}</span>`;
+  if(c.kind==="bla") return `3 M€ · défense`;
+  if(c.kind==="steal") return c.e==="opa"?"vol renforcé":"vol de voix";
+  return "coup tactique";
+}
+function cardRuleText(c){
+  if(c.kind==="cor") return `Encaisse ${c.gain} M€, carte posée face cachée sur ${c.front}. Dénoncé sur ce front : tu recraches tout ton sale.`;
+  if(c.kind==="clean") return `Argent légal, jamais dénonçable. Posé face cachée sur un front au choix — un front tout propre fait rater une dénonciation.`;
+  if(c.kind==="den") return `Devine un front d'un rival. Sale dessus → il paie tout. Propre ou vide → tu paies mise + 3 M€ d'amende.`;
+  if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate.`;
+  if(c.kind==="bla") return `Rend une de tes cartes sales propre (plus dénonçable).`;
+  if(c.kind==="steal") return c.e==="opa"?`La victime te cède un de ses MEILLEURS blocs isolés (voix + famille).`:`La victime te cède un bloc isolé de son choix (voix + famille).`;
+  if(c.e==="remise") return `Ton prochain votant coûte 3 M€ de moins.`;
+  if(c.e==="incoherence") return `Achète un bloc incompatible malgré l'exclusion (+1 carte sale Presse).`;
+  if(c.e==="promesse") return `+3 voix tout de suite (+1 carte sale Presse).`;
+  if(c.e==="element") return `RÉACTION automatique : annule une dénonciation contre toi. Garde-la en main.`;
+  if(c.e==="renvoi") return `+3 M€ et pioche 1 carte.`;
+  return "";
+}
+function cardFaceHTML(c,big){
+  return `<div class="cface k-${c.kind}${big?" big":""}"><span class="ribbon"></span>
+    <span class="c-name">${esc(c.nom)}</span>
+    <div class="c-art"><span class="med">${TYPE_ART[c.kind]||"🃏"}</span></div>
+    <div class="c-stat">${cardStatLine(c)}</div>
+    <div class="c-rule">${cardRuleText(c)}</div>
+    <div class="c-flav">« ${FLAVOR[c.nom]||"…"} »</div></div>`;
+}
+function votFaceHTML(c,big){
+  return `<div class="cface votant${big?" big":""}"><span class="ribbon"></span>
+    <span class="c-name">${esc(c.nom)}</span>
+    <div class="c-art"><span class="med">${FAM_ART[c.family]||"👥"}</span></div>
+    <div class="c-fam">${esc(c.family||"Indépendant")} · ${c.tier}</div>
+    <div class="c-foot"><span class="cost">${c.cost} M€</span><span class="vx">${c.voix} voix</span></div></div>`;
+}
+
+/* ===================== RENDER ===================== */
 function render(){
   if(!VIEW||NET.mySeat===null) return;
   const me=VIEW.players.find(p=>p.id===NET.mySeat); if(!me) return;
   const isMine=!VIEW.over&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat;
-  const myTurn=isMine&&!busy;   // busy = action envoyée, on attend l'hôte → contrôles verrouillés
+  const myTurn=isMine&&!busy;
   const L=legalMap();
-  // décision en attente pour moi (dette de dénonciation OU vol à subir)
   if(VIEW.pending&&VIEW.pending.playerId===NET.mySeat){
     if(VIEW.pending.kind==="debt"&&modalMode!=="paydebt") openPayDebt();
     else if(VIEW.pending.kind==="cede"&&modalMode!=="cede") openCede();
   }
 
-  $("#meta").innerHTML=`Manche <b>${VIEW.turn}</b> · Objectif <b>${VIEW.X} voix</b> · Combines <b>${VIEW.deckCount}</b> · Votants restants <b>${VIEW.votantsLeft}</b>`;
+  $("#meta").innerHTML=`Manche <b>${VIEW.turn}</b> · Objectif <b>${VIEW.X} voix</b>`;
   if(NET.online) $("#roomPill").textContent="Table "+NET.room;
+  const ti=$("#turninfo");
+  if(VIEW.over){ ti.className=""; ti.textContent="Partie terminée."; }
+  else if(VIEW.pending){ ti.className="final"; ti.textContent=(VIEW.pending.kind==="cede"?"🎯 ":"⚖️ ")+seatName(VIEW.pending.playerId)+(VIEW.pending.kind==="cede"?" doit céder un électeur…":" doit rendre des votants…"); }
+  else if(isMine){ ti.className="mine"; ti.textContent=busy?"⏳ Envoi de ton action…":(VIEW.finalRound?"🏁 MANCHE FINALE — à toi de jouer !":"🎯 À toi de jouer !"); }
+  else { ti.className=VIEW.finalRound?"final":""; ti.textContent=(VIEW.finalRound?"🏁 Manche finale — ":"⏳ ")+"au tour de "+seatName(VIEW.currentPlayerId); }
 
-  const tb=$("#turnbar");
-  if(VIEW.over){ tb.className="turnbar"; tb.textContent="Partie terminée."; }
-  else if(VIEW.pending){ tb.className="turnbar final"; tb.textContent=(VIEW.pending.kind==="cede"?"🎯 ":"⚖️ ")+seatName(VIEW.pending.playerId)+(VIEW.pending.kind==="cede"?" doit céder un électeur…":" doit rendre des votants…"); }
-  else if(isMine){ tb.className="turnbar mine"; tb.textContent=busy?"⏳ Envoi de ton action…":(VIEW.finalRound?"🏁 Manche finale — à toi de jouer !":"🎯 À toi de jouer !"); }
-  else { tb.className="turnbar"+(VIEW.finalRound?" final":""); tb.textContent=(VIEW.finalRound?"🏁 Manche finale — ":"⏳ ")+"au tour de "+seatName(VIEW.currentPlayerId); }
-
+  /* adversaires */
   const opp=$("#opponents"); opp.innerHTML="";
   VIEW.players.filter(p=>p.id!==NET.mySeat).forEach(p=>{
     const acting=!VIEW.over&&VIEW.currentPlayerId===p.id; const inDebt=VIEW.pending&&VIEW.pending.playerId===p.id;
+    const shields=CN.FRONTS.filter(fr=>p.protect.includes(fr));
     const d=document.createElement("div"); d.className="opp"+(acting?" turn":"")+(inDebt?" debt":"");
-    d.innerHTML=`<div class="ohead"><span class="dot" style="background:${seatColor(p.id)}"></span>
-        <div><div class="onm">${esc(seatName(p.id))}</div><div class="osub">${p.handCount} cartes en main</div></div></div>
-      <div class="statline"><span class="v">${p.voix} voix</span><span class="m">${p.money} M€</span></div>
-      <div class="fronts">${frontsHTML(p)}</div>
-      ${p.coalitions.length?`<div>${p.coalitions.map(f=>`<span class="coachip">🔒 ${f}</span>`).join(" ")}</div>`:""}
-      <div class="votstrip">${votstripHTML(p)}</div>
-      <div class="handbacks">${"<div class='cback'></div>".repeat(Math.min(p.handCount,7))}</div>
-      <div class="nowp">${inDebt?"⚠️ subit une attaque…":acting?"▶ en train de jouer…":""}</div>`;
+    d.onclick=()=>openSeatZoom(p.id);
+    d.innerHTML=`<div class="ohead"><span class="dot" style="background:${seatColor(p.id)}"></span><span class="onm">${esc(seatName(p.id))}</span></div>
+      <div class="ostats"><span class="v">${p.voix} voix</span><span class="m">${p.money} M€</span></div>
+      <div class="oinfo">🗄️ casier secret${shields.length?" · "+shields.map(f=>"🛡"+f.slice(0,4)).join(" "):""} · 🃏 ${p.handCount}</div>
+      <div class="oinfo">🗳️ ${p.votants.length} bloc${p.votants.length>1?"s":""}${p.coalitions.length?" · 🔒 "+p.coalitions.length+" coalition"+(p.coalitions.length>1?"s":""):""}</div>
+      <div class="oflag">${inDebt?"⚠️ subit une attaque…":acting?"▶ joue…":""}</div>`;
     opp.appendChild(d);
   });
 
   setDeck("deckCombines",VIEW.deckCount); setDeck("deckDiscard",VIEW.discardCount); setDeck("deckVotants",VIEW.votantsLeft);
 
-  const track=$("#track"); track.innerHTML="";
-  for(let i=0;i<=VIEW.X;i++){ const cell=document.createElement("div"); cell.className="cell"+(i===VIEW.X?" goal":""); let mp="";
-    VIEW.players.forEach(p=>{ if(Math.min(p.voix,VIEW.X)===i) mp+=`<div class="meeple${p.id===NET.mySeat?" me":""}" style="background:${seatColor(p.id)}" title="${esc(seatName(p.id))} (${p.voix})"></div>`; });
-    cell.innerHTML=`<span class="num">${i}</span><div class="meeples">${mp}</div>`; track.appendChild(cell); }
+  /* piste réglette */
+  const tr=$("#track"); let h=`<div class="rail"></div>`;
+  for(let i=0;i<=VIEW.X;i+=5){ h+=`<span class="tick" style="left:${i/VIEW.X*100}%"><i></i>${i}</span>`; }
+  h+=`<span class="goalflag">🏁</span>`;
+  VIEW.players.forEach((p,k)=>{ const pct=Math.min(p.voix,VIEW.X)/VIEW.X*100;
+    h+=`<span class="mp${p.id===NET.mySeat?" me":""}" style="left:${pct}%;background:${seatColor(p.id)};margin-top:${(k%3-1)*5}px" title="${esc(seatName(p.id))} · ${p.voix} voix"></span>`; });
+  tr.innerHTML=h;
 
+  /* marché */
   const mk=$("#market"); mk.innerHTML="";
   VIEW.market.forEach((c,i)=>{
-    const forb=c.family===me.forbiddenFamily; const inc=incompatWith(c.bloc,me.blocs);
-    const canBuy=myTurn&&L.buy.has(i);
-    const d=document.createElement("div"); d.className="vcard"+(canBuy?" buy":"")+(myTurn&&!canBuy?" dis":"");
-    let warn=forb?`<span style="color:var(--red)">⛔ ta famille interdite</span>`:inc?`<span style="color:var(--red)">✗ exclut ${blocName(inc)}</span>`:"";
-    d.innerHTML=`<div class="tier">${c.tier}</div><div class="vt">${c.nom}</div><div class="vfam">👥 ${c.family}</div>
-      <div class="vwarn">${warn}</div><div class="vfoot"><span class="cost">${c.cost} M€</span><span class="vx">${c.voix}<span style="font-size:10px"> v</span></span></div>`;
-    if(canBuy) d.onclick=()=>submit({type:"BUY_VOTANT",marketIndex:i});
+    const canB=myTurn&&L.buy.has(i);
+    const forb=c.family===me.forbiddenFamily; const inc=uiIncompat(c.bloc,me.blocs);
+    const d=document.createElement("div"); d.className="mkc"+((myTurn&&!canB)?" dis":"");
+    d.innerHTML=votFaceHTML(c,false)+(forb?`<span class="mkwarn" title="ta famille interdite">⛔</span>`:inc?`<span class="mkwarn" title="incompatible avec ${esc(blocName(inc))}">✗</span>`:"");
+    d.onclick=()=>openMarketZoom(i);
     mk.appendChild(d);
   });
 
-  $("#log").innerHTML=VIEW.log.slice(0,80).map(e=>`<div class="${e.tag||""}">${esc(e.msg)}</div>`).join("");
+  $("#logmini").innerHTML=VIEW.log.slice(0,6).map(e=>`<div class="${e.tag||""}">${esc(e.msg)}</div>`).join("");
 
-  $("#me").className=myTurn?"":"notmine";
-  $("#myMoney").textContent=me.money; $("#myVoix").textContent=me.voix; $("#myName").textContent=me.name+" (toi)";
-  if(me.forbiddenFamily) $("#myRole").innerHTML=`<span class="party">🎭 ${esc(me.partyName||"")}</span> · <span class="forb">⛔ interdit : ${esc(me.forbiddenFamily)}</span>`;
+  /* ma zone */
+  $("#mybar").className=myTurn?"mine":"";
+  $("#myMoney").textContent=me.money; $("#myVoix").textContent=me.voix;
+  $("#myName").textContent=me.name;
+  $("#myForb").innerHTML=me.forbiddenFamily?`⛔ famille interdite (secrète) : <b>${esc(me.forbiddenFamily)}</b>`:"";
   const pips=$("#actpips");
-  if(myTurn){ let h=`<span class="osub" style="margin-right:4px">Actions :</span>`; for(let k=0;k<CN.CONFIG.actions;k++) h+=`<span class="pip${k<VIEW.actionsLeft?" on":""}"></span>`; pips.innerHTML=h; }
-  else pips.innerHTML=`<span class="osub">${VIEW.over?"Partie terminée":VIEW.pending?"scandale en cours…":"…patiente"}</span>`;
+  if(myTurn){ let ph=`<span class="small" style="color:#bdb494;font-weight:800;margin-right:3px">Actions</span>`; for(let k=0;k<CN.CONFIG.actions;k++) ph+=`<span class="pip${k<VIEW.actionsLeft?" on":""}"></span>`; pips.innerHTML=ph; }
+  else pips.innerHTML=`<span class="small" style="color:#bdb494">${VIEW.over?"terminée":VIEW.pending?"scandale…":busy?"envoi…":"patiente"}</span>`;
 
-  $("#mycaser").innerHTML=myCaserHTML(me);
-  $("#myvots").innerHTML=me.votants.length?me.votants.map(v=>`<span class="myvchip${v.fidele?" fidele":""}">${v.fidele?"🔒 ":""}${v.nom} · ${v.voix}v</span>`).join(""):`<span class="osub">aucun votant acheté</span>`;
+  $("#mycaser").innerHTML=CN.FRONTS.map(fr=>{
+    const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
+    const sale=cards.reduce((a,c)=>a+(c.clean?0:c.amount),0);
+    return `<div class="caserline"><span class="tag ${frontClass[fr]}">${fr}</span><span>${cards.length} carte${cards.length>1?"s":""}</span>
+      <span class="${prot?"safe":sale>0?"warn":"safe"}">${prot?"🛡":sale>0?"⚠ "+sale+" M€":"✓"}</span></div>`;
+  }).join("");
+  const totV=me.votants.reduce((a,v)=>a+v.voix,0);
+  $("#myvots").innerHTML=me.votants.length
+    ? `<b>${me.votants.length}</b> blocs · <b>${totV}</b> voix${me.coalitions.length?`<br><span class="coach">🔒 ${me.coalitions.join(" · ")}</span>`:""}`
+    : `<span style="color:#a99f83">aucun votant acheté</span>`;
 
+  /* la main en éventail */
   const hand=$("#hand"); hand.innerHTML="";
-  (me.hand||[]).forEach((card,i)=>{ const ok=myTurn&&L.hand[i]&&L.hand[i].length>0;
-    const d=document.createElement("div"); d.className="hcard k-"+card.kind+(ok?" play":(myTurn?" dis":""));
-    d.innerHTML=`<div class="hn">${card.nom}</div>${cardTag(card)}<div class="hd">${cardDesc(card)}</div>`;
-    if(ok) d.onclick=()=>playCard(i,card,L); hand.appendChild(d); });
-  $("#handHint").textContent=busy?"⏳ envoi de ton action…":VIEW.pending?"réaction en cours…":myTurn?(VIEW.actionsLeft>0?"joue une carte ou achète un votant":"plus d'action — termine ton tour"):"ce n'est pas ton tour";
+  const cards=me.hand||[]; const n=cards.length;
+  cards.forEach((card,i)=>{
+    const ok=myTurn&&L.hand[i]&&L.hand[i].length>0;
+    const d=document.createElement("div"); d.className="hc"+(myTurn&&!ok?" dis":"");
+    const rot=(i-(n-1)/2)*5, dy=Math.abs(i-(n-1)/2)*7;
+    d.style.setProperty("--r",rot+"deg"); d.style.setProperty("--y",dy+"px");
+    d.innerHTML=cardFaceHTML(card,false);
+    d.onclick=()=>openCardZoom(i);
+    hand.appendChild(d);
+  });
   $("#recycleBtn").disabled=!(myTurn&&L.canRecycle); $("#endBtn").disabled=!(myTurn&&L.canEnd);
 }
-function blocName(bloc){ const v=CN.VOTANTS.find(x=>x.bloc===bloc); return v?v.nom:bloc; }
-function setDeck(id,n){ const d=$("#"+id); d.classList.toggle("empty",n===0); d.querySelector(".cnt").textContent=n; }
-function frontsHTML(p){   // casier adverse TOTALEMENT INVISIBLE : aucun front détaillé, juste les boucliers (publics)
+function setDeck(id,nv){ const d=$("#"+id); d.querySelector(".cnt").textContent=nv; }
+
+/* ===================== ZOOMS ===================== */
+function openCardZoom(i){
+  const me=VIEW.players.find(p=>p.id===NET.mySeat); const card=me.hand[i]; if(!card) return;
+  const L=legalMap(); const plays=L.hand[i]||[];
+  const canAct=!VIEW.over&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat&&!busy&&VIEW.actionsLeft>0;
+  let act="";
+  if(card.kind==="cor") act=actBtn(canAct&&plays.length>0,`Se financer (+${card.gain} M€)`,`playSimple(${i},'PLAY_FINANCE')`);
+  else if(card.kind==="pro") act=actBtn(canAct&&plays.length>0,`Protéger ${card.front} (5 M€)`,`playSimple(${i},'PLAY_PROTECT')`);
+  else if(card.kind==="bla") act=actBtn(canAct&&plays.length>0,`Blanchir ma plus grosse carte sale (3 M€)`,`playSimple(${i},'PLAY_BLANCH')`);
+  else if(card.kind==="coup"&&card.e!=="element") act=actBtn(canAct&&plays.length>0,`Jouer ce coup`,`playSimple(${i},'PLAY_COUP')`);
+  else if(card.kind==="coup"&&card.e==="element") act=`<div class="muted small">Se joue automatiquement quand on te dénonce. Garde-la en main.</div>`;
+  else if(card.kind==="clean"){
+    act=`<div class="muted small" style="margin-bottom:4px">Pose ce leurre sur un front (face cachée) :</div><div class="btnrow">`+
+      CN.FRONTS.map(fr=>`<button class="btn${canAct?"":" off"}" ${canAct?`onclick="playClean(${i},'${fr}')"`:""}>${fr} <span class="muted">(${me.financCount[fr]})</span></button>`).join("")+`</div>`;
+  }
+  else if(card.kind==="den"){
+    const opts=plays.filter(a=>a.type==="PLAY_DENOUNCE");
+    act=opts.length?`<div class="muted small">DEVINE le front sale d'un rival (son casier est invisible) :</div><div class="choices">`+
+      opts.map(a=>`<div class="choice" onclick="playDen(${i},${a.targetId},'${a.front}')">${esc(seatName(a.targetId))} · <span class="tag ${frontClass[a.front]}">${a.front}</span></div>`).join("")+`</div>`
+      :`<div class="muted small">Aucune cible dénonçable pour l'instant (fronts protégés / cibles déjà attaquées / pas ton tour).</div>`;
+  }
+  else if(card.kind==="steal"){
+    const opts=plays.filter(a=>a.type==="PLAY_STEAL");
+    act=opts.length?`<div class="muted small">La victime choisira quel bloc isolé te céder :</div><div class="choices">`+
+      opts.map(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId); return `<div class="choice" onclick="playSteal(${i},${a.targetId})">${esc(seatName(a.targetId))} — ${t.voix} voix</div>`; }).join("")+`</div>`
+      :`<div class="muted small">Aucune cible volable pour l'instant.</div>`;
+  }
+  if(!canAct&&card.kind!=="coup") act=`<div class="muted small">⏳ ${VIEW.currentPlayerId!==NET.mySeat?"Ce n'est pas ton tour.":"Plus d'action ce tour."}</div>`+(act&&card.e==="element"?act:"");
+  showModal(`<div class="zoomwrap">${cardFaceHTML(card,true)}<div class="zoomact"><h2 style="font-size:16px">${esc(card.nom)}</h2>${act}
+    <button class="btn ghost" style="border-color:var(--paper-edge);color:var(--ink-soft);margin-top:auto" onclick="hideModal()">Fermer</button></div></div>`);
+}
+function actBtn(on,label,call){ return `<button class="btn primary${on?"":" off"}" ${on?`onclick="${call}"`:""}>${label}</button>`; }
+function playSimple(i,type){ hideModal(); submit({type,handIndex:i}); }
+function playClean(i,fr){ hideModal(); submit({type:"PLAY_FINANCE_CLEAN",handIndex:i,front:fr}); }
+function playDen(i,t,fr){ hideModal(); submit({type:"PLAY_DENOUNCE",handIndex:i,targetId:t,front:fr}); }
+function playSteal(i,t){ hideModal(); submit({type:"PLAY_STEAL",handIndex:i,targetId:t}); }
+
+function openMarketZoom(i){
+  const c=VIEW.market[i]; if(!c) return;
+  const me=VIEW.players.find(p=>p.id===NET.mySeat);
+  const L=legalMap(); const canB=!VIEW.over&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat&&!busy&&L.buy.has(i);
+  const forb=c.family===me.forbiddenFamily; const inc=uiIncompat(c.bloc,me.blocs);
+  const marg=CN.coalitionBonus(me.blocs.concat([c.bloc]))-CN.coalitionBonus(me.blocs);
+  let warn=forb?`<div class="small" style="color:var(--sale);font-weight:800">⛔ C'est ta famille interdite — tu ne peux jamais l'acheter.</div>`
+    :inc?`<div class="small" style="color:var(--sale);font-weight:800">✗ Incompatible avec ${esc(blocName(inc))} que tu détiens.</div>`
+    :marg>0?`<div class="small" style="color:var(--clean);font-weight:800">👥 +${marg} voix de coalition en le prenant !</div>`:"";
+  showModal(`<div class="zoomwrap">${votFaceHTML(c,true)}<div class="zoomact"><h2 style="font-size:16px">${esc(c.nom)}</h2>
+    <div class="small muted">Famille : <b>${esc(c.family)}</b> — 3 blocs d'une famille = coalition (+3 voix, involable).</div>${warn}
+    ${actBtn(canB,`Acheter (${c.cost} M€ → +${c.voix} voix)`,`buyMarket(${i})`)}
+    <button class="btn ghost" style="border-color:var(--paper-edge);color:var(--ink-soft);margin-top:auto" onclick="hideModal()">Fermer</button></div></div>`);
+}
+function buyMarket(i){ hideModal(); submit({type:"BUY_VOTANT",marketIndex:i}); }
+
+function openSeatZoom(id){
+  const p=VIEW.players.find(x=>x.id===id); if(!p) return;
   const shields=CN.FRONTS.filter(fr=>p.protect.includes(fr));
-  return `<div class="secretcaser">🗄️ casier secret${shields.length?` · ${shields.map(f=>"🛡 "+f.slice(0,4)).join(" ")}`:""}</div>`;
+  const vl=p.votants.length?`<div class="vlist">${p.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒 ":""}${esc(v.nom)} · ${v.voix}v</span>`).join("")}</div>`:`<p class="muted small">Aucun votant.</p>`;
+  showModal(`<h2>${esc(seatName(id))}</h2>
+    <p class="small" style="margin:4px 0"><b style="color:var(--clean)">${p.voix} voix</b> · <b style="color:var(--gold-d)">${p.money} M€</b> · 🃏 ${p.handCount} cartes en main</p>
+    <p class="small muted">🗄️ Casier <b>secret</b> — tu ne vois ni le contenu ni le nombre de cartes.${shields.length?" Protégé : "+shields.map(f=>"🛡 "+f).join(", ")+".":""}</p>
+    ${p.coalitions.length?`<p class="small" style="color:var(--gold-d);font-weight:800">🔒 Coalitions : ${p.coalitions.join(" · ")}</p>`:""}
+    <div class="small muted" style="margin-top:8px;font-weight:800;text-transform:uppercase">Ses votants (publics)</div>${vl}
+    <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
 }
-function votstripHTML(p){ if(!p.votants.length) return `<span class="osub">—</span>`; return p.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒":""}${v.nom}</span>`).join(""); }
-function myCaserHTML(me){ return CN.FRONTS.map(fr=>{ const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
-  const pile=cards.map(c=>`<div class="fcard ${c.clean?"clean":"sale"}">${c.clean?"propre":"⚠"} ${c.amount}</div>`).join("")||"<span class='osub' style='font-size:9px'>vide</span>";
-  const sale=cards.reduce((a,c)=>a+(c.clean?0:c.amount),0);
-  return `<div class="cslot ${prot?"prot":""}"><span class="tag ${frontClass[fr]}">${fr}</span>
-    <div class="pile">${pile}</div>
-    <div class="expo">${prot?"🛡 protégé":sale>0?`⚠️ ${sale} M€ exposés`:cards.length?"✓ que du propre":"✓ vide"}</div></div>`; }).join(""); }
-
-function cardTag(c){
-  if(c.kind==="cor") return `<div class="ht"><span class="tag ${frontClass[c.front]}">Corruption · ${c.front} · +${c.gain}M€</span></div>`;
-  if(c.kind==="clean") return `<div class="ht"><span class="tag t-clean">Propre · +${c.gain}M€ · sûr</span></div>`;
-  if(c.kind==="den") return `<div class="ht"><span class="tag" style="color:var(--red);border-color:#f4ccc3;background:#fdeeeb">Dénoncer · pari · 2M€</span></div>`;
-  if(c.kind==="pro") return `<div class="ht"><span class="tag ${frontClass[c.front]}">Protéger ${c.front} · 5M€</span></div>`;
-  if(c.kind==="bla") return `<div class="ht"><span class="tag">Blanchir · 3M€</span></div>`;
-  if(c.kind==="steal") return `<div class="ht"><span class="tag" style="color:var(--purple);border-color:#dcc9ee;background:#f5eefc">${c.e==="opa"?"OPA électorale":"Débauchage"}</span></div>`;
-  if(c.e==="element") return `<div class="ht"><span class="tag" style="color:var(--blue);border-color:#c5d8f4;background:#eef4fc">Réaction (auto)</span></div>`;
-  return `<div class="ht"><span class="tag">Coup tactique</span></div>`;
+function openMyCasier(){
+  const me=VIEW.players.find(p=>p.id===NET.mySeat);
+  const piles=CN.FRONTS.map(fr=>{
+    const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
+    const sale=cards.reduce((a,c)=>a+(c.clean?0:c.amount),0);
+    const items=cards.length?cards.map(c=>`<span class="vchip${c.clean?"":" fidele"}" style="${c.clean?"":"background:#f2ded6;border-color:#c98b76;color:#7d3b2b"}">${c.clean?"🧾 propre":"💸 SALE"} ${c.amount}</span>`).join(" "):`<span class="muted small">vide</span>`;
+    return `<div style="margin:10px 0"><span class="tag ${frontClass[fr]}">${fr}</span> ${prot?"🛡 protégé":""} <b class="small" style="color:${sale>0?"var(--sale)":"var(--clean)"}">${sale>0?"⚠ "+sale+" M€ exposés":"✓ sûr"}</b><div class="vlist">${items}</div></div>`;
+  }).join("");
+  showModal(`<h2>🗄️ Mon casier (visible de moi seul)</h2><p class="muted small">Les rivaux ne voient RIEN de tout ça. Une dénonciation sur un front me fait payer tout le SALE de ce front.</p>${piles}
+    <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
 }
-function cardDesc(c){
-  if(c.kind==="cor") return `+${c.gain} M€ (face cachée sur ${c.front}). Si on te dénonce sur ${c.front}, tu recraches ce montant (avec tout ton sale de ce front).`;
-  if(c.kind==="clean") return `+${c.gain} M€ sûr, jamais dénonçable. Gonfle un front pour bluffer : dénoncer un front tout-propre coûte une amende à l'attaquant.`;
-  if(c.kind==="den") return `PARI : un rival + un front. Il paie TOUT son sale de ce front. Que du propre/vide → −2 M€ + 3 d'amende à la cible.`;
-  if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate.`;
-  if(c.kind==="bla") return `Rends une de tes cartes sales propre (plus dénonçable).`;
-  if(c.kind==="steal") return c.e==="opa"?`OPA : la victime te cède un de ses meilleurs blocs isolés (voix + famille).`:`Débauchage : la victime te cède un bloc isolé de son choix (voix + famille).`;
-  if(c.e==="remise") return `Ton prochain votant coûte 3 M€ de moins.`;
-  if(c.e==="incoherence") return `Prends un bloc incompatible sans blocage (+1 carte sale Presse).`;
-  if(c.e==="promesse") return `+3 voix tout de suite (+1 carte sale Presse).`;
-  if(c.e==="element") return `Auto en réaction : annule une dénonciation contre toi. Garde-la !`;
-  if(c.e==="renvoi") return `+3 M€ et pioche 1 carte.`;
-  return "";
+function openMyVotants(){
+  const me=VIEW.players.find(p=>p.id===NET.mySeat);
+  const vl=me.votants.length?`<div class="vlist">${me.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒 ":""}${esc(v.nom)} · ${v.voix}v</span>`).join("")}</div>`:`<p class="muted small">Aucun votant.</p>`;
+  showModal(`<h2>🗳️ Mes votants</h2><p class="muted small">🔒 = coalition complète (3+ d'une famille) : +voix bonus et involables.</p>${vl}
+    <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
+}
+function openJournal(){
+  showModal(`<h2>📰 Journal de campagne</h2><div style="max-height:60vh;overflow:auto;margin-top:8px;font-size:13px">${VIEW.log.map(e=>`<div style="padding:4px 0;border-bottom:1px dashed var(--paper-edge)">${esc(e.msg)}</div>`).join("")}</div>
+    <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
 }
 
-/* JOUER UNE CARTE */
-function playCard(i,card,L){
-  if(card.kind==="den"){ openDenounce(i,L); return; }
-  if(card.kind==="steal"){ openSteal(i,L); return; }
-  if(card.kind==="clean"){ openCleanFront(i); return; }
-  submit({type: card.kind==="cor"?"PLAY_FINANCE":card.kind==="pro"?"PLAY_PROTECT":card.kind==="bla"?"PLAY_BLANCH":"PLAY_COUP", handIndex:i});
-}
-function openDenounce(handIdx,L){
-  const opts=L.den.filter(a=>a.handIndex===handIdx); if(!opts.length){ toast("Aucune cible dénonçable."); return; }
-  modalMode="denounce";
-  let h=`<h2>🔥 Dénoncer — DEVINE le bon front</h2><p class="muted">Tu ne vois pas le casier des rivaux : à toi de <b>deviner</b> où ils planquent leur corruption. Touché → la cible paie tout son sale de ce front. Que du propre / vide → <b>raté</b> : tu perds ta mise + 3 M€ d'amende.</p><div class="choices">`;
-  opts.forEach(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId);
-    h+=`<div class="choice" onclick="confirmDenounce(${handIdx},${a.targetId},'${a.front}')"><b>${esc(seatName(a.targetId))}</b> — ${t.voix} voix · <span class="tag ${frontClass[a.front]}">${a.front}</span></div>`; });
-  h+=`</div><div style="margin-top:10px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`; showModal(h);
-}
-function confirmDenounce(handIdx,targetId,front){ hideModal(); submit({type:"PLAY_DENOUNCE",handIndex:handIdx,targetId,front}); }
-function openSteal(handIdx,L){
-  const opts=L.steal.filter(a=>a.handIndex===handIdx); if(!opts.length){ toast("Aucune cible (pas de bloc isolé cédable)."); return; }
-  modalMode="steal";
-  let h=`<h2>🎯 Voler un électeur</h2><p class="muted">Choisis ta cible : <b>c'est elle qui décidera</b> quel bloc isolé (hors coalition complète) te céder. Le bloc passe dans ta zone.</p><div class="choices">`;
-  opts.forEach(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId); h+=`<div class="choice" onclick="confirmSteal(${handIdx},${a.targetId})"><b>${esc(seatName(a.targetId))}</b> — ${t.voix} voix</div>`; });
-  h+=`</div><div style="margin-top:10px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`; showModal(h);
-}
-function confirmSteal(handIdx,targetId){ hideModal(); submit({type:"PLAY_STEAL",handIndex:handIdx,targetId}); }
-function openCleanFront(handIdx){
-  modalMode="clean"; const me=VIEW.players.find(p=>p.id===NET.mySeat);
-  let h=`<h2>🃏 Financement propre — pose un leurre</h2><p class="muted">Argent sûr. Pose-le sur un front pour <b>gonfler la pile</b> (les rivaux ne savent pas si c'est sale). Un front qui n'a QUE du propre fait <b>rater</b> une dénonciation → amende pour l'attaquant.</p><div class="fronttabs">`;
-  CN.FRONTS.forEach(fr=>{ const n=me.financCount[fr]; h+=`<div class="fronttab" onclick="confirmClean(${handIdx},'${fr}')"><span class="tag ${frontClass[fr]}">${fr}</span><div class="muted" style="margin-top:6px;font-size:11px">pile de ${n}</div></div>`; });
-  h+=`</div><div style="margin-top:14px"><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`; showModal(h);
-}
-function confirmClean(handIdx,front){ hideModal(); submit({type:"PLAY_FINANCE_CLEAN",handIndex:handIdx,front}); }
-
-/* RECYCLER */
+/* ===================== RECYCLER / DETTE / CESSION — logique inchangée ===================== */
 let recSel=[];
 function openRecycle(){
-  if(!VIEW||VIEW.pending||VIEW.currentPlayerId!==NET.mySeat) return; const me=VIEW.players.find(p=>p.id===NET.mySeat); recSel=[]; modalMode="recycle";
-  showModal(`<h2>♻ Recycler (1 action)</h2><p class="muted">Choisis 1 ou 2 cartes à défausser, tu repiocheras pour revenir à 5.</p><div class="choices" id="recList"></div>
-    <div style="margin-top:12px;display:flex;gap:8px"><button class="btn primary" onclick="confirmRecycle()">Recycler</button><button class="btn ghost" onclick="hideModal()">Annuler</button></div>`);
+  if(!VIEW||VIEW.pending||VIEW.currentPlayerId!==NET.mySeat) return; recSel=[]; modalMode="recycle";
+  showModal(`<h2>♻ Recycler (1 action)</h2><p class="muted small">Défausse 1 ou 2 cartes, tu repiocheras à 5.</p><div class="choices" id="recList"></div>
+    <div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="confirmRecycle()">Recycler</button><button class="btn" onclick="hideModal()">Annuler</button></div>`);
   renderRecList();
 }
 function renderRecList(){ const me=VIEW.players.find(p=>p.id===NET.mySeat); const c=$("#recList"); c.innerHTML="";
-  me.hand.forEach((card,i)=>{ const sel=recSel.includes(i); const d=document.createElement("div"); d.className="choice"+(sel?" sel":""); d.innerHTML=`${sel?"☑":"☐"} <b>${card.nom}</b>`;
+  me.hand.forEach((card,i)=>{ const sel=recSel.includes(i); const d=document.createElement("div"); d.className="choice"+(sel?" sel":""); d.innerHTML=`${sel?"☑":"☐"} <b>${esc(card.nom)}</b>`;
     d.onclick=()=>{ if(sel)recSel=recSel.filter(x=>x!==i); else if(recSel.length<2)recSel.push(i); renderRecList(); }; c.appendChild(d); }); }
 function confirmRecycle(){ if(!recSel.length){ hideModal(); return; } hideModal(); submit({type:"RECYCLE",handIndexes:recSel.slice()}); }
 
-/* PAYER LA DETTE (dénoncé) */
 let payDebtSel=[];
 function openPayDebt(){ modalMode="paydebt"; payDebtSel=[]; renderPayDebt(); }
 function renderPayDebt(){
   const me=VIEW.players.find(p=>p.id===NET.mySeat); if(!me||!VIEW.pending){ hideModal(); return; }
   const need=VIEW.pending.voixNeeded; const sel=payDebtSel.reduce((a,i)=>a+(me.votants[i]?me.votants[i].voix:0),0);
-  let h=`<h2>⚖️ Scandale ! Rends des votants</h2><p class="muted">Tu ne peux pas tout payer en argent. Choisis les votants à rendre (ils retournent au marché). Couvre <b>${need} voix</b> — perds-en le moins possible !</p><div class="choices">`;
+  let h=`<h2>⚖️ Scandale ! Rends des votants</h2><p class="muted small">Ton cash ne suffit pas : rends des votants (retour au marché). Couvre <b>${need} voix</b> — perds-en le moins possible !</p><div class="choices">`;
   me.votants.forEach((v,i)=>{ const s=payDebtSel.includes(i); h+=`<div class="choice${s?" sel":""}" onclick="togglePay(${i})">${s?"☑":"☐"} <b>${v.fidele?"🔒 ":""}${esc(v.nom)}</b> — ${v.voix} voix</div>`; });
-  h+=`</div><p style="margin-top:10px;font-weight:800;color:${sel>=need?"var(--money)":"var(--red)"}">Sélectionné : ${sel} / ${need} voix</p>
-    <div style="margin-top:8px"><button class="btn primary" onclick="confirmPayDebt()" ${sel>=need||me.votants.length===payDebtSel.length?"":"disabled"}>Rendre ces votants</button></div>`;
+  h+=`</div><p style="margin-top:10px;font-weight:800;color:${sel>=need?"var(--clean)":"var(--sale)"}">Sélectionné : ${sel} / ${need} voix</p>
+    <div class="btnrow"><button class="btn primary" onclick="confirmPayDebt()" ${sel>=need||me.votants.length===payDebtSel.length?"":"disabled"}>Rendre ces votants</button></div>`;
   const m=$("#modal"); m.className="modal debt"; m.innerHTML=h; $("#overlay").style.display="flex";
 }
 function togglePay(i){ if(payDebtSel.includes(i)) payDebtSel=payDebtSel.filter(x=>x!==i); else payDebtSel.push(i); renderPayDebt(); }
 function confirmPayDebt(){ const idx=payDebtSel.slice(); modalMode=null; hideModal(); submitPending({type:"PAY_DEBT",votantIndexes:idx}); }
 
-/* CÉDER UN BLOC (victime d'un vol) */
 function openCede(){
   modalMode="cede"; const me=VIEW.players.find(p=>p.id===NET.mySeat);
   const opts=(VIEW.legal||[]).filter(a=>a.type==="CEDE_BLOC");
   const attacker=VIEW.pending?seatName(VIEW.pending.attackerId):"?"; const opa=VIEW.pending&&VIEW.pending.mode==="opa";
-  let h=`<h2>🎯 On te débauche un électeur !</h2><p class="muted">${esc(attacker)} lance ${opa?"une <b>OPA</b> (tes meilleurs blocs)":"un <b>débauchage</b>"}. Choisis quel bloc <b>isolé</b> tu cèdes (il part avec ses voix chez l'attaquant).</p><div class="choices">`;
+  let h=`<h2>🎯 On te débauche un électeur !</h2><p class="muted small">${esc(attacker)} lance ${opa?"une <b>OPA</b> (tes meilleurs blocs)":"un <b>débauchage</b>"}. Choisis quel bloc <b>isolé</b> tu cèdes.</p><div class="choices">`;
   opts.forEach(a=>{ const v=me.votants.find(x=>x.bloc===a.bloc); h+=`<div class="choice" onclick="confirmCede('${esc(a.bloc)}')"><b>${esc(v?v.nom:a.bloc)}</b> — ${v?v.voix:"?"} voix</div>`; });
   h+=`</div>`;
   const m=$("#modal"); m.className="modal debt"; m.innerHTML=h; $("#overlay").style.display="flex";
 }
 function confirmCede(bloc){ modalMode=null; hideModal(); submitPending({type:"CEDE_BLOC",bloc}); }
 
-/* FIN */
+/* ===================== FIN ===================== */
 function onGameOver(){
   if(gameOverShown) return; gameOverShown=true; modalMode=null;
   const mine=VIEW.winner===NET.mySeat; const ranked=VIEW.players.slice().sort((a,b)=>b.finalScore-a.finalScore);
   let h=`<h2>${mine?"🏆 Tu remportes l'élection !":"🗳️ "+esc(seatName(VIEW.winner))+" l'emporte"}</h2>
-    <p class="muted" style="margin-top:4px">${VIEW.endReason==="seuil"?"Le plus de voix en fin de manche finale.":"Fin au garde-fou — décompte des voix."} Familles interdites révélées :</p>
+    <p class="muted small" style="margin-top:4px">${VIEW.endReason==="seuil"?"Le plus de voix en fin de manche finale.":"Fin au garde-fou — décompte des voix."} Familles interdites révélées :</p>
     <table class="reveal"><tr><th>Joueur</th><th>Voix</th><th>Parti</th><th>Famille interdite</th></tr>`;
   ranked.forEach(p=>{ h+=`<tr class="${p.id===VIEW.winner?"win":""}"><td>${esc(seatName(p.id))}</td><td><b>${p.finalScore}</b></td><td>${esc(p.partyName||"?")}</td><td>⛔ ${esc(p.forbiddenFamily||"?")}</td></tr>`; });
-  h+=`</table><div class="choices" style="margin-top:14px">`;
-  if(NET.isHost) h+=`<div class="choice" onclick="hideModal();rematch()">↺ Relancer une partie</div>`; else h+=`<div class="muted">En attente de l'hôte pour relancer…</div>`;
+  h+=`</table><div class="choices" style="margin-top:12px">`;
+  if(NET.isHost) h+=`<div class="choice" onclick="hideModal();rematch()">↺ Relancer une partie</div>`; else h+=`<div class="muted small">En attente de l'hôte pour relancer…</div>`;
   h+=`<div class="choice" onclick="hideModal();leaveTable()">← Quitter la table</div></div>`;
   showModal(h);
 }
 function rematch(){ if(!NET.isHost) return; if(NET.online) hostStart(); else startSolo(); }
 
-/* UTILS */
+/* ===================== UTILS ===================== */
 function showModal(h){ const m=$("#modal"); m.className="modal"; m.innerHTML=h; $("#overlay").style.display="flex"; }
 function hideModal(){ $("#overlay").style.display="none"; if(modalMode!=="paydebt"&&modalMode!=="cede") modalMode=null; }
 let toastT=null;
