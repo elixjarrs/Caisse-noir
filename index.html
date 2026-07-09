@@ -63,7 +63,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ============ LA TABLE (plein écran, sans scroll) ============ */
-#table{display:none;grid-template-rows:44px auto minmax(0,1fr) 264px;gap:8px;height:100vh;padding:10px 14px 8px;
+#table{display:none;grid-template-rows:44px auto minmax(0,1fr) auto;gap:8px;height:100vh;padding:10px 14px 8px;
   background:radial-gradient(130% 120% at 50% -10%,var(--felt) 0%,var(--felt-d) 85%);border:12px solid var(--wood2);outline:3px solid rgba(0,0,0,.55);border-radius:20px;box-shadow:inset 0 0 90px rgba(0,0,0,.45)}
 @media(max-height:600px),(max-width:860px){ body.ingame{overflow:auto} #table{height:auto;grid-template-rows:auto auto auto auto} }
 
@@ -93,7 +93,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .oflag{font-size:10px;font-weight:800;color:var(--gold);min-height:13px;margin-top:3px}
 
 /* centre : pioches | marché+piste | journal */
-#center{display:grid;grid-template-columns:84px minmax(0,1fr) 225px;gap:10px;min-height:0}
+#center{display:grid;grid-template-columns:74px minmax(0,1fr);gap:10px;min-height:0}
 .deckcol{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center}
 .minideck{text-align:center;cursor:default}
 .minideck .stack{position:relative;width:52px;height:72px;margin:0 auto}
@@ -118,16 +118,14 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .mklabel{font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:#bdb494;font-weight:800}
 #market{display:flex;gap:8px;flex-wrap:wrap;align-content:flex-start;min-height:0}
 
-/* journal */
-#sidecol{background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;color:#d8cfae;display:flex;flex-direction:column;min-height:0}
-#sidecol .ptitle{font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;color:#bdb494;font-weight:800;display:flex;justify-content:space-between;align-items:center}
-#sidecol .ptitle span{cursor:pointer;color:var(--gold);font-size:10px}
-#logmini{margin-top:6px;overflow:hidden;font-size:11.5px;line-height:1.45}
-#logmini div{padding:3px 0;border-bottom:1px dashed rgba(255,255,255,.12)}
+/* journal : fine bande sous le marché */
+#logstrip{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:6px 12px;color:#d8cfae;font-size:12px}
+#logmini{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 #logmini .den{color:#e8a08c}#logmini .buy{color:#a8d3b2}#logmini .win{color:#f4d689;font-weight:800}#logmini .income{color:#a99f83}
+.logmore{cursor:pointer;color:var(--gold);font-size:11px;font-weight:800;white-space:nowrap}
 
 /* ============ MA ZONE ============ */
-#me{display:grid;grid-template-rows:46px minmax(0,1fr);gap:4px;min-height:0}
+#me{display:grid;grid-template-rows:46px auto;gap:4px}
 #mybar{display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:5px 14px;color:#e8dfc8}
 #mybar.mine{border-color:var(--gold);box-shadow:0 0 16px rgba(195,154,74,.25)}
 .roulette{display:flex;align-items:baseline;gap:5px}
@@ -139,7 +137,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .actpips{display:flex;gap:5px;align-items:center;margin-left:auto}
 .pip{width:12px;height:12px;border-radius:50%;border:2px solid var(--gold)}
 .pip.on{background:var(--gold)}
-#myrow{display:grid;grid-template-columns:215px minmax(0,1fr) 215px;gap:10px;min-height:0}
+#myrow{display:grid;grid-template-columns:200px minmax(0,1fr) 200px;gap:10px}
 .sidebox{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 11px;color:#d8cfae;cursor:pointer;transition:.12s;overflow:hidden}
 .sidebox:hover{border-color:var(--gold)}
 .sidebox .ptitle{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#bdb494;font-weight:800;margin-bottom:5px}
@@ -150,43 +148,43 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .coach{font-size:10px;color:var(--gold);font-weight:800}
 
 /* la MAIN en éventail */
-#handwrap{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:0}
+#handwrap{position:relative;display:flex;justify-content:center;align-items:flex-end;height:calc(clamp(150px,min(21.5vh,13.5vw),215px)*1.36 + 6px)}
 #hand{display:flex;align-items:flex-end;justify-content:center;height:100%}
-.hc{width:142px;height:192px;margin:0 -24px;transform:rotate(var(--r)) translateY(var(--y));transform-origin:50% 120%;transition:transform .18s,box-shadow .18s;cursor:pointer;position:relative;z-index:1}
-.hc:hover{transform:translateY(-36px) rotate(0deg) scale(1.07);z-index:20}
+.hc{width:clamp(150px,min(21.5vh,13.5vw),215px);aspect-ratio:142/192;margin:0 -26px;transform:rotate(var(--r)) translateY(var(--y));transform-origin:50% 120%;transition:transform .18s,box-shadow .18s;cursor:pointer;position:relative;z-index:1}
+.hc:hover{transform:translateY(-42px) rotate(0deg) scale(1.08);z-index:20}
 .hc.dis{filter:grayscale(.5) brightness(.85)}
 
 /* ============ CARTES (papier) ============ */
 .cface{width:100%;height:100%;background:linear-gradient(168deg,#f8f1de,var(--paper) 45%,var(--paper2));border:1px solid var(--paper-edge);border-radius:11px;box-shadow:0 4px 10px rgba(0,0,0,.35);display:flex;flex-direction:column;padding:9px 10px;position:relative;overflow:hidden}
 .cface::before{content:"";position:absolute;inset:4px;border:1px solid rgba(150,118,47,.35);border-radius:8px;pointer-events:none}
-.cface .c-name{font-family:Georgia,serif;font-weight:700;font-size:13px;line-height:1.12;color:var(--ink);display:block}
-.cface .c-art{text-align:center;font-size:33px;margin:5px 0 3px;filter:sepia(.25) saturate(.85)}
-.cface .c-art .med{display:inline-flex;width:52px;height:52px;border-radius:50%;align-items:center;justify-content:center;background:rgba(0,0,0,.06);border:1px solid rgba(150,118,47,.3)}
-.cface .c-stat{text-align:center;font-size:11px;font-weight:800;color:var(--ink)}
-.cface .c-rule{font-size:9.8px;color:var(--ink-soft);line-height:1.35;margin-top:4px;flex:1;overflow:hidden}
-.cface .c-flav{font-size:9px;font-style:italic;color:var(--ink-faint);border-top:1px dashed var(--paper-edge);padding-top:3px;margin-top:3px}
+.cface .c-name{font-family:Georgia,serif;font-weight:700;font-size:15px;line-height:1.12;color:var(--ink);display:block}
+.cface .c-art{text-align:center;font-size:38px;margin:5px 0 3px;filter:sepia(.25) saturate(.85)}
+.cface .c-art .med{display:inline-flex;width:58px;height:58px;border-radius:50%;align-items:center;justify-content:center;background:rgba(0,0,0,.06);border:1px solid rgba(150,118,47,.3)}
+.cface .c-stat{text-align:center;font-size:12.5px;font-weight:800;color:var(--ink)}
+.cface .c-rule{font-size:11px;color:var(--ink-soft);line-height:1.35;margin-top:4px;flex:1;overflow:hidden}
+.cface .c-flav{font-size:10px;font-style:italic;color:var(--ink-faint);border-top:1px dashed var(--paper-edge);padding-top:3px;margin-top:3px}
 .cface .ribbon{position:absolute;top:0;left:0;right:0;height:4px}
 .k-cor .ribbon{background:var(--sale)} .k-clean .ribbon{background:var(--clean)} .k-den .ribbon{background:var(--atk)}
 .k-pro .ribbon{background:var(--def)} .k-bla .ribbon{background:var(--bla)} .k-steal .ribbon{background:var(--steal)} .k-coup .ribbon{background:var(--coup)} .votant .ribbon{background:var(--gold-d)}
-.cface.big{width:250px;height:340px;padding:14px}
-.cface.big .c-name{font-size:18px}
-.cface.big .c-art{font-size:56px;margin:12px 0 8px}
-.cface.big .c-art .med{width:92px;height:92px}
-.cface.big .c-stat{font-size:14px}
-.cface.big .c-rule{font-size:12.5px;margin-top:8px}
-.cface.big .c-flav{font-size:11px;padding-top:6px}
+.cface.big{width:272px;height:370px;padding:15px}
+.cface.big .c-name{font-size:20px}
+.cface.big .c-art{font-size:60px;margin:12px 0 8px}
+.cface.big .c-art .med{width:98px;height:98px}
+.cface.big .c-stat{font-size:15px}
+.cface.big .c-rule{font-size:13.5px;margin-top:8px}
+.cface.big .c-flav{font-size:11.5px;padding-top:6px}
 /* votant marché (mini) */
-.mkc{width:104px;height:140px;cursor:pointer;transition:.14s;position:relative;z-index:1}
+.mkc{width:clamp(108px,min(16vh,calc((100vw - 215px)/8)),170px);aspect-ratio:104/140;cursor:pointer;transition:.14s;position:relative;z-index:1}
 .mkc:hover{transform:translateY(-5px) scale(1.04);z-index:5}
-.mkc .cface{padding:7px 8px}
-.mkc .c-name{font-size:11px}
-.mkc .c-art{font-size:24px;margin:2px 0}
-.mkc .c-art .med{width:40px;height:40px}
+.mkc .cface{padding:8px 9px}
+.mkc .c-name{font-size:12.5px}
+.mkc .c-art{font-size:28px;margin:3px 0}
+.mkc .c-art .med{width:46px;height:46px}
 .mkc.dis{filter:grayscale(.55) brightness(.85)}
-.cface .c-fam{text-align:center;font-size:9px;color:var(--ink-faint);font-weight:700}
+.cface .c-fam{text-align:center;font-size:10.5px;color:var(--ink-faint);font-weight:700}
 .cface .c-foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:auto}
-.cface .cost{font-weight:800;color:var(--gold-d);font-size:11px}
-.cface .vx{font-family:Georgia,serif;font-weight:700;color:var(--clean);font-size:15px}
+.cface .cost{font-weight:800;color:var(--gold-d);font-size:13px}
+.cface .vx{font-family:Georgia,serif;font-weight:700;color:var(--clean);font-size:18px}
 .cface.big .cost{font-size:15px} .cface.big .vx{font-size:22px}
 .mkwarn{position:absolute;top:7px;right:7px;font-size:12px;z-index:2}
 
@@ -283,10 +281,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
       <div id="trackwrap"><div id="track"></div></div>
       <div class="mklabel">🛒 Marché des votants — clique une carte pour zoomer</div>
       <div id="market"></div>
-    </div>
-    <div id="sidecol">
-      <div class="ptitle">📰 Journal <span onclick="openJournal()">tout voir ↗</span></div>
-      <div id="logmini"></div>
+      <div id="logstrip">📰 <span id="logmini"></span><span class="logmore" onclick="openJournal()">tout voir ↗</span></div>
     </div>
   </div>
 
@@ -564,7 +559,7 @@ function render(){
     mk.appendChild(d);
   });
 
-  $("#logmini").innerHTML=VIEW.log.slice(0,6).map(e=>`<div class="${e.tag||""}">${esc(e.msg)}</div>`).join("");
+  $("#logmini").innerHTML=VIEW.log.slice(0,2).reverse().map(e=>`<span class="${e.tag||""}">${esc(e.msg)}</span>`).join(" · ");
 
   /* ma zone */
   $("#mybar").className=myTurn?"mine":"";
@@ -684,8 +679,14 @@ function openMyVotants(){
     <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
 }
 function openJournal(){
-  showModal(`<h2>📰 Journal de campagne</h2><div style="max-height:60vh;overflow:auto;margin-top:8px;font-size:13px">${VIEW.log.map(e=>`<div style="padding:4px 0;border-bottom:1px dashed var(--paper-edge)">${esc(e.msg)}</div>`).join("")}</div>
+  // ordre CHRONOLOGIQUE (plus ancien -> plus récent) ; le journal est stocké récent-en-premier.
+  const rows=VIEW.log.slice().reverse().map(e=>{
+    const turnBreak=e.tag==="income"?"border-top:2px solid var(--paper-edge);margin-top:6px;padding-top:8px;":"border-top:1px dashed var(--paper-edge);";
+    return `<div style="padding:4px 0;${turnBreak}"><span class="${e.tag||""}">${esc(e.msg)}</span></div>`;
+  }).join("");
+  showModal(`<h2>📰 Journal de campagne</h2><div id="jbox" style="max-height:60vh;overflow:auto;margin-top:8px;font-size:13px">${rows}</div>
     <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
+  const jb=document.getElementById("jbox"); if(jb) jb.scrollTop=jb.scrollHeight;
 }
 
 /* ===================== RECYCLER / DETTE / CESSION — logique inchangée ===================== */

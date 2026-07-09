@@ -1,7 +1,7 @@
 <!-- markdownlint-disable -->
 # v0.7 « corruption cachée » — Résumé + Prompt pour Claude Code
 
-> Évolution de la v0.6. Changements v0.7 : dénonciation sur **1 carte** (pas le front entier) · parti = **famille interdite secrète** (remplace pouvoirs + objectifs) · **débauchage/OPA = cartes, la victime choisit** · **incompatibilités renforcées** · **deck ~64 blocs** · **seuil = 70 − 6N** pour une partie ~15 min.
+> Évolution de la v0.6. Changements v0.7 : dénonciation sur **1 carte** (pas le front entier) · parti = **famille interdite secrète** (remplace pouvoirs + objectifs) · **débauchage/OPA = cartes, la victime choisit** · **incompatibilités renforcées** · **deck 42 blocs** · **seuil = 52 − 4N** pour une partie ~7-12 min.
 
 ## 📋 Résumé lisible — tout ce qu'on ajoute / change (pour relecture rapide)
 
@@ -14,10 +14,10 @@
 7. **Frein anti-meneur auto-ciblant** : le meneur a tout converti en voix → il est cash-pauvre → quand on le dénonce il rend des votants → il perd des voix. Planquer du cash sale = double peine.
 8. **Voix lues sur les cartes votant** (face visible). La piste de score devient une simple aide de lecture (facultative).
 9. **Parti = FAMILLE INTERDITE SECRÈTE** (face cachée, connue du seul joueur) : une famille d'électeurs qu'il ne peut jamais acheter. Remplace les pouvoirs visibles ET les objectifs à points (asymétrie 100 % cachée, aucun signal économique).
-10. **Seuil = 70 − 6 × joueurs** (58/52/46/40/34), calibré par simulation v0.7 (~100 % par le seuil, ~39-48 tours ≈ 12-14 min). À raffiner avec `simulate()`.
+10. **Seuil = 52 − 4 × joueurs** (44/40/36/32/28), calibré par simulation v0.7 (~100 % par le seuil, ~22-40 tours ≈ 7-12 min). À raffiner avec `simulate()`.
 11. **3 fronts seulement** : Justice · Presse · Finances. **Montants multiples de 3** : sale 3/6/9 (mêmes sur chaque front), propre 3/6 (plafond 6).
 12. **Fin de partie** : franchir le seuil déclenche la **manche finale** (tout le monde joue) ; le **plus de voix gagne**, même si renvoyé sous le seuil.
-13. **Deck votants ~64 blocs uniques** (≈ 8/famille ; la plupart des familles ont un gros 12/6, quelques-unes non) — nécessaire pour tenir ~15 min.
+13. **Deck votants 42 blocs uniques** (roster existant ; la plupart des familles ont un gros 12/6, quelques-unes non).
 14. **Incompatibilités renforcées** : nombreuses **paires de votants exclusives** (ne peut pas détenir les deux) → progression plus lente.
 15. **Débauchage / OPA = cartes** ; **la victime choisit** le votant isolé cédé.
 
@@ -69,7 +69,7 @@ patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recali
       Les votants restent "publics" ; garde une piste de score comme simple miroir.
    d. FAMILLES, COALITIONS & INCOMPATIBILITÉS : map bloc→famille (8 familles, §15.1/§16.6).
       3 blocs d'une famille = +3 voix, +1 par bloc en plus. Coalition complète => blocs
-      "fidèles" (involables). DECK ~64 blocs uniques (≈8/famille ; la plupart des familles ont
+      "fidèles" (involables). DECK 42 blocs uniques (roster existant, ~5/famille ; la plupart des familles ont
       un gros 12/6, quelques-unes non). INCOMPATIBILITÉS : liste de PAIRES de votants exclusives
       (ne peut détenir les deux) — à l'achat, refuse un bloc incompatible avec un bloc détenu.
       Étoffe la liste (Chasseurs×Animalistes, Patronat×CGT, Flics×Émeutiers…) pour ralentir.
@@ -82,8 +82,8 @@ patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recali
       des autres. Supprime les anciens pouvoirs de parti ET les objectifs à points.
    g. DÉFENSES : Protection (5 M€, bouclier de front ; 3 fronts -> 3 protections), Blanchiment (3 M€, rend une carte sale
       "propre"), Élément de langage (réactif, annule une dénonciation).
-   h. SEUIL : seuil(N) = 70 - 6*N (2j 58 · 3j 52 · 4j 46 · 5j 40 · 6j 34). Garde-fou ~40 manches,
-      départ 7 M€, revenu +3. Cible : ~40-50 tours totaux (manches*joueurs) ≈ 12-15 min.
+   h. SEUIL : seuil(N) = 52 - 4*N (2j 44 · 3j 40 · 4j 36 · 5j 32 · 6j 28). Garde-fou ~40 manches,
+      départ 7 M€, revenu +3. Cible : ~22-40 tours totaux (manches*joueurs) ≈ 7-12 min.
    h2. FIN DE PARTIE : quand un joueur atteint le seuil, on TERMINE la manche en cours,
        puis le PLUS DE VOIX gagne — même s'il est repassé sous le seuil (dénonciation de fin
        de manche). Ne fige pas la victoire dès que le seuil est touché.
@@ -95,8 +95,8 @@ patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recali
 2) RE-CALIBRAGE (NE PAS deviner) : adapte simulate() + une IA qui (i) vise une famille pour
    compléter des coalitions en respectant sa famille interdite + les incompatibilités,
    (ii) mélange financement propre/sale, (iii) dénonce le meneur sur son front le plus chargé
-   (révèle 1 carte). Trouve le seuil par N donnant ~40-50 tours totaux (manches*joueurs) et
-   ≥90 % de victoires par le seuil. Point de départ 70 − 6N. Reporte la valeur trouvée dans
+   (révèle 1 carte). Trouve le seuil par N donnant ~22-40 tours totaux (manches*joueurs) et
+   ≥90 % de victoires par le seuil. Point de départ 52 − 4N. Reporte la valeur trouvée dans
    docs/REGLES.md (§16.7) et README.
 
 3) UI :
@@ -104,7 +104,7 @@ patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recali
      en v0.5). Référence de contenu/visuel = catalogue-v0.6.html (galerie lecture seule déjà
      mise à jour v0.7 : votants par famille, corruption 3 fronts × 3/6/9, financement propre,
      vol-cartes, défenses, coups, PARTIS = famille interdite secrète). Mets à jour le bac à
-     sable avec le seuil 70−6N.
+     sable avec le seuil 52−4N.
    - index.html : casier de financement FACE CACHÉE en PILES par front (les rivaux voient des
      dos + le total d'argent, pas le contenu) ; dénonciation = choisir cible + front → révèle
      la carte du dessus (pari) ; débauchage/OPA = la victime choisit le bloc cédé ; coalitions/
@@ -114,6 +114,6 @@ patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recali
    main / famille interdite adverse ne fuit dans publicState ; une partie solo va jusqu'à la victoire.
 
 CONTRAINTES : ne casse pas le déterminisme ; respecte le secret des cartes de financement et
-de la famille interdite ; cible ~40-50 tours totaux (~15 min). Le deck passe à ~64 blocs uniques
-(≈8/famille) — il faut CRÉER les blocs manquants (noms satiriques FR) ; marché tournant ~8.
+de la famille interdite ; cible ~22-40 tours totaux (~7-12 min). Le deck passe à 42 blocs uniques
+(6/famille) — on garde les 42 blocs existants (aucune carte à créer) ; marché tournant ~8.
 ```

@@ -35,13 +35,13 @@ puis recalibre avec simulate(). Ne casse pas le déterminisme ni le secret des c
      incompatible avec un bloc déjà détenu. Étoffe la liste (Chasseurs×Animalistes,
      Patronat×CGT, Flics×Émeutiers, Bobos×Souverainistes...) pour ralentir la progression.
 
-5. DECK VOTANTS ~64 BLOCS UNIQUES (≈ 8/famille, 8 familles).
-   - Il faut CRÉER les blocs manquants (noms satiriques FR), tiers 4/2, 8/4, 12/6.
+5. DECK VOTANTS 42 BLOCS UNIQUES (roster existant, ~5/famille).
+   - On garde les 42 blocs existants (aucune carte à ajouter).
    - La plupart des familles ont au moins un gros bloc 12/6 ; quelques familles non (OK).
 
-6. SEUIL = 70 − 6 × joueurs : 2j=58 · 3j=52 · 4j=46 · 5j=40 · 6j=34.
+6. SEUIL = 52 − 4 × joueurs : 2j=44 · 3j=40 · 4j=36 · 5j=32 · 6j=28.
    - SEUIL(n) = 70 - 6*n. Départ 7 M€, revenu +3/tour, garde-fou ~40 manches.
-   - Cible : ~40-50 tours totaux (manches × joueurs) ≈ 12-15 min.
+   - Cible : ~22-40 tours totaux (manches × joueurs) ≈ 7-12 min.
 
 7. FIN DE PARTIE : atteindre le seuil déclenche la MANCHE FINALE (tout le monde joue son
    tour), puis le PLUS DE VOIX gagne — même si renvoyé sous le seuil par une dénonciation
@@ -49,7 +49,7 @@ puis recalibre avec simulate(). Ne casse pas le déterminisme ni le secret des c
 
 8. RE-CALIBRAGE (ne pas deviner) : adapte simulate() + une IA qui respecte sa famille
    interdite + les incompatibilités, mélange financement propre/sale, et dénonce le meneur
-   sur son front le plus chargé (1 carte). Confirme que 70−6N donne ~40-50 tours totaux et
+   sur son front le plus chargé (1 carte). Confirme que 52−4N donne ~22-40 tours totaux et
    ≥90 % de victoires par le seuil. Reporte la valeur finale dans docs/REGLES.md §16.7 + README.
 
 9. UI :
@@ -57,7 +57,7 @@ puis recalibre avec simulate(). Ne casse pas le déterminisme ni le secret des c
      des dos + le total d'argent, pas le contenu) ; dénonciation = cible + front -> révèle la
      carte du dessus ; débauchage/OPA = la victime choisit le bloc ; famille interdite visible
      seulement par son propriétaire.
-   - catalogue.html : reconstruis en v0.7 (réf. catalogue-v0.6.html) ; bac à sable seuil 70−6N.
+   - catalogue.html : reconstruis en v0.7 (réf. catalogue-v0.6.html) ; bac à sable seuil 52−4N.
 
 10. CONFIDENTIALITÉ : publicState masque le CONTENU des cartes de financement (type + montant)
     ET la famille interdite ; n'expose que le total d'argent + le NOMBRE de cartes par front.

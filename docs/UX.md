@@ -12,7 +12,7 @@
 
 Setup volontairement **épuré**. Au centre, partagé par tous :
 
-- **Le marché tournant de Votants** : la pioche de blocs uniques est mélangée, on en révèle **~6 à 8 face visible** dans un présentoir. Ce sont les seuls blocs achetables à l'instant T ; dès qu'un est acheté, on le **remplace** par le suivant. (On n'étale jamais les ~64 blocs : lisibilité + tension — *le bloc convoité peut partir avant ton tour*.)
+- **Le marché tournant de Votants** : la pioche de blocs uniques est mélangée, on en révèle **~6 à 8 face visible** dans un présentoir. Ce sont les seuls blocs achetables à l'instant T ; dès qu'un est acheté, on le **remplace** par le suivant. (On n'étale jamais les 42 blocs : lisibilité + tension — *le bloc convoité peut partir avant ton tour*.)
 - **La pioche « Les Combines »** (cartes action : financements, attaques, défenses, coups), face cachée, dos uniforme — scindable en 2-3 piles identiques autour de la table pour l'accès. Défausse commune à côté (remélangée quand la pioche est vide).
 - **Une piste de score commune** graduée de 0 au seuil, avec **un pion/meeple par joueur**. Aide de lecture de la course. *(En v0.7 les voix se lisent aussi directement sur les votants posés ; la piste reste le miroir pratique.)*
 
@@ -47,7 +47,7 @@ Devant **chaque joueur** (sa zone) :
 4. **Négociation libre** à tout moment (pactes, pots-de-vin, trahisons — à la parole).
 5. **Fin de tour** : complète ta main à **5**.
 6. **Jeton premier joueur** : tourne à chaque manche (équité).
-7. Un pion atteint le **seuil (70 − nb de joueurs)** → **on termine la manche en cours**, puis le **plus de voix gagne** (même s'il est redescendu sous le seuil par une dénonciation de fin de manche).
+7. Un pion atteint le **seuil (44 à 28 selon le nb de joueurs)** → **on termine la manche en cours**, puis le **plus de voix gagne** (même s'il est redescendu sous le seuil par une dénonciation de fin de manche).
 
 ## A4. Les gestes clés (UX des interactions cachées)
 
@@ -66,7 +66,7 @@ Le cœur sensoriel du jeu, c'est **l'information cachée tactile** :
 ## A5. Principes UX retenus (le « pourquoi »)
 
 - **Le score est lisible en permanence** (piste + votants face visible) → la course est claire → **le meneur est une cible évidente** pour les dénonciations. C'est le frein anti-runaway rendu visible.
-- **Marché tournant ~8** (et pas ~64 étalés) : lisibilité + tension du bloc qui file.
+- **Marché tournant ~8** (et pas 42 étalés) : lisibilité + tension du bloc qui file.
 - **Roulette d'argent** au lieu de billets : moins de manip, argent public.
 - **Corruption cachée** (piles de dos) : la couche bluff/psychologique façon *Coup / Sheriff of Nottingham*.
 - **Cartes courtes** : 1 phrase de règle + 1 phrase drôle ; on raccourcit surtout les votants (les voix doivent sauter aux yeux).
