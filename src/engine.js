@@ -227,8 +227,10 @@ function returnVotant(state, p, i) { const v = p.votants.splice(i, 1)[0]; if (v 
 function startRound(state) {
   state.turn++;
   for (const p of state.players) p.attackedThisRound = false;
-  const sp = (state.turn - 1) % state.nPlayers;
-  state.order = state.players.slice(sp).concat(state.players.slice(0, sp));
+  // ORDRE DE TOUR FIXE (P0 -> P1 -> ... -> Pn -> P0 ...). Plus de rotation du premier joueur :
+  // la rotation créait un espacement inégal au changement de manche (un joueur enchaînait
+  // fin+début de manche pendant qu'un autre attendait un tour entier → impression de "je rejoue").
+  state.order = state.players.slice();
   state.currentIdx = 0;
   beginTurn(state);
 }

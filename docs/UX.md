@@ -46,7 +46,7 @@ Devant **chaque joueur** (sa zone) :
 3. **Élément de langage** : se joue **en réaction**, hors de ton tour, quand on te dénonce.
 4. **Négociation libre** à tout moment (pactes, pots-de-vin, trahisons — à la parole).
 5. **Fin de tour** : complète ta main à **5**.
-6. **Jeton premier joueur** : tourne à chaque manche (équité).
+6. **Ordre de tour FIXE** (P1 → P2 → … → P1), même à chaque manche — espacement des tours régulier (pas de rotation du premier joueur, qui donnait un rythme inégal).
 7. Un pion atteint le **seuil (44 à 28 selon le nb de joueurs)** → **on termine la manche en cours**, puis le **plus de voix gagne** (même s'il est redescendu sous le seuil par une dénonciation de fin de manche).
 
 ## A4. Les gestes clés (UX des interactions cachées)
