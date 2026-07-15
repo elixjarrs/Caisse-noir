@@ -35,7 +35,7 @@ header p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:900px}
 <body>
 <header>
   <h1>🗳️ Caisse Noire — Catalogue des cartes <span style="color:var(--muted);font-size:15px">(modèle v0.7 « corruption cachée »)</span></h1>
-  <p>Référence en lecture seule. Spec complète : <code>docs/REGLES.md §16</code>. Seuil de victoire = <b>52 − 4×joueurs</b> (44/40/36/32/28). Corruption <b>cachée</b> ; dénonciation = <b>pari sur UNE carte</b> ; parti = <b>famille interdite secrète</b> ; deck 42 votants ; incompatibilités renforcées.</p>
+  <p>Référence en lecture seule, <b>générée depuis <code>src/engine.js</code></b> (fait foi). Seuil de victoire = <b>45 voix (fixe, 2 à 6 joueurs)</b>. Corruption <b>cachée</b> ; dénonciation = <b>pari sur un front entier</b> ; parti = <b>famille interdite secrète</b> ; <b>57 votants</b> (8 familles) ; incompatibilités renforcées.</p>
 </header>
 <div class="wrap">
   <div class="filterbar" id="filter"></div>
@@ -46,15 +46,14 @@ header p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:900px}
 const T={P:[4,2],M:[8,4],G:[12,6],E:[13,7]}; // paliers coût/voix
 // Votants : [nom, palier]  groupés par famille
 const FAMS=[
- ["Le Capital",[["Patronat","G"],["Banquiers","G"],["Promoteurs immobiliers","G"],["Rentiers","M"],["Héritiers","M"]]],
- ["Le Bloc Public",[["La CGT","G"],["Fonctionnaires","G"],["Soignants","M"],["Profs","M"]]],
- ["L'Ordre & le Terroir",[["Policiers","M"],["Militaires","M"],["Chasseurs","M"],["Agriculteurs","M"],["Pêcheurs","M"]]],
- ["La Start-up Nation",[["Start-uppers","M"],["Crypto-bros","P"],["Influenceurs","P"],["Libertariens","P"],["Gamers","P"]]],
- ["L'Écolo-Bobo",[["Animalistes","P"],["Bobos urbains","P"],["Néo-ruraux","P"],["Les Éveillés","P"]]],
- ["L'Identité",[["Souverainistes","G"],["Intégristes","G"],["Masculinistes","P"],["Survivalistes","P"]]],
- ["Les Précaires",[["Chômeurs","M"],["Intermittents","P"],["Étudiants","P"],["Chauffeurs VTC","P"]]],
- ["La Mobilité",[["Taxis","M"],["Routiers","M"],["Motards","M"]]],
- ["Indépendants (sans synergie)",[["Retraités","E"],["Lobby pétrolier","G"],["Communauté LGBT","G"],["Lobby pharma","G"],["Francs-maçons","M"],["Diaspora","M"],["Anti-vax","P"],["Complotistes","P"]]],
+ ["Le Capital",[["Le Patronat","G"],["Les Banquiers","G"],["Les Retraités","M"],["Les Rentiers","M"],["Les Héritiers","M"],["Les Promoteurs","P"],["Les Actionnaires","P"]]],
+ ["Le Bloc Public",[["La CGT","G"],["Les Fonctionnaires","G"],["Les Soignants","M"],["Les Profs","M"],["Les Cheminots","M"],["Les Agents du fisc","P"],["Les Bibliothécaires","P"]]],
+ ["L'Ordre & le Terroir",[["Le Lobby agroalimentaire","G"],["Les Militaires","G"],["Les Policiers","M"],["Les Chasseurs","M"],["Les Gendarmes","P"],["Les Pêcheurs","P"],["Les Viticulteurs","P"]]],
+ ["La Start-up Nation",[["Les Start-uppers","M"],["Les Traders","M"],["Les Youtubeurs","M"],["Les Crypto-bros","P"],["Les Influenceurs","P"],["Les Nomades digitaux","P"],["Les Gamers","P"]]],
+ ["L'Écolo-Bobo",[["Les Décroissants","M"],["Les Néo-ruraux","M"],["Les Animalistes","P"],["Les Bobos urbains","P"],["Les Éveillés","P"],["Les Cyclistes","P"],["Les Vegans","P"]]],
+ ["L'Identité",[["Les Souverainistes","G"],["Les Intégristes","G"],["Les Identitaires","M"],["Les Traditionalistes","M"],["Les Masculinistes","P"],["Les Survivalistes","P"],["Les Complotistes","P"]]],
+ ["Les Précaires",[["Les Gilets jaunes","G"],["Les Chômeurs","M"],["Les Intérimaires","M"],["Les Auto-entrepreneurs","M"],["Les Intermittents","P"],["Les Étudiants","P"],["Les Chauffeurs VTC","P"],["Les Livreurs","P"]]],
+ ["La Mobilité",[["Les Automobilistes","G"],["Les Taxis","M"],["Les Routiers","M"],["Les Compagnies aériennes","M"],["Les Motards","P"],["Les Usagers du périph","P"],["Les Routards","P"]]],
 ];
 // Corruption SALE : 3 fronts × {3,6,9}
 const SALE=[
@@ -64,7 +63,7 @@ const SALE=[
 ];
 const PROPRE=[["Don d'un militant",3],["Cotisations du parti",3],["Meeting payant",6],["Subvention européenne",6]];
 const ATTAQUES=[
- {n:"Dénonciation",c:"2 M€",d:"PARI sur UNE carte : tu désignes un rival + UN de ses fronts, on révèle la carte du DESSUS de la pile. Sale → il perd ce montant (3/6/9 ; cash, sinon rend des votants de SON choix → perd des voix). Leurre/vide → RATÉ : tu perds ta mise + 3 M€ d'amende à la cible."},
+ {n:"Dénonciation",c:"2 M€",d:"PARI sur un FRONT : tu désignes un rival + UN de ses fronts. Touché (au moins une carte sale dessus) → il perd la SOMME de tout le front (cash, sinon rend des votants de SON choix → perd des voix). Raté (que du propre / vide / protégé) → tu perds ta mise + 3 M€ d'amende à la cible."},
  {n:"Débauchage",c:"carte",d:"Vol d'électorat : joue-la sur un rival ; c'est la VICTIME qui choisit quel votant ISOLÉ elle te cède (le bloc passe chez toi, tu gagnes ses voix). Un bloc en coalition complète est involable."},
  {n:"OPA électorale",c:"carte",d:"Débauchage renforcé : même principe (la victime choisit) mais sur un bloc de plus forte valeur. Rare."},
 ];
@@ -81,13 +80,16 @@ const COUPS=[
  {n:"Promesse intenable",d:"+3 voix tout de suite, mais ajoute une carte sale sur Presse."},
  {n:"Renvoi d'ascenseur",d:"Un service rendu : +3 M€ et pioche 1 carte."},
 ];
+// Partis = nom satirique (ironique) + famille SECRÈTE qu'il ne peut jamais acheter.
 const PARTIS=[
- {n:"La Meute",s:"populiste",d:"Famille interdite : <b>Écolos</b>. Ne pourra jamais courtiser Animalistes, Bobos, Néoruraux, Éveillés."},
- {n:"La Lumière",s:"religieux",d:"Famille interdite : <b>Précaires</b>. Pas de Chômeurs, Intermittents, Étudiants, Ubers."},
- {n:"Le Cartel",s:"patronal",d:"Famille interdite : <b>Public</b>. Pas de CGT, Fonctionnaires, Soignants, Profs."},
- {n:"La Vague",s:"souverainiste",d:"Famille interdite : <b>Tech</b>. Pas de Startuppers, Crypto, Influenceurs, Gamers."},
- {n:"Les Verts pâles",s:"écolo",d:"Famille interdite : <b>Capital</b>. Pas de Patronat, Banquiers, Promoteurs, Rentiers."},
- {n:"La Forteresse",s:"identitaire",d:"Famille interdite : <b>Mobilité</b>. Pas de Taxis, Routiers, Motards."},
+ {n:"La France des Travailleurs",s:"anti-capital",d:"Famille interdite (secrète) : <b>Le Capital</b>. Ne courtisera jamais Patronat, Banquiers, Rentiers, Actionnaires…"},
+ {n:"Le Parti du Privé",s:"anti-public",d:"Famille interdite : <b>Le Bloc Public</b>. Pas de CGT, Fonctionnaires, Soignants, Profs, Cheminots…"},
+ {n:"Les Écologistes Radicaux",s:"anti-terroir",d:"Famille interdite : <b>L'Ordre & le Terroir</b>. Pas de Chasseurs, Militaires, Agroalimentaire, Viticulteurs…"},
+ {n:"Le Mouvement Souverain",s:"anti-tech",d:"Famille interdite : <b>La Start-up Nation</b>. Pas de Start-uppers, Traders, Crypto, Nomades digitaux…"},
+ {n:"Le Rassemblement des Bâtisseurs",s:"anti-écolo",d:"Famille interdite : <b>L'Écolo-Bobo</b>. Pas d'Animalistes, Bobos, Vegans, Cyclistes…"},
+ {n:"La République Ouverte",s:"anti-identité",d:"Famille interdite : <b>L'Identité</b>. Pas de Souverainistes, Intégristes, Identitaires…"},
+ {n:"Le Parti de l'Ordre",s:"anti-précaires",d:"Famille interdite : <b>Les Précaires</b>. Pas de Gilets jaunes, Chômeurs, Livreurs, Intérimaires…"},
+ {n:"Les Amis du Rail",s:"anti-bagnole",d:"Famille interdite : <b>La Mobilité</b>. Pas d'Automobilistes, Routiers, Motards, Taxis…"},
 ];
 
 /* ============ RENDU ============ */

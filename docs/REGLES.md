@@ -6,7 +6,7 @@
 > Jeu jouable (solo + en ligne) : `index.html` ; catalogue des cartes + bac à sable d'équilibrage : `catalogue.html` (à ouvrir dans un navigateur).
 > Dernière mise à jour : 27 juin 2026.
 >
-> 🔴 **MODÈLE CIBLE = v0.7 « corruption cachée » → voir §16. C'est ce qui fait foi pour le dev.** Les sections §3–§9 décrivent le modèle v0.5 (corruption visible) ; §16 les **remplace** : corruption cachée, dénonciation qui frappe l'**argent** en visant **une carte**, voix lues sur les cartes, familles/coalitions + **incompatibilités renforcées**, **débauchage-carte** (la victime choisit), **famille interdite secrète** par parti (remplace pouvoirs + objectifs). **Deck de votants 42 blocs (roster inchangé). Seuil = 52 − 4 × joueurs** (2j 44 · 3j 40 · 4j 36 · 5j 32 · 6j 28) — calibré par simulation (~100 % des parties finies au seuil de 2 à 6 joueurs, ~7-12 min ; voir §16.7). *(Un seuil fixe 45 marcherait à 2-4 joueurs mais serait injouable à 5-6 avec seulement 42 votants : le seuil baisse donc d'un cran par joueur en plus.)*
+> 🔴 **MODÈLE CIBLE = v0.7 « corruption cachée » → voir §16. C'est ce qui fait foi pour le dev.** Les sections §3–§9 décrivent le modèle v0.5 (corruption visible) ; §16 les **remplace** : corruption cachée, dénonciation qui frappe l'**argent** en visant **tout un front**, voix lues sur les cartes, familles/coalitions + **incompatibilités renforcées**, **débauchage-carte** (la victime choisit), **famille interdite secrète** par parti (remplace pouvoirs + objectifs). **Deck de votants 57 blocs. Seuil = 45 voix (fixe, tous les nombres de joueurs)** — validé par le `simulate()` du moteur : ~100 % des parties finies au seuil de 2 à 6 joueurs, ~15 manches (voir §16.7). Le code `src/engine.js` **fait foi**.
 
 ---
 
@@ -338,7 +338,7 @@ Transfert de **voix** (la carte bloc ne change pas de main ; on déplace les pio
 - **Asymétrie de parti = FAMILLE INTERDITE SECRÈTE** : chaque parti a une famille qu'il ne peut pas acheter, **connue de lui seul** (remplace pouvoirs visibles + objectifs à points — l'asymétrie reste 100 % cachée).
 - **Débauchage = une carte** (vol de voix) : la **victime choisit** quel votant elle cède.
 - **Incompatibilités renforcées** entre votants → progression plus lente, coalitions plus dures à compléter.
-- **Deck de votants (42 blocs, roster inchangé)** (roster inchangé, aucune carte à créer).
+- **Deck de votants : 57 blocs uniques** (8 familles, ~7 par famille).
 - Conservés/adaptés : familles → coalitions (+voix), défenses.
 
 ## 16.2 L'argent (roulette individuelle 0–80, visible)
@@ -395,24 +395,19 @@ En début de partie, chaque joueur reçoit **1 carte Parti face cachée** (aléa
 - Design : chaque carte Parti = un nom satirique + la famille interdite au dos-révélé. Une famille interdite peut se répéter d'une partie à l'autre ; à distribuer pour qu'aucun joueur n'ait la même sur une partie donnée.
 
 ## 16.6 Familles, coalitions, incompatibilités & vol
-- **Familles** : 8 familles (voir §15.1), **42 blocs uniques** répartis dessus. La plupart des familles ont au moins un **gros bloc (12 M€ / 6 voix)** ; quelques familles n'en ont pas (déséquilibre thématique assumé). **3 blocs d'une même famille = +3 voix**, puis **+1 par bloc** en plus.
+- **Familles** : 8 familles (voir §15.1), **57 blocs uniques** répartis dessus. La plupart des familles ont au moins un **gros bloc (12 M€ / 6 voix)** ; quelques familles n'en ont pas (déséquilibre thématique assumé). **3 blocs d'une même famille = +3 voix**, puis **+1 par bloc** en plus.
 - **Incompatibilités renforcées** : de nombreuses **paires de votants s'excluent** (tu ne peux pas détenir les deux — ex. Chasseurs × Animalistes, Patronat × CGT, Flics × Émeutiers…). Ça ralentit la course aux voix, oblige à choisir sa ligne, et **allonge la partie**. *(À l'échelle du moteur : une liste de paires interdites ; à l'achat, on refuse un bloc incompatible avec un bloc déjà détenu.)*
 - **Coalition complète = électorat fidèle → involable** (protégé du vol).
 - **Débauchage = une CARTE** (vol de voix) : tu la joues sur un rival ; **c'est la victime qui choisit** quel **votant isolé** (hors coalition complète) elle te cède — le bloc passe dans ta zone (tu gagnes ses voix, elle les perd). **OPA électorale** (carte plus chère) : même principe sur un bloc de plus forte valeur. Partage le plafond « 1 attaque subie / manche » avec la dénonciation.
 
 ## 16.7 Économie & seuil (calibré par simulation v0.7)
 - Départ **7 M€**, revenu **+3/tour**, main **5**, garde-fou **~40 manches** (jamais atteint en pratique).
-- Votants : Petit **4/2**, Moyen **8/4**, Gros **12/6**. **Deck 42 blocs uniques** (roster inchangé, ~5 par famille).
-- **Seuil de victoire = 52 − 4 × joueurs** :
-
-| Joueurs | 2 | 3 | 4 | 5 | 6 |
-|---|---|---|---|---|---|
-| **Seuil (voix)** | **44** | **40** | **36** | **32** | **28** |
-
-- Pourquoi pas un seuil **fixe** : sur un deck de seulement 42 votants, un seuil fixe (ex. 45) est parfait à **2-4 joueurs** mais **injouable à 5-6** — le marché se vide avant que chacun ait pu amasser autant de voix (48÷6 ≈ 8 blocs/joueur). Le seuil **baisse donc d'un cran (−4) par joueur en plus** pour rester atteignable partout.
+- Votants : Petit **4/2**, Moyen **8/4**, Gros **12/6**. **Deck 57 blocs uniques** (8 familles, ~7 par famille).
+- **Seuil de victoire = 45 voix, FIXE pour tous les nombres de joueurs (2 à 6).**
+- Pourquoi un seuil **fixe marche ici** : quand on dénonce, la cible qui manque de cash **rend des votants** qui **retournent au marché** → le marché **ne se vide pas**, la partie tient ~15 manches, et chacun a le temps d'atteindre 45 même à 6 joueurs. (Un deck fixe sans recirculation aurait forcé un seuil dégressif ; ce n'est pas le cas.)
 - Coûts d'attaque : **dénoncer 2 M€** (+ **amende 3 M€** si raté) · **Débauchage / OPA** = cartes.
-- **Résultats sim (v0.7, milliers de parties, roster réel 42)** : **~100 % des parties finies au seuil de 2 à 6 joueurs**, **~8-11 manches** (~7-12 min ; voix du gagnant ≈ le seuil). La dénonciation « 1 carte » + les incompatibilités lissent les effondrements → course disputée.
-- Le seuil est réglable dans `src/engine.js` (`SEUIL(n) = 52 - 4*n`) ; **à revérifier avec le `simulate()` réel** une fois la v0.7 codée.
+- **Résultats `simulate()` (moteur réel, 57 blocs, ordre de tour fixe)** : **~100 % par le seuil** (96 % à 6 j.), **~15-16 manches** quel que soit le nombre de joueurs, voix du gagnant ≈ 46. La dénonciation « front entier » + les incompatibilités gardent la course disputée.
+- Le seuil est réglable dans `src/engine.js` (`const SEUIL_VOIX = 45`).
 
 **Fin de partie (important, vu en simulation) :** dès qu'un joueur **atteint le seuil**, on **termine la manche en cours** (tout le monde joue son tour), **puis** on compare → **le plus de voix gagne**, *même s'il est repassé sous le seuil* à cause d'une dénonciation de fin de manche. Ça empêche de « geler » la victoire et donne le climax (le meneur franchit la ligne, toute la table lui tombe dessus, le survivant l'emporte).
 

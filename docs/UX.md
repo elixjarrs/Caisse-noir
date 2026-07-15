@@ -12,7 +12,7 @@
 
 Setup volontairement **épuré**. Au centre, partagé par tous :
 
-- **Le marché tournant de Votants** : la pioche de blocs uniques est mélangée, on en révèle **~6 à 8 face visible** dans un présentoir. Ce sont les seuls blocs achetables à l'instant T ; dès qu'un est acheté, on le **remplace** par le suivant. (On n'étale jamais les 42 blocs : lisibilité + tension — *le bloc convoité peut partir avant ton tour*.)
+- **Le marché tournant de Votants** : la pioche de blocs uniques est mélangée, on en révèle **~6 à 8 face visible** dans un présentoir. Ce sont les seuls blocs achetables à l'instant T ; dès qu'un est acheté, on le **remplace** par le suivant. (On n'étale jamais les 57 blocs : lisibilité + tension — *le bloc convoité peut partir avant ton tour*.)
 - **La pioche « Les Combines »** (cartes action : financements, attaques, défenses, coups), face cachée, dos uniforme — scindable en 2-3 piles identiques autour de la table pour l'accès. Défausse commune à côté (remélangée quand la pioche est vide).
 - **Une piste de score commune** graduée de 0 au seuil, avec **un pion/meeple par joueur**. Aide de lecture de la course. *(En v0.7 les voix se lisent aussi directement sur les votants posés ; la piste reste le miroir pratique.)*
 
@@ -47,7 +47,7 @@ Devant **chaque joueur** (sa zone) :
 4. **Négociation libre** à tout moment (pactes, pots-de-vin, trahisons — à la parole).
 5. **Fin de tour** : complète ta main à **5**.
 6. **Ordre de tour FIXE** (P1 → P2 → … → P1), même à chaque manche — espacement des tours régulier (pas de rotation du premier joueur, qui donnait un rythme inégal).
-7. Un pion atteint le **seuil (44 à 28 selon le nb de joueurs)** → **on termine la manche en cours**, puis le **plus de voix gagne** (même s'il est redescendu sous le seuil par une dénonciation de fin de manche).
+7. Un pion atteint le **seuil (45, fixe pour tous)** → **on termine la manche en cours**, puis le **plus de voix gagne** (même s'il est redescendu sous le seuil par une dénonciation de fin de manche).
 
 ## A4. Les gestes clés (UX des interactions cachées)
 

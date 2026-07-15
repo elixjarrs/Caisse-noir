@@ -42,37 +42,37 @@ function marketVisibleFor(_n) { return 8; }
 
 const FRONTS = ['Justice', 'Presse', 'Finances'];
 
-/* ------------------------- VOTANTS : 8 familles × 8 (64) ------------------- */
+/* ------------------------- VOTANTS : 8 familles, 57 blocs ------------------ */
 /* [nom, blocKey, tier]  — tier P=Petit(4/2) M=Moyen(8/4) G=Gros(12/6) */
 const FAMILY_DEF = {
   'Le Capital': [
     ['Le Patronat','Patronat','G'],['Les Banquiers','Banquiers','G'],['Les Retraités','Retraités','M'],
     ['Les Rentiers','Rentiers','M'],['Les Héritiers','Héritiers','M'],['Les Promoteurs','Promoteurs','P'],
-    ['Les Actionnaires','Actionnaires','P'],['Le Lobby du luxe','Luxe','P'],
+    ['Les Actionnaires','Actionnaires','P'],
   ],
   'Le Bloc Public': [
     ['La CGT','CGT','G'],['Les Fonctionnaires','Fonctionnaires','G'],['Les Soignants','Soignants','M'],
-    ['Les Profs','Profs','M'],['Les Cheminots','Cheminots','M'],['Les Postiers','Postiers','P'],
-    ['Les Territoriaux','Territoriaux','P'],['Les Bibliothécaires','Bibliothecaires','P'],
+    ['Les Profs','Profs','M'],['Les Cheminots','Cheminots','M'],
+    ['Les Agents du fisc','AgentsFisc','P'],['Les Bibliothécaires','Bibliothecaires','P'],
   ],
   "L'Ordre & le Terroir": [
     ["Le Lobby agroalimentaire",'Agroalim','G'],['Les Militaires','Militaires','G'],['Les Policiers','Flics','M'],
-    ['Les Chasseurs','Chasseurs','M'],['Les Éleveurs','Eleveurs','M'],['Les Gendarmes','Gendarmes','P'],
+    ['Les Chasseurs','Chasseurs','M'],['Les Gendarmes','Gendarmes','P'],
     ['Les Pêcheurs','Pecheurs','P'],['Les Viticulteurs','Viticulteurs','P'],
   ],
   'La Start-up Nation': [
-    ['La Big Tech','BigTech','G'],['Les Start-uppers','Startuppers','M'],['Les Traders','Traders','M'],
+    ['Les Start-uppers','Startuppers','M'],['Les Traders','Traders','M'],
     ['Les Youtubeurs','Youtubeurs','M'],['Les Crypto-bros','Crypto','P'],['Les Influenceurs','Influenceurs','P'],
-    ['Les Libertariens','Libertariens','P'],['Les Gamers','Gamers','P'],
+    ['Les Nomades digitaux','NomadesDigitaux','P'],['Les Gamers','Gamers','P'],
   ],
   "L'Écolo-Bobo": [
-    ['Les ONG vertes','ONG','M'],['Les Décroissants','Decroissants','M'],['Les Néo-ruraux','Neoruraux','M'],
+    ['Les Décroissants','Decroissants','M'],['Les Néo-ruraux','Neoruraux','M'],
     ['Les Animalistes','Animalistes','P'],['Les Bobos urbains','Bobos','P'],['Les Éveillés','Eveilles','P'],
     ['Les Cyclistes','Cyclistes','P'],['Les Vegans','Vegans','P'],
   ],
   "L'Identité": [
     ['Les Souverainistes','Souverainistes','G'],['Les Intégristes','Integristes','G'],['Les Identitaires','Identitaires','M'],
-    ['Les Traditionalistes','Traditionalistes','M'],['Les Anti-immigration','AntiImmig','M'],['Les Masculinistes','Masculinistes','P'],
+    ['Les Traditionalistes','Traditionalistes','M'],['Les Masculinistes','Masculinistes','P'],
     ['Les Survivalistes','Survivalistes','P'],['Les Complotistes','Complotistes','P'],
   ],
   'Les Précaires': [
@@ -83,7 +83,7 @@ const FAMILY_DEF = {
   'La Mobilité': [
     ['Les Automobilistes','Automobilistes','G'],['Les Taxis','Taxis','M'],['Les Routiers','Routiers','M'],
     ['Les Compagnies aériennes','Aerien','M'],['Les Motards','Motards','P'],['Les Usagers du périph','Periph','P'],
-    ['Les Bateliers','Bateliers','P'],['Les Trottinettistes','Trottinettes','P'],
+    ['Les Routards','Routards','P'],
   ],
 };
 const TIERVAL = { P: { tier:'Petit', cost:4, voix:2 }, M: { tier:'Moyen', cost:8, voix:4 }, G: { tier:'Gros', cost:12, voix:6 } };
@@ -99,14 +99,15 @@ const FAMILY_LIST = Object.keys(FAMILY_DEF);
 /* ------------------- INCOMPATIBILITÉS : paires EXCLUSIVES ------------------- */
 /* On ne peut pas détenir les deux (refus à l'achat, sauf carte Incohérence). Cross-familles. */
 const INCOMPAT = [
-  ['Chasseurs','Animalistes'], ['Chasseurs','Vegans'], ['Eleveurs','Vegans'],
+  ['Chasseurs','Animalistes'], ['Chasseurs','Vegans'],
   ['Patronat','CGT'], ['Actionnaires','CGT'], ['Banquiers','GiletsJaunes'],
   ['Flics','GiletsJaunes'], ['Gendarmes','GiletsJaunes'],
-  ['Bobos','Souverainistes'], ['Eveilles','Masculinistes'], ['Eveilles','AntiImmig'],
+  ['Bobos','Souverainistes'], ['Eveilles','Masculinistes'],
   ['Neoruraux','Promoteurs'], ['Cyclistes','Automobilistes'], ['Cyclistes','Motards'],
-  ['Integristes','Eveilles'], ['Militaires','Intermittents'], ['Souverainistes','BigTech'],
-  ['AntiImmig','Livreurs'], ['Decroissants','Traders'], ['Survivalistes','Eveilles'],
-  ['Traditionalistes','Youtubeurs'], ['Agroalim','ONG'], ['Luxe','GiletsJaunes'], ['Automobilistes','Decroissants'],
+  ['Integristes','Eveilles'], ['Militaires','Intermittents'],
+  ['Decroissants','Traders'], ['Survivalistes','Eveilles'],
+  ['Traditionalistes','Youtubeurs'], ['Automobilistes','Decroissants'],
+  ['AgentsFisc','Rentiers'],
 ];
 function incompatWith(bloc, owned) {
   for (const [a, b] of INCOMPAT) { if (bloc === a && owned.includes(b)) return b; if (bloc === b && owned.includes(a)) return a; }
