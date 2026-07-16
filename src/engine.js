@@ -14,7 +14,7 @@
  *   3. DÉBAUCHAGE / OPA = CARTES : la VICTIME choisit quel votant ISOLÉ elle cède ; le bloc
  *      (voix + famille) passe chez l'attaquant. OPA = bloc de plus forte valeur.
  *   4. INCOMPATIBILITÉS renforcées : paires exclusives (on ne peut pas détenir les deux).
- *   5. DECK VOTANTS ~64 blocs uniques (8 familles × 8), tiers 4/2, 8/4, 12/6.
+ *   5. DECK VOTANTS 57 blocs uniques (7 par famille, Précaires 8), tiers 4/2, 8/4, 12/6.
  *   6. SEUIL = 45 voix (fixe, tous N ; calibré ~14-15 manches). Garde-fou 40 manches.
  *   7. FIN : atteindre le seuil verrouille la manche finale ; le plus de voix gagne.
  *  10. CONFIDENTIALITÉ : publicState masque le contenu du financement ET la famille interdite ;

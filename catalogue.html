@@ -54,7 +54,7 @@ table.bal th{background:var(--surface2);color:var(--gold-d);font-family:Fredoka}
 <body>
 <header>
   <h1>🗳️ Caisse Noire — Catalogue <span style="color:var(--muted);font-size:15px">(v0.7 « corruption cachée »)</span></h1>
-  <p>Généré depuis le moteur <code>src/engine.js</code>. Dénonciation = pari sur <b>une carte</b> (le dessus de la pile) · <b>famille interdite secrète</b> par joueur · débauchage/OPA = cartes (la victime cède un bloc) · <b>incompatibilités renforcées</b>. Seuil = <b>45 voix</b>. · <a href="index.html">▶ Jouer</a></p>
+  <p>Généré depuis le moteur <code>src/engine.js</code>. Dénonciation = <b>pari à l'aveugle sur un front</b> (casier invisible ; touché → la cible paie <b>tout son sale</b> du front) · <b>famille interdite secrète</b> par joueur · débauchage/OPA = cartes (la victime cède un bloc) · <b>incompatibilités renforcées</b>. Seuil = <b>45 voix</b>. · <a href="index.html">▶ Jouer</a></p>
 </header>
 <div class="wrap"><div class="filterbar" id="filter"></div><div id="body"></div></div>
 
@@ -74,7 +74,7 @@ function votCard(v){ return `<div class="card votant"><div class="nom">${v.nom}<
 function render(){
   let h="";
   if(show("Votants")){
-    h+=`<h2 class="sec-title">Votants — 64 blocs uniques (8 familles × 8)</h2><p class="sec-sub">Réunir <b>3 blocs d'une même famille</b> = coalition complète → <b>+3 voix</b> (puis +1/bloc), et ces blocs deviennent <b>fidèles → involables</b> (protégés du vol). Chaque joueur a une <b>famille interdite secrète</b> qu'il ne peut jamais acheter.</p>`;
+    h+=`<h2 class="sec-title">Votants — ${CN.VOTANTS.length} blocs uniques (8 familles)</h2><p class="sec-sub">Réunir <b>3 blocs d'une même famille</b> = coalition complète → <b>+3 voix</b> (puis +1/bloc), et ces blocs deviennent <b>fidèles → involables</b> (protégés du vol). Chaque joueur a une <b>famille interdite secrète</b> qu'il ne peut jamais acheter.</p>`;
     Object.keys(CN.FAMILY_DEF).forEach(fam=>{ const list=CN.VOTANTS.filter(v=>v.family===fam);
       h+=`<div class="famhead">👥 ${fam} <span style="color:var(--muted);font-weight:600;font-size:12px">(${list.length})</span></div><div class="grid">${list.map(votCard).join("")}</div>`; });
   }
@@ -97,7 +97,7 @@ function render(){
       <div class="card att"><div class="nom">Dénonciation ×${den.n}</div><span class="tag">Attaque · 2 M€</span><div class="desc"><b>PARI sur un front</b> : la cible paie <b>toute</b> sa corruption cachée de ce front. Que du propre / vide → tu perds ta mise + <b>3 M€ d'amende</b>.</div></div>
       <div class="card att"><div class="nom">Débauchage ×${deb.n}</div><span class="tag">Attaque · carte</span><div class="desc">La <b>victime choisit</b> quel bloc <b>isolé</b> elle te cède (voix + famille). Une coalition complète est involable.</div></div>
       <div class="card att"><div class="nom">OPA électorale ×${opa.n}</div><span class="tag">Attaque · carte</span><div class="desc">Comme le débauchage, mais la victime doit céder un de ses <b>meilleurs</b> blocs isolés.</div></div>`;
-    h+=`<h2 class="sec-title">Attaques</h2><p class="sec-sub">La dénonciation frappe l'ARGENT (un pari sur une carte). Le vol transfère un <b>bloc entier</b>. On ne subit qu'UNE attaque par manche.</p><div class="grid">${g}</div>`;
+    h+=`<h2 class="sec-title">Attaques</h2><p class="sec-sub">La dénonciation frappe l'ARGENT (un pari à l'aveugle sur un front entier). Le vol transfère un <b>bloc entier</b>. On ne subit qu'UNE attaque par manche.</p><div class="grid">${g}</div>`;
   }
   if(show("Défenses")){
     let g=""; combines("pro").forEach(c=>g+=`<div class="card def"><div class="nom">${c.nom}</div><span class="tag ${frontClass[c.front]}">Protection · 5 M€</span><div class="desc">Bouclier permanent sur ${c.front} — toute dénonciation y rate.</div></div>`);
