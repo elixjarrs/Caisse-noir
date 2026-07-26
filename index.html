@@ -10,14 +10,14 @@
 <style>
 /* ============ PALETTE « table de jeu » : bois · feutre · papier · encre ============ */
 :root{
-  --wood:#4a3826; --wood2:#3b2c1d;
-  --felt:#31493c; --felt-d:#26382e; --felt-line:rgba(255,255,255,.09);
+  --wood:#463526; --wood2:#38291b;
+  --felt:#2d2a2f; --felt-d:#211f24; --felt-line:rgba(255,255,255,.07);   /* ardoise/cuir sombre — pas vert casino */
   --paper:#f5edd8; --paper2:#ecdfc2; --paper-edge:#c9b98f;
   --ink:#2e2a20; --ink-soft:#6d6350; --ink-faint:#948a72;
-  --gold:#c39a4a; --gold-d:#96762f;
-  --sale:#a04b38; --clean:#4f7d5f; --atk:#7d3b3b; --def:#54718f; --bla:#6b7f95; --steal:#7d6390; --coup:#a8843b;
+  --gold:#c9a457; --gold-d:#9c7c34;
+  --sale:#a84a37; --clean:#4f7d5f; --atk:#8a3b3b; --def:#54718f; --bla:#6b7f95; --steal:#7d6390; --coup:#a8843b;
   --justice:#54718f; --presse:#b07d41; --finances:#4f7d5f;
-  --shadow:0 8px 22px rgba(0,0,0,.35);
+  --shadow:0 8px 22px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -132,20 +132,34 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .roulette b{font-family:Georgia,serif;font-size:21px;color:#f4d689}
 .roulette span{font-size:10px;color:#bdb494;font-weight:800}
 .voixbox b{font-family:Georgia,serif;font-size:21px;color:#a8d3b2}
-.forb{font-size:11.5px;color:#e8a08c;font-weight:700}
-.forb b{color:#f0c2b2}
+#myForb{display:flex;gap:6px;flex-wrap:wrap}
+.rl{font-size:11px;font-weight:700;padding:1px 7px;border-radius:12px}
+.rl.forb{color:#f0c2b2;background:rgba(168,74,55,.25)} .rl.forb b{color:#f7d8cd}
+.rl.tgt{color:#cfe4b6;background:rgba(120,150,80,.25)} .rl.tgt b{color:#e6f2d4}
 .actpips{display:flex;gap:5px;align-items:center;margin-left:auto}
 .pip{width:12px;height:12px;border-radius:50%;border:2px solid var(--gold)}
 .pip.on{background:var(--gold)}
-#myrow{display:grid;grid-template-columns:200px minmax(0,1fr) 200px;gap:10px}
-.sidebox{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 11px;color:#d8cfae;cursor:pointer;transition:.12s;overflow:hidden}
+#myrow{display:grid;grid-template-columns:210px minmax(0,1fr) 210px;gap:10px}
+.sidebox{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 11px;color:#d8cfae;cursor:pointer;transition:.12s;overflow:auto}
 .sidebox:hover{border-color:var(--gold)}
-.sidebox .ptitle{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#bdb494;font-weight:800;margin-bottom:5px}
+.sidebox .ptitle{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#bdb494;font-weight:800;margin-bottom:6px}
+/* casier : 3 piles face cachée */
+.fslot{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:6px;padding:3px 0}
+.fpile{position:relative;display:inline-flex;height:22px}
+.fpile i{width:15px;height:21px;border-radius:2px;border:1px solid #8d7a52;background:repeating-linear-gradient(45deg,#7a6a49 0 3px,#6b5d40 3px 6px);margin-left:-11px;box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.fpile i:first-child{margin-left:0}
+.fpile b{position:absolute;right:-14px;top:3px;font-size:12px;color:#f0e3bd}
+.fpile.empty{color:#8a8168;font-size:12px;align-items:center}
+.fexp{font-size:10.5px;font-weight:800;text-align:right}
+.fexp.warn{color:#e8a08c} .fexp.safe{color:#a8d3b2}
+/* votants groupés par famille */
+.vfam{margin:4px 0;line-height:1.25}
+.vfam.done{background:rgba(195,154,74,.12);border-radius:7px;padding:2px 5px}
+.vfhead{display:block;font-size:11.5px;font-weight:800;color:#e8dfc8}
+.vfhead b{color:#a8d3b2}
+.vfnames{font-size:10.5px;color:#bdb494}
 .caserline{display:flex;justify-content:space-between;font-size:11.5px;padding:2.5px 0}
 .caserline .warn{color:#e8a08c;font-weight:800} .caserline .safe{color:#a8d3b2;font-weight:700}
-.votsum{font-size:11.5px;line-height:1.5}
-.votsum b{color:#a8d3b2}
-.coach{font-size:10px;color:var(--gold);font-weight:800}
 
 /* la MAIN en éventail */
 #handwrap{position:relative;display:flex;justify-content:center;align-items:flex-end;height:calc(clamp(150px,min(21.5vh,13.5vw),215px)*1.36 + 6px)}
@@ -158,6 +172,8 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .cface{width:100%;height:100%;background:linear-gradient(168deg,#f8f1de,var(--paper) 45%,var(--paper2));border:1px solid var(--paper-edge);border-radius:11px;box-shadow:0 4px 10px rgba(0,0,0,.35);display:flex;flex-direction:column;padding:9px 10px;position:relative;overflow:hidden}
 .cface::before{content:"";position:absolute;inset:4px;border:1px solid rgba(150,118,47,.35);border-radius:8px;pointer-events:none}
 .cface .c-name{font-family:Georgia,serif;font-weight:700;font-size:15px;line-height:1.12;color:var(--ink);display:block}
+.cface .c-kind{font-size:9px;font-weight:800;letter-spacing:.4px;color:var(--ink-faint);margin-top:2px}
+.cface .c-incomp{font-size:9.5px;font-weight:800;color:var(--sale);margin-top:3px;line-height:1.2}
 .cface .c-art{text-align:center;font-size:38px;margin:5px 0 3px;filter:sepia(.25) saturate(.85)}
 .cface .c-art .med{display:inline-flex;width:58px;height:58px;border-radius:50%;align-items:center;justify-content:center;background:rgba(0,0,0,.06);border:1px solid rgba(150,118,47,.3)}
 .cface .c-stat{text-align:center;font-size:12.5px;font-weight:800;color:var(--ink)}
@@ -168,6 +184,8 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .k-pro .ribbon{background:var(--def)} .k-bla .ribbon{background:var(--bla)} .k-steal .ribbon{background:var(--steal)} .k-coup .ribbon{background:var(--coup)} .votant .ribbon{background:var(--gold-d)}
 .cface.big{width:272px;height:370px;padding:15px}
 .cface.big .c-name{font-size:20px}
+.cface.big .c-kind{font-size:11px}
+.cface.big .c-incomp{font-size:12px;margin-top:5px}
 .cface.big .c-art{font-size:60px;margin:12px 0 8px}
 .cface.big .c-art .med{width:98px;height:98px}
 .cface.big .c-stat{font-size:15px}
@@ -178,8 +196,11 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .mkc:hover{transform:translateY(-5px) scale(1.04);z-index:5}
 .mkc .cface{padding:8px 9px}
 .mkc .c-name{font-size:12.5px}
-.mkc .c-art{font-size:28px;margin:3px 0}
-.mkc .c-art .med{width:46px;height:46px}
+.mkc .c-art{font-size:26px;margin:2px 0}
+.mkc .c-art .med{width:44px;height:44px}
+.mkc .c-flav{display:none}                 /* la phrase & l'incompat ne s'affichent qu'au zoom */
+.mkc .c-incomp{font-size:8.5px;margin-top:2px;overflow:hidden;max-height:22px}
+.mkc .c-kind{font-size:8.5px}
 .mkc.dis{filter:grayscale(.55) brightness(.85)}
 .cface .c-fam{text-align:center;font-size:10.5px;color:var(--ink-faint);font-weight:700}
 .cface .c-foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:auto}
@@ -208,6 +229,14 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .vlist{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .vchip{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(79,125,95,.14);border:1px solid rgba(79,125,95,.4);color:#33553f}
 .vchip.fidele{background:rgba(195,154,74,.16);border-color:var(--gold-d);color:#6b5423}
+.ccardrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.ccard{width:150px;border-radius:9px;padding:8px 9px;border:1px solid #c9b98f;background:#efe7d0;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.ccard b{display:block;font-size:12px;color:#4a3f24}
+.ccard i{display:block;font-style:normal;font-size:10px;line-height:1.3;color:#6f6544;margin-top:3px}
+.ccard.dirty{background:#f2ded6;border-color:#c98b76}
+.ccard.dirty b{color:#8a3b2b} .ccard.dirty i{color:#8a4a3b}
+.ccard.clean{background:#e3ecdf;border-color:#a7c1ac}
+.ccard.clean b{color:#33553f} .ccard.clean i{color:#4a6b52}
 #toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);background:#221a0e;color:#f0e3bd;padding:10px 20px;border-radius:12px;font-weight:800;z-index:60;opacity:0;transition:.2s;pointer-events:none;box-shadow:var(--shadow);max-width:90%;border:1px solid var(--gold-d)}
 #toast.show{opacity:1}
 </style>
@@ -218,7 +247,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 <div id="setup" class="wrap">
   <div class="mat">
     <h1 style="font-size:34px;text-align:center">🗳️ Caisse Noire</h1>
-    <p class="sub" style="text-align:center;max-width:560px;margin:8px auto 0">Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie à l'aveugle</b> en dénonçant : le casier des rivaux est invisible. Chacun a une <b>famille interdite secrète</b>. Premier à <b>45 voix</b> déclenche la manche finale.</p>
+    <p class="sub" style="text-align:center;max-width:560px;margin:8px auto 0">Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie à l'aveugle</b> en dénonçant : le casier des rivaux est invisible. Chacun a une <b>famille interdite</b> (impossible à acheter) et une <b>famille cible</b> secrète (coalition dessus = <b>+3 voix bonus</b>). Premier à <b>45 voix</b> déclenche la manche finale.</p>
     <div class="field" style="max-width:320px;margin:20px auto 4px"><label>Ton nom (pseudo)</label><input type="text" id="pseudo" maxlength="16" placeholder="ex. Rastignac"></div>
     <div class="modes">
       <div class="modecard">
@@ -292,7 +321,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
       <div style="font-family:Georgia,serif;font-weight:700" id="myName"></div>
       <div class="forb" id="myForb"></div>
       <div class="actpips" id="actpips"></div>
-      <button class="btn" id="recycleBtn" onclick="openRecycle()">♻ Recycler</button>
+      <button class="btn" id="recycleBtn" onclick="openRecycle()">🗑 Défausser</button>
       <button class="btn primary" id="endBtn" onclick="endMyTurn()">Fin de tour ▶</button>
     </div>
     <div id="myrow">
@@ -350,6 +379,34 @@ const FLAVOR = {
   "Promesse intenable":"On rasera gratis.",
   "Renvoi d'ascenseur":"Un service en vaut deux.",
 };
+/* une phrase cliché par bloc votant (par clé) */
+const VOT_FLAVOR = {
+  Patronat:"Ça ruissellera, promis.", Banquiers:"Trop gros pour tomber.", Retraités:"Eux, au moins, ils votent.",
+  Rentiers:"Le travail, c'est pour les autres.", Héritiers:"Self-made, à la naissance.", Promoteurs:"Encore un champ, encore un parking.",
+  Actionnaires:"Un dividende, un licenciement.",
+  CGT:"On lâche rien (surtout pas le préavis).", Fonctionnaires:"Le pays tourne au ralenti.", Soignants:"Applaudis un printemps, oubliés l'hiver.",
+  Profs:"Deux mois de vacances, dix de copies.", Cheminots:"La grève, elle, arrive à l'heure.", AgentsFisc:"Ils savent où dort ton argent.",
+  Bibliothecaires:"Chut. Ils votent en silence.",
+  Agroalim:"Du terroir sans terroir.", Militaires:"Rompez… vers l'isoloir.", Flics:"Le calme, à la matraque.",
+  Chasseurs:"La nature, surtout morte.", Gendarmes:"Contrôle d'identité électoral.", Pecheurs:"Quota de voix atteint.",
+  Viticulteurs:"Un p'tit rouge pour la démocratie.",
+  Startuppers:"Disrupte d'abord, monétise ensuite.", Traders:"Achète la peur, vends la promesse.", Youtubeurs:"Like, partage, vote.",
+  Crypto:"To the moon, ou au tribunal.", Influenceurs:"Placement de produit : ta voix.", NomadesDigitaux:"Bureau à Bali, impôts nulle part.",
+  Gamers:"GG, mais IRL cette fois.",
+  Decroissants:"Moins, c'est mieux. Sauf les voix.", Neoruraux:"Le coq chante trop fort, plainte déposée.", Animalistes:"Un vote pour Médor.",
+  Bobos:"Bio, local, hors de prix.", Eveilles:"Déconstruit, mais réveillé pour voter.", Cyclistes:"Priorité à gauche, toujours.",
+  Vegans:"Sans viande, sans compromis.",
+  Souverainistes:"On reprend le contrôle (de la télécommande).", Integristes:"C'était mieux au Moyen Âge.", Identitaires:"Racines profondes, idées courtes.",
+  Traditionalistes:"Le bon vieux temps qui n'a jamais existé.", Masculinistes:"Victimes, mais virils.", Survivalistes:"Bunker plein, urne pas oubliée.",
+  Complotistes:"Réveille-toi ! (sauf pour mon élection)",
+  GiletsJaunes:"Rond-point, mon amour.", Chomeurs:"Traverse la rue, tu voteras.", Interimaires:"CDI jusqu'au 2nd tour.",
+  AutoEntrepreneurs:"Patron de rien, esclave de tout.", Intermittents:"En représentation permanente.", Etudiants:"Pâtes à tous les repas, idéaux au dessert.",
+  Ubers:"Note ma course, note mon programme.", Livreurs:"Ta démocratie livrée en 30 min.",
+  Automobilistes:"Touche pas à ma bagnole.", Taxis:"Le compteur tourne, le vote aussi.", Routiers:"Klaxon pour la République.",
+  Aerien:"Bilan carbone en business class.", Motards:"En colère, mais bien rangés.", Periph:"Bloqués depuis 2008.",
+  Routards:"Sac à dos et bulletin froissé.",
+};
+function incompatNames(bloc){ const out=[]; for(const[a,b]of CN.INCOMPAT){ if(a===bloc)out.push(blocName(b)); else if(b===bloc)out.push(blocName(a)); } return out; }
 
 /* ===================== STATE (identique à avant) ===================== */
 let S = null, VIEW = null;
@@ -464,43 +521,49 @@ function uiIncompat(bloc,owned){ for(const[a,b]of CN.INCOMPAT){ if(bloc===a&&own
 function blocName(bloc){ const v=CN.VOTANTS.find(x=>x.bloc===bloc); return v?v.nom:bloc; }
 
 /* ===================== CARTES (faces papier) ===================== */
+function cardKindLabel(c){
+  if(c.kind==="cor") return `CORRUPTION · <span class="tag ${frontClass[c.front]}">${c.front}</span>`;
+  if(c.kind==="clean") return `ARGENT PROPRE`;
+  if(c.kind==="den") return `DÉNONCIATION · 2 M€`;
+  if(c.kind==="pro") return `PROTECTION · <span class="tag ${frontClass[c.front]}">${c.front}</span>`;
+  if(c.kind==="bla") return `BLANCHIMENT · 3 M€`;
+  if(c.kind==="steal") return c.e==="opa"?`OPA · vol de bloc`:`DÉBAUCHAGE · vol de bloc`;
+  return `COUP TACTIQUE`;
+}
 function cardStatLine(c){
-  if(c.kind==="cor") return `+${c.gain} M€ · <span class="tag ${frontClass[c.front]}">${c.front}</span>`;
-  if(c.kind==="clean") return `+${c.gain} M€ · sûr`;
-  if(c.kind==="den") return `2 M€ · attaque`;
-  if(c.kind==="pro") return `5 M€ · <span class="tag ${frontClass[c.front]}">${c.front}</span>`;
-  if(c.kind==="bla") return `3 M€ · défense`;
-  if(c.kind==="steal") return c.e==="opa"?"vol renforcé":"vol de voix";
-  return "coup tactique";
+  if(c.kind==="cor"||c.kind==="clean") return `<span style="color:var(--clean)">+${c.gain} M€</span>${c.kind==="cor"?` · risque −${c.gain}`:``}`;
+  return cardKindLabel(c).replace(/^[A-ZÉ]+ · /,"");
 }
 function cardRuleText(c){
-  if(c.kind==="cor") return `Encaisse ${c.gain} M€, carte posée face cachée sur ${c.front}. Dénoncé sur ce front : tu recraches tout ton sale.`;
-  if(c.kind==="clean") return `Argent légal, jamais dénonçable. Posé face cachée sur un front au choix — un front tout propre fait rater une dénonciation.`;
-  if(c.kind==="den") return `Devine un front d'un rival. Sale dessus → il paie tout. Propre ou vide → tu paies mise + 3 M€ d'amende.`;
-  if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate.`;
-  if(c.kind==="bla") return `Rend une de tes cartes sales propre (plus dénonçable).`;
-  if(c.kind==="steal") return c.e==="opa"?`La victime te cède un de ses MEILLEURS blocs isolés (voix + famille).`:`La victime te cède un bloc isolé de son choix (voix + famille).`;
+  if(c.kind==="cor") return `Tu gagnes ${c.gain} M€, carte cachée sur ${c.front}. Si on te dénonce sur ${c.front} (et que tu n'es pas protégé) : tu perds TOUT ton argent sale de ${c.front}.`;
+  if(c.kind==="clean") return `${c.gain} M€ 100 % légal, jamais dénonçable. Range-la dans un front pour bluffer : un front qui n'a que du propre fait RATER une dénonciation.`;
+  if(c.kind==="den") return `Vise un rival + un front (à l'aveugle). Sale caché dessus → il perd tout. Sinon (propre/vide/protégé) → tu perds 2 M€ + 3 M€ d'amende.`;
+  if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate d'office.`;
+  if(c.kind==="bla") return `Ta plus grosse carte sale devient PROPRE (plus dénonçable). Tu gardes l'argent.`;
+  if(c.kind==="steal") return c.e==="opa"?`Un rival te cède un de ses MEILLEURS blocs isolés (c'est lui qui choisit). Ses voix passent chez toi.`:`Un rival te cède un bloc isolé de son choix. Ses voix passent chez toi.`;
   if(c.e==="remise") return `Ton prochain votant coûte 3 M€ de moins.`;
-  if(c.e==="incoherence") return `Achète un bloc incompatible malgré l'exclusion (+1 carte sale Presse).`;
-  if(c.e==="promesse") return `+3 voix tout de suite (+1 carte sale Presse).`;
-  if(c.e==="element") return `RÉACTION automatique : annule une dénonciation contre toi. Garde-la en main.`;
+  if(c.e==="incoherence") return `Achète un bloc incompatible malgré l'exclusion (au prix d'1 carte sale sur Presse).`;
+  if(c.e==="promesse") return `+3 voix immédiates (au prix d'1 carte sale sur Presse).`;
+  if(c.e==="element") return `RÉACTION auto : annule une dénonciation lancée contre toi. Garde-la simplement en main.`;
   if(c.e==="renvoi") return `+3 M€ et pioche 1 carte.`;
   return "";
 }
 function cardFaceHTML(c,big){
   return `<div class="cface k-${c.kind}${big?" big":""}"><span class="ribbon"></span>
     <span class="c-name">${esc(c.nom)}</span>
+    <div class="c-kind">${cardKindLabel(c)}</div>
     <div class="c-art"><span class="med">${TYPE_ART[c.kind]||"🃏"}</span></div>
-    <div class="c-stat">${cardStatLine(c)}</div>
     <div class="c-rule">${cardRuleText(c)}</div>
     <div class="c-flav">« ${FLAVOR[c.nom]||"…"} »</div></div>`;
 }
 function votFaceHTML(c,big){
+  const inc=incompatNames(c.bloc);
   return `<div class="cface votant${big?" big":""}"><span class="ribbon"></span>
     <span class="c-name">${esc(c.nom)}</span>
-    <div class="c-art"><span class="med">${FAM_ART[c.family]||"👥"}</span></div>
-    <div class="c-fam">${esc(c.family||"Indépendant")} · ${c.tier}</div>
-    <div class="c-foot"><span class="cost">${c.cost} M€</span><span class="vx">${c.voix} voix</span></div></div>`;
+    <div class="c-kind" style="color:var(--gold-d)">${FAM_ART[c.family]||"👥"} ${esc(c.family||"Indépendant")}</div>
+    <div class="c-flav" style="border:none;padding:0;margin:6px 0 0;text-align:center">« ${VOT_FLAVOR[c.bloc]||"…"} »</div>
+    ${inc.length?`<div class="c-incomp">✗ jamais avec ${inc.map(esc).join(" · ")}</div>`:`<div class="c-incomp" style="visibility:hidden">.</div>`}
+    <div class="c-foot"><span class="cost">${c.cost} M€</span><span class="vx">${c.voix} voix · ${c.tier}</span></div></div>`;
 }
 
 /* ===================== RENDER ===================== */
@@ -565,20 +628,27 @@ function render(){
   $("#mybar").className=myTurn?"mine":"";
   $("#myMoney").textContent=me.money; $("#myVoix").textContent=me.voix;
   $("#myName").textContent=me.name;
-  $("#myForb").innerHTML=me.forbiddenFamily?`⛔ famille interdite (secrète) : <b>${esc(me.forbiddenFamily)}</b>`:"";
+  $("#myForb").innerHTML=me.forbiddenFamily
+    ? `<span class="rl forb">⛔ interdit : <b>${esc(me.forbiddenFamily)}</b></span> <span class="rl tgt">🎯 cible +3 : <b>${esc(me.targetFamily||"?")}</b></span>`:"";
   const pips=$("#actpips");
   if(myTurn){ let ph=`<span class="small" style="color:#bdb494;font-weight:800;margin-right:3px">Actions</span>`; for(let k=0;k<CN.CONFIG.actions;k++) ph+=`<span class="pip${k<VIEW.actionsLeft?" on":""}"></span>`; pips.innerHTML=ph; }
   else pips.innerHTML=`<span class="small" style="color:#bdb494">${VIEW.over?"terminée":VIEW.pending?"scandale…":busy?"envoi…":"patiente"}</span>`;
 
+  // casier : 3 piles face cachée (les MIENNES, que je peux inspecter) + exposition
   $("#mycaser").innerHTML=CN.FRONTS.map(fr=>{
-    const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
+    const prot=me.protect.includes(fr); const cards=me.financ[fr]||[]; const n=cards.length;
     const sale=cards.reduce((a,c)=>a+(c.clean?0:c.amount),0);
-    return `<div class="caserline"><span class="tag ${frontClass[fr]}">${fr}</span><span>${cards.length} carte${cards.length>1?"s":""}</span>
-      <span class="${prot?"safe":sale>0?"warn":"safe"}">${prot?"🛡":sale>0?"⚠ "+sale+" M€":"✓"}</span></div>`;
+    const stack=n?`<span class="fpile">${'<i></i>'.repeat(Math.min(n,6))}<b>${n}</b></span>`:`<span class="fpile empty">—</span>`;
+    return `<div class="fslot"><span class="tag ${frontClass[fr]}">${fr}</span>${stack}
+      <span class="fexp ${prot?"safe":sale>0?"warn":"safe"}">${prot?"🛡 protégé":sale>0?"⚠ "+sale+" M€":n?"✓ propre":"vide"}</span></div>`;
   }).join("");
-  const totV=me.votants.reduce((a,v)=>a+v.voix,0);
+  // votants groupés par famille (lisible, avec catégorie)
+  const byFam={}; me.votants.forEach(v=>{ const f=v.family||"—"; (byFam[f]=byFam[f]||[]).push(v); });
+  const fams=Object.keys(byFam).sort((a,b)=>byFam[b].length-byFam[a].length);
   $("#myvots").innerHTML=me.votants.length
-    ? `<b>${me.votants.length}</b> blocs · <b>${totV}</b> voix${me.coalitions.length?`<br><span class="coach">🔒 ${me.coalitions.join(" · ")}</span>`:""}`
+    ? fams.map(f=>{ const list=byFam[f]; const done=me.coalitions.includes(f);
+        return `<div class="vfam ${done?"done":""}"><span class="vfhead">${FAM_ART[f]||"👥"} ${esc(f)} <b>${list.length}</b>${done?" 🔒":""}</span>
+          <span class="vfnames">${list.map(v=>esc(v.nom)).join(", ")}</span></div>`; }).join("")
     : `<span style="color:#a99f83">aucun votant acheté</span>`;
 
   /* la main en éventail */
@@ -590,7 +660,7 @@ function render(){
     const rot=(i-(n-1)/2)*5, dy=Math.abs(i-(n-1)/2)*7;
     d.style.setProperty("--r",rot+"deg"); d.style.setProperty("--y",dy+"px");
     d.innerHTML=cardFaceHTML(card,false);
-    d.onclick=()=>openCardZoom(i);
+    d.onclick=()=>clickHand(i);
     hand.appendChild(d);
   });
   $("#recycleBtn").disabled=!(myTurn&&L.canRecycle); $("#endBtn").disabled=!(myTurn&&L.canEnd);
@@ -598,6 +668,19 @@ function render(){
 function setDeck(id,nv){ const d=$("#"+id); d.querySelector(".cnt").textContent=nv; }
 
 /* ===================== ZOOMS ===================== */
+// clic sur une carte de la main : jeu direct (1 clic) pour les cartes sans choix ;
+// zoom-choix pour clean/dénonce/vol ; zoom lecture seule si pas jouable maintenant.
+function clickHand(i){
+  const me=VIEW.players.find(p=>p.id===NET.mySeat); const card=me.hand[i]; if(!card) return;
+  const canAct=!VIEW.over&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat&&!busy&&VIEW.actionsLeft>0;
+  const plays=legalMap().hand[i]||[];
+  if(!canAct){ openCardZoom(i); return; }                                  // lecture seule
+  if(card.kind==="cor"){ submit({type:"PLAY_FINANCE",handIndex:i}); return; }
+  if(card.kind==="pro"&&plays.length){ submit({type:"PLAY_PROTECT",handIndex:i}); return; }
+  if(card.kind==="bla"&&plays.length){ submit({type:"PLAY_BLANCH",handIndex:i}); return; }
+  if(card.kind==="coup"&&card.e!=="element"&&plays.length){ submit({type:"PLAY_COUP",handIndex:i}); return; }
+  openCardZoom(i);   // clean (front), dénonce (cible+front), vol (cible), ou carte non jouable
+}
 function openCardZoom(i){
   const me=VIEW.players.find(p=>p.id===NET.mySeat); const card=me.hand[i]; if(!card) return;
   const L=legalMap(); const plays=L.hand[i]||[];
@@ -638,11 +721,12 @@ function openMarketZoom(i){
   const c=VIEW.market[i]; if(!c) return;
   const me=VIEW.players.find(p=>p.id===NET.mySeat);
   const L=legalMap(); const canB=!VIEW.over&&!VIEW.pending&&VIEW.currentPlayerId===NET.mySeat&&!busy&&L.buy.has(i);
-  const forb=c.family===me.forbiddenFamily; const inc=uiIncompat(c.bloc,me.blocs);
+  const forb=c.family===me.forbiddenFamily; const inc=uiIncompat(c.bloc,me.blocs); const isTgt=c.family===me.targetFamily;
   const marg=CN.coalitionBonus(me.blocs.concat([c.bloc]))-CN.coalitionBonus(me.blocs);
   let warn=forb?`<div class="small" style="color:var(--sale);font-weight:800">⛔ C'est ta famille interdite — tu ne peux jamais l'acheter.</div>`
     :inc?`<div class="small" style="color:var(--sale);font-weight:800">✗ Incompatible avec ${esc(blocName(inc))} que tu détiens.</div>`
     :marg>0?`<div class="small" style="color:var(--clean);font-weight:800">👥 +${marg} voix de coalition en le prenant !</div>`:"";
+  if(isTgt&&!forb) warn+=`<div class="small" style="color:#8a6d1f;font-weight:800">🎯 Ta famille cible : complète la coalition (3+) pour +3 voix bonus.</div>`;
   showModal(`<div class="zoomwrap">${votFaceHTML(c,true)}<div class="zoomact"><h2 style="font-size:16px">${esc(c.nom)}</h2>
     <div class="small muted">Famille : <b>${esc(c.family)}</b> — 3 blocs d'une famille = coalition (+3 voix, involable).</div>${warn}
     ${actBtn(canB,`Acheter (${c.cost} M€ → +${c.voix} voix)`,`buyMarket(${i})`)}
@@ -666,16 +750,31 @@ function openMyCasier(){
   const piles=CN.FRONTS.map(fr=>{
     const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
     const sale=cards.reduce((a,c)=>a+(c.clean?0:c.amount),0);
-    const items=cards.length?cards.map(c=>`<span class="vchip${c.clean?"":" fidele"}" style="${c.clean?"":"background:#f2ded6;border-color:#c98b76;color:#7d3b2b"}">${c.clean?"🧾 propre":"💸 SALE"} ${c.amount}</span>`).join(" "):`<span class="muted small">vide</span>`;
-    return `<div style="margin:10px 0"><span class="tag ${frontClass[fr]}">${fr}</span> ${prot?"🛡 protégé":""} <b class="small" style="color:${sale>0?"var(--sale)":"var(--clean)"}">${sale>0?"⚠ "+sale+" M€ exposés":"✓ sûr"}</b><div class="vlist">${items}</div></div>`;
+    const head=`<span class="tag ${frontClass[fr]}">${fr}</span> `+(prot
+      ? `<b class="small" style="color:var(--clean)">🛡 protégé — dénonciation impossible ici</b>`
+      : sale>0 ? `<b class="small" style="color:var(--sale)">⚠ dénoncé ici = je perds ${sale} M€</b>`
+               : `<b class="small" style="color:var(--clean)">✓ rien à perdre</b>`);
+    const items=cards.length?cards.map(c=>c.clean
+        ? `<div class="ccard clean"><b>🧾 Propre · ${c.amount} M€</b><i>Argent sûr. Gonfle la pile pour tromper — jamais dénonçable.</i></div>`
+        : `<div class="ccard dirty"><b>💸 SALE · ${c.amount} M€</b><i>Dénoncé sur ${fr} sans 🛡 → je perds les ${sale} M€ sales de ce front.</i></div>`
+      ).join(""):`<span class="muted small">pile vide</span>`;
+    return `<div style="margin:12px 0">${head}<div class="ccardrow">${items}</div></div>`;
   }).join("");
-  showModal(`<h2>🗄️ Mon casier (visible de moi seul)</h2><p class="muted small">Les rivaux ne voient RIEN de tout ça. Une dénonciation sur un front me fait payer tout le SALE de ce front.</p>${piles}
+  showModal(`<h2>🗄️ Mon casier — visible de moi seul</h2><p class="muted small">C'est ta pile de financement, face cachée. Les rivaux ne voient <b>rien</b> : ni le nombre de cartes, ni le contenu, seulement ton argent qui monte. Une dénonciation vise un front entier : si elle touche un front non protégé, tu perds <b>tout</b> l'argent SALE posé dessus.</p>${piles}
     <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
 }
 function openMyVotants(){
   const me=VIEW.players.find(p=>p.id===NET.mySeat);
-  const vl=me.votants.length?`<div class="vlist">${me.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒 ":""}${esc(v.nom)} · ${v.voix}v</span>`).join("")}</div>`:`<p class="muted small">Aucun votant.</p>`;
-  showModal(`<h2>🗳️ Mes votants</h2><p class="muted small">🔒 = coalition complète (3+ d'une famille) : +voix bonus et involables.</p>${vl}
+  const byFam={}; me.votants.forEach(v=>{ const f=v.family||"—"; (byFam[f]=byFam[f]||[]).push(v); });
+  const fams=Object.keys(byFam).sort((a,b)=>byFam[b].length-byFam[a].length);
+  const body=me.votants.length?fams.map(f=>{
+      const list=byFam[f]; const done=me.coalitions.includes(f); const isTgt=me.targetFamily===f;
+      const need=Math.max(0,3-list.length);
+      const status=done?`🔒 coalition (+3${isTgt?" +3 cible":""})`:`${list.length}/3${isTgt?` · 🎯 cible : +3 de plus si complète`:need?` · encore ${need}`:""}`;
+      return `<div class="vfam ${done?"done":""}" style="margin:8px 0"><span class="vfhead">${FAM_ART[f]||"👥"} ${esc(f)} — <b>${status}</b></span>
+        <div class="vlist" style="margin-top:4px">${list.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒 ":""}${esc(v.nom)} · ${v.voix}v</span>`).join("")}</div></div>`;
+    }).join(""):`<p class="muted small">Aucun votant acheté.</p>`;
+  showModal(`<h2>🗳️ Mes votants</h2><p class="muted small">3+ votants d'une même famille = <b>coalition</b> : +3 voix et involables (on ne peut plus te les débaucher). 🎯 = ta famille <b>cible</b> secrète : une coalition dessus rapporte +3 voix de plus.</p>${body}
     <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
 }
 function openJournal(){
@@ -693,8 +792,8 @@ function openJournal(){
 let recSel=[];
 function openRecycle(){
   if(!VIEW||VIEW.pending||VIEW.currentPlayerId!==NET.mySeat) return; recSel=[]; modalMode="recycle";
-  showModal(`<h2>♻ Recycler (1 action)</h2><p class="muted small">Défausse 1 ou 2 cartes, tu repiocheras à 5.</p><div class="choices" id="recList"></div>
-    <div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="confirmRecycle()">Recycler</button><button class="btn" onclick="hideModal()">Annuler</button></div>`);
+  showModal(`<h2>🗑 Défausser des cartes (1 action)</h2><p class="muted small">Jette 1 ou 2 cartes qui ne te servent pas, tu repiocheras jusqu'à 5.</p><div class="choices" id="recList"></div>
+    <div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="confirmRecycle()">Défausser</button><button class="btn" onclick="hideModal()">Annuler</button></div>`);
   renderRecList();
 }
 function renderRecList(){ const me=VIEW.players.find(p=>p.id===NET.mySeat); const c=$("#recList"); c.innerHTML="";
@@ -732,9 +831,9 @@ function onGameOver(){
   if(gameOverShown) return; gameOverShown=true; modalMode=null;
   const mine=VIEW.winner===NET.mySeat; const ranked=VIEW.players.slice().sort((a,b)=>b.finalScore-a.finalScore);
   let h=`<h2>${mine?"🏆 Tu remportes l'élection !":"🗳️ "+esc(seatName(VIEW.winner))+" l'emporte"}</h2>
-    <p class="muted small" style="margin-top:4px">${VIEW.endReason==="seuil"?"Le plus de voix en fin de manche finale.":"Fin au garde-fou — décompte des voix."} Familles interdites révélées :</p>
-    <table class="reveal"><tr><th>Joueur</th><th>Voix</th><th>Parti</th><th>Famille interdite</th></tr>`;
-  ranked.forEach(p=>{ h+=`<tr class="${p.id===VIEW.winner?"win":""}"><td>${esc(seatName(p.id))}</td><td><b>${p.finalScore}</b></td><td>${esc(p.partyName||"?")}</td><td>⛔ ${esc(p.forbiddenFamily||"?")}</td></tr>`; });
+    <p class="muted small" style="margin-top:4px">${VIEW.endReason==="seuil"?"Le plus de voix en fin de manche finale.":"Fin au garde-fou — décompte des voix."} Rôles secrets révélés :</p>
+    <table class="reveal"><tr><th>Joueur</th><th>Voix</th><th>Parti</th><th>Interdit</th><th>Cible +3</th></tr>`;
+  ranked.forEach(p=>{ h+=`<tr class="${p.id===VIEW.winner?"win":""}"><td>${esc(seatName(p.id))}</td><td><b>${p.finalScore}</b></td><td>${esc(p.partyName||"?")}</td><td>⛔ ${esc(p.forbiddenFamily||"?")}</td><td>${p.targetDone?"🎯 ":"○ "}${esc(p.targetFamily||"?")}</td></tr>`; });
   h+=`</table><div class="choices" style="margin-top:12px">`;
   if(NET.isHost) h+=`<div class="choice" onclick="hideModal();rematch()">↺ Relancer une partie</div>`; else h+=`<div class="muted small">En attente de l'hôte pour relancer…</div>`;
   h+=`<div class="choice" onclick="hideModal();leaveTable()">← Quitter la table</div></div>`;

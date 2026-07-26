@@ -6,7 +6,7 @@
 > Jeu jouable (solo + en ligne) : `index.html` ; catalogue des cartes + bac à sable d'équilibrage : `catalogue.html` (à ouvrir dans un navigateur).
 > Dernière mise à jour : 27 juin 2026.
 >
-> 🔴 **MODÈLE CIBLE = v0.7 « corruption cachée » → voir §16. C'est ce qui fait foi pour le dev.** Les sections §3–§9 décrivent le modèle v0.5 (corruption visible) ; §16 les **remplace** : corruption cachée, dénonciation qui frappe l'**argent** en visant **tout un front**, voix lues sur les cartes, familles/coalitions + **incompatibilités renforcées**, **débauchage-carte** (la victime choisit), **famille interdite secrète** par parti (remplace pouvoirs + objectifs). **Deck de votants 57 blocs. Seuil = 45 voix (fixe, tous les nombres de joueurs)** — validé par le `simulate()` du moteur : ~100 % des parties finies au seuil de 2 à 6 joueurs, ~15 manches (voir §16.7). Le code `src/engine.js` **fait foi**.
+> 🔴 **MODÈLE CIBLE = v0.7 « corruption cachée » → voir §16. C'est ce qui fait foi pour le dev.** Les sections §3–§9 décrivent le modèle v0.5 (corruption visible) ; §16 les **remplace** : corruption cachée, dénonciation qui frappe l'**argent** en visant **tout un front**, voix lues sur les cartes, familles/coalitions + **incompatibilités renforcées**, **débauchage-carte** (la victime choisit), **parti secret à double face** (famille interdite + famille cible à +3 voix ; remplace pouvoirs + objectifs). **Deck de votants 57 blocs. Seuil = 45 voix (fixe, tous les nombres de joueurs)** — validé par le `simulate()` du moteur : ~100 % des parties finies au seuil de 2 à 6 joueurs, ~15 manches (voir §16.7). Le code `src/engine.js` **fait foi**.
 
 ---
 
@@ -388,16 +388,18 @@ Les **votants restent face visible** devant toi : **voix = somme de tes cartes v
 
 *(Les coups « Incohérence » et « Promesse intenable », qui ajoutaient une carte sale sur l'ex-front « Rue », la posent désormais sur **Presse**.)*
 
-## 16.5 Parti = famille interdite SECRÈTE
-En début de partie, chaque joueur reçoit **1 carte Parti face cachée** (aléatoire). Elle indique **une famille d'électeurs qu'il ne peut jamais acheter** — connue de **lui seul**. C'est toute l'asymétrie : invisible, sans aucun signal économique (rien à repérer type « +1 M€/manche »). Les autres doivent **deviner** ta famille interdite à ta façon de jouer.
-- Ça crée un handicap thématique (« le parti anti-écolo ne courtisera jamais les Animalistes ») et de l'information cachée à lire.
+## 16.5 Parti = famille interdite + famille CIBLE (double face SECRÈTE)
+En début de partie, chaque joueur reçoit **1 carte Parti face cachée** (aléatoire) à **deux faces secrètes**, connues de **lui seul** :
+- **Famille INTERDITE** : une famille d'électeurs qu'il **ne peut jamais acheter**. C'est le handicap thématique (« le parti anti-écolo ne courtisera jamais les Animalistes ») et de l'information cachée à lire. Aucun signal économique (rien à repérer type « +1 M€/manche ») : les autres doivent **deviner** à ta façon de jouer.
+- **Famille CIBLE** : une famille (toujours **différente** de l'interdite) qui rapporte un **bonus de +3 voix** si tu en **complètes la coalition** (≥3 blocs). Ce bonus s'ajoute **au +3 de coalition** — donc une coalition sur ta cible vaut **+6 voix**. Elle t'oriente secrètement vers une ligne électorale précise ; révélée à la fin comme l'interdite.
 - **Remplace** les anciens pouvoirs de parti visibles **et** les objectifs à points (jugés trop lisibles / obvious).
-- Design : chaque carte Parti = un nom satirique + la famille interdite au dos-révélé. Une famille interdite peut se répéter d'une partie à l'autre ; à distribuer pour qu'aucun joueur n'ait la même sur une partie donnée.
+- Design : chaque carte Parti = un nom satirique + interdite/cible au dos-révélé. Les familles peuvent se répéter d'une partie à l'autre ; à distribuer pour qu'aucun joueur n'ait la même interdite, et que cible ≠ interdite pour chacun.
+- **Calibrage** : ce bonus (~+3 pour un ou deux joueurs par partie) reste absorbé par le **seuil fixe de 45 voix** (§16.7) — vérifié par `simulate()`.
 
 ## 16.6 Familles, coalitions, incompatibilités & vol
 - **Familles** : 8 familles (voir §15.1), **57 blocs uniques** répartis dessus. La plupart des familles ont au moins un **gros bloc (12 M€ / 6 voix)** ; quelques familles n'en ont pas (déséquilibre thématique assumé). **3 blocs d'une même famille = +3 voix**, puis **+1 par bloc** en plus.
 - **Incompatibilités renforcées** : de nombreuses **paires de votants s'excluent** (tu ne peux pas détenir les deux — ex. Chasseurs × Animalistes, Patronat × CGT, Flics × Émeutiers…). Ça ralentit la course aux voix, oblige à choisir sa ligne, et **allonge la partie**. *(À l'échelle du moteur : une liste de paires interdites ; à l'achat, on refuse un bloc incompatible avec un bloc déjà détenu.)*
-- **Coalition complète = électorat fidèle → involable** (protégé du vol).
+- **Coalition complète = électorat fidèle → involable** (protégé du vol). Si la famille est ta **cible** secrète (§16.5), la coalition rapporte **+3 voix de plus**.
 - **Débauchage = une CARTE** (vol de voix) : tu la joues sur un rival ; **c'est la victime qui choisit** quel **votant isolé** (hors coalition complète) elle te cède — le bloc passe dans ta zone (tu gagnes ses voix, elle les perd). **OPA électorale** (carte plus chère) : même principe sur un bloc de plus forte valeur. Partage le plafond « 1 attaque subie / manche » avec la dénonciation.
 
 ## 16.7 Économie & seuil (calibré par simulation v0.7)

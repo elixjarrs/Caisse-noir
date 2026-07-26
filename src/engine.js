@@ -9,8 +9,9 @@
  *      un front ; la cible perd la SOMME de TOUTES ses cartes sales de ce front (cash, sinon rend
  *      des votants). Si le front n'a QUE du propre / est vide / protégé → RATÉ : l'accusateur perd
  *      sa mise (2) + amende 3 à la cible. Les leurres propres appâtent donc un ratage (bluff).
- *   2. PARTI = FAMILLE INTERDITE SECRÈTE : chaque joueur a une famille qu'il ne peut jamais
- *      acheter, connue de lui seul. Aucun autre effet (remplace pouvoirs + objectifs à points).
+ *   2. PARTI = carte secrète à double face : une famille INTERDITE (jamais achetable) ET une
+ *      famille CIBLE (+3 voix bonus si tu complètes une coalition de cette famille, en plus
+ *      du bonus de coalition). Les deux sont connues du joueur seul. Cible ≠ interdite.
  *   3. DÉBAUCHAGE / OPA = CARTES : la VICTIME choisit quel votant ISOLÉ elle cède ; le bloc
  *      (voix + famille) passe chez l'attaquant. OPA = bloc de plus forte valeur.
  *   4. INCOMPATIBILITÉS renforcées : paires exclusives (on ne peut pas détenir les deux).
@@ -31,6 +32,7 @@
 const CONFIG = {
   start: 7, income: 3, hand: 5, actions: 2,
   protectCost: 5, blanchCost: 3, denounceCost: 2, amende: 3,
+  targetBonus: 3,        // +voix si coalition complète de sa famille CIBLE (secrète)
   guardrail: 40,
 };
 // Seuil FIXE = 45 voix pour tous les N (choix EJ). Vérifié par simulate() : ~14-15 manches et
@@ -174,10 +176,10 @@ function shuffle(arr, state) { for (let i = arr.length - 1; i > 0; i--) { const 
 function buildCombines() { const d = []; for (const c of COMBINES_DEF) { const { n, ...card } = c; for (let i = 0; i < n; i++) d.push({ ...card }); } return d; }
 function buildVotants() { return VOTANTS.map(v => ({ ...v })); }
 
-function newPlayer(id, forbiddenFamily, name) {
+function newPlayer(id, forbiddenFamily, targetFamily, name) {
   return {
     id, name: name || ('Joueur ' + (id + 1)),
-    forbiddenFamily,                        // SECRET
+    forbiddenFamily, targetFamily,          // SECRETS (cible ≠ interdite)
     money: CONFIG.start, voix: 0,
     votants: [], blocs: [],
     financ: { Justice: [], Presse: [], Finances: [] },   // piles ordonnées {clean,amount}
@@ -199,7 +201,13 @@ function createGame(opts = {}) {
     pending: null, endingTriggered: false, log: [],
   };
   const famPool = shuffle(FAMILY_LIST.slice(), state);   // famille interdite distincte par joueur
-  for (let i = 0; i < nPlayers; i++) state.players.push(newPlayer(i, famPool[i % famPool.length], (opts.names && opts.names[i]) || null));
+  const tgtPool = shuffle(FAMILY_LIST.slice(), state);   // famille cible distincte par joueur, ≠ sa propre interdite
+  for (let i = 0; i < nPlayers; i++) {
+    if (tgtPool[i] === famPool[i]) {
+      for (let k = nPlayers; k < tgtPool.length; k++) if (tgtPool[k] !== famPool[i]) { [tgtPool[i], tgtPool[k]] = [tgtPool[k], tgtPool[i]]; break; }
+    }
+    state.players.push(newPlayer(i, famPool[i], tgtPool[i], (opts.names && opts.names[i]) || null));
+  }
   state.deck = shuffle(buildCombines(), state);
   state.votantDeck = shuffle(buildVotants(), state);
   refillMarket(state);
@@ -211,7 +219,10 @@ function createGame(opts = {}) {
 /* ------------------------------ UTILITAIRES -------------------------------- */
 function log(state, msg, tag) { state.log.unshift({ t: state.turn, msg, tag: tag || null }); }
 function current(state) { return state.order[state.currentIdx]; }
-function recompute(p) { p.voix = Math.max(0, p.votants.reduce((a, x) => a + x.voix, 0) + coalitionBonus(p.blocs)); }
+function recompute(p) {
+  const tgt = p.targetFamily && completeFamilies(p.blocs).includes(p.targetFamily) ? CONFIG.targetBonus : 0;
+  p.voix = Math.max(0, p.votants.reduce((a, x) => a + x.voix, 0) + coalitionBonus(p.blocs) + tgt);
+}
 function finalScore(p) { return p.voix; }
 
 function frontCount(p, fr) { return p.financ[fr].length; }
@@ -478,6 +489,8 @@ function publicState(state, playerId) {
         hand: mine ? p.hand.slice() : undefined,
         financ: mine ? { Justice: p.financ.Justice.slice(), Presse: p.financ.Presse.slice(), Finances: p.financ.Finances.slice() } : undefined,
         forbiddenFamily: reveal ? p.forbiddenFamily : undefined,
+        targetFamily: reveal ? p.targetFamily : undefined,
+        targetDone: reveal ? completeFamilies(p.blocs).includes(p.targetFamily) : undefined,
         partyName: reveal ? PARTY_BY_FAMILY[p.forbiddenFamily] : undefined,
         finalScore: state.over ? finalScore(p) : undefined,
       };
@@ -526,7 +539,17 @@ function botChooseAction(state, playerId) {
   const pri = p.hand.findIndex(c => c.kind === 'coup' && c.e === 'promesse'); if (pri >= 0 && p.voix >= state.X - 6) return { type: 'PLAY_COUP', handIndex: pri };
   // 5. acheter le meilleur bloc (favorise les coalitions ; respecte famille interdite + incompat)
   let best = -1, bestScore = -1;
-  state.market.forEach((c, i) => { const chk = canBuy(p, c); if (!chk.ok) return; const marg = coalitionBonus(p.blocs.concat([c.bloc])) - coalitionBonus(p.blocs); const eff = c.voix + marg; const sc = eff / Math.max(1, chk.cost) + eff * 0.03; if (sc > bestScore) { bestScore = sc; best = i; } });
+  const tgtBefore = completeFamilies(p.blocs).includes(p.targetFamily) ? CONFIG.targetBonus : 0;
+  state.market.forEach((c, i) => {
+    const chk = canBuy(p, c); if (!chk.ok) return;
+    const nb = p.blocs.concat([c.bloc]);
+    const marg = coalitionBonus(nb) - coalitionBonus(p.blocs);
+    const tgtMarg = (completeFamilies(nb).includes(p.targetFamily) ? CONFIG.targetBonus : 0) - tgtBefore;
+    const towardTarget = (FAMILIES[c.bloc] === p.targetFamily) ? 0.6 : 0;   // vise activement sa famille cible
+    const eff = c.voix + marg + tgtMarg;
+    const sc = eff / Math.max(1, chk.cost) + eff * 0.03 + towardTarget;
+    if (sc > bestScore) { bestScore = sc; best = i; }
+  });
   if (best >= 0) return { type: 'BUY_VOTANT', marketIndex: best };
   // 6. se financer si pauvre
   if (p.money < 10) { if (!iLead) { const ci = p.hand.findIndex(c => c.kind === 'cor'); if (ci >= 0) return { type: 'PLAY_FINANCE', handIndex: ci }; } const cl = p.hand.findIndex(c => c.kind === 'clean'); if (cl >= 0) return { type: 'PLAY_FINANCE_CLEAN', handIndex: cl }; const ci2 = p.hand.findIndex(c => c.kind === 'cor'); if (ci2 >= 0) return { type: 'PLAY_FINANCE', handIndex: ci2 }; }
