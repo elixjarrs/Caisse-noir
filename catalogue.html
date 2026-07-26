@@ -69,7 +69,7 @@ let cur = "Tout";
 function chips(){ const f=$("#filter"); f.innerHTML=""; SECTIONS.forEach(s=>{ const c=document.createElement("div"); c.className="chip"+(s===cur?" active":""); c.textContent=s; c.onclick=()=>{cur=s;chips();render();}; f.appendChild(c); }); }
 const show = s => cur==="Tout"||cur===s;
 const combines = k => CN.COMBINES_DEF.filter(c=>c.kind===k);
-function votCard(v){ return `<div class="card votant"><div class="nom">${v.nom}</div><div class="tag">${v.tier} · ${v.bloc}</div><div class="foot"><span class="cout">${v.cost} M€</span><span class="voix">${v.voix} voix</span></div></div>`; }
+function votCard(v){ return `<div class="card votant"><div class="nom">${v.nom}</div><div class="tag">${v.family||v.bloc}</div><div class="foot"><span class="cout">${v.cost} M€</span><span class="voix">${v.voix} voix</span></div></div>`; }
 
 function render(){
   let h="";
@@ -88,8 +88,8 @@ function render(){
     h+=`<h2 class="sec-title">Corruption (SALE) — 3 fronts × 3/6/9</h2><p class="sec-sub">Posée <b>face cachée</b> sur son front. Une dénonciation sur ce front frappe <b>toute</b> ta corruption qui s'y trouve → tu perds la somme d'un coup. Les autres ne voient <b>rien</b> de ton casier (ni contenu, ni nombre de cartes) : à eux de deviner où tu as fraudé.</p><div class="grid">${g}</div>`;
   }
   if(show("Propre")){
-    let g=""; combines("clean").sort((a,b)=>a.gain-b.gain).forEach(c=>g+=`<div class="card propre"><div class="nom">${c.nom}</div><span class="tag t-finances">PROPRE · sûr</span><div class="desc">+${c.gain} M€, jamais dénonçable. Gonfle un front (bluff) ; un front qui n'a QUE du propre fait <b>rater</b> une dénonciation → amende pour l'attaquant.</div><div class="foot"><span class="voix">+${c.gain} M€</span><span style="color:var(--money);font-weight:800">aucun risque</span></div></div>`);
-    h+=`<h2 class="sec-title">Financement PROPRE — leurres (3 / 6)</h2><p class="sec-sub">Argent sûr (plafonne à +6 ; le +9 est réservé au sale). Face cachée, on ne distingue pas un don d'un pot-de-vin → un front rempli de leurres appâte une dénonciation ratée. Ratio ~2 sales pour 1 propre.</p><div class="grid">${g}</div>`;
+    let g=""; combines("clean").sort((a,b)=>a.gain-b.gain).forEach(c=>g+=`<div class="card propre"><div class="nom">${c.nom}</div><span class="tag t-finances">PROPRE · sûr</span><div class="desc">+${c.gain} M€, 100 % légal, jamais dénonçable. Sert passivement de leurre (le moteur la classe tout seul) : un front rempli de propre fait <b>rater</b> une dénonciation → amende pour l'attaquant.</div><div class="foot"><span class="voix">+${c.gain} M€</span><span style="color:var(--money);font-weight:800">aucun risque</span></div></div>`);
+    h+=`<h2 class="sec-title">Financement PROPRE — leurres (3 / 6)</h2><p class="sec-sub">Argent sûr (plafonne à +6 ; le +9 est réservé au sale). Le joueur <b>ne choisit pas de front</b> : il encaisse juste de l'argent légal, la carte sert de leurre en coulisse. Ratio ~2 sales pour 1 propre.</p><div class="grid">${g}</div>`;
   }
   if(show("Attaques")){
     const deb=combines("steal").find(c=>c.e==="debauchage"), opa=combines("steal").find(c=>c.e==="opa"), den=combines("den")[0];

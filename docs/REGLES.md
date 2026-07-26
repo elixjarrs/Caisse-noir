@@ -346,6 +346,8 @@ Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**
 
 **3 FRONTS de corruption : Justice · Presse · Finances** (la justice, les médias, l'argent — les trois piliers d'un scandale).
 
+> **Un seul casier, les fronts sont des catégories internes.** Côté joueur, le casier est **une seule pile face cachée** — on ne voit pas trois piles à trier. Le « front » est juste l'étiquette portée par chaque carte SALE (elle sert de cible à la dénonciation) ; l'argent PROPRE, lui, n'a aucun front à choisir. *(Le mot « front » est jugé perfectible côté nommage — renommage à confirmer avec EJ ; ne pas renommer sans validation.)*
+
 **Tous les montants sont des multiples de 3 (3 / 6 / 9)**, au rythme du revenu (+3/tour).
 
 **SALE (corruption)** — montant = ce que tu gagnes **et** ce que tu perds si dénoncé (100 %). Posée face cachée sur **son** front. **Mêmes montants (3/6/9) sur chaque front** → un montant ne révèle jamais le front, et un front ne révèle jamais le montant :
@@ -356,7 +358,7 @@ Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**
 | **Presse** | Petits cadeaux (+3) · Ménage médiatique (+6) · Voyage offert (+9) |
 | **Finances** | Note de frais maquillée (+3) · Rétrocommission (+6) · Évasion fiscale (+9) |
 
-**PROPRE (légal, sûr, jamais dénonçable)** — sert aussi de **leurre** (posée face cachée sur un front de ton choix). **Plafonne à +6** (le +9 est réservé au sale = prime du risque, sinon plus personne ne se corromprait) :
+**PROPRE (légal, sûr, jamais dénonçable)** — tu gagnes juste de l'argent 100 % légal. Le joueur n'a **rien d'autre à savoir** : il **ne choisit pas de front**, il ne « range » rien — la carte va dans son casier (une seule pile) et sert passivement de **leurre** (le moteur la classe tout seul sur un front, invisible). **Plafonne à +6** (le +9 est réservé au sale = prime du risque, sinon plus personne ne se corromprait) :
 
 | Carte | Argent |
 |---|---|

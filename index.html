@@ -192,7 +192,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .cface.big .c-rule{font-size:13.5px;margin-top:8px}
 .cface.big .c-flav{font-size:11.5px;padding-top:6px}
 /* votant marché (mini) */
-.mkc{width:clamp(108px,min(16vh,calc((100vw - 215px)/8)),170px);aspect-ratio:104/140;cursor:pointer;transition:.14s;position:relative;z-index:1}
+.mkc{width:clamp(108px,min(16vh,calc((100vw - 215px)/8)),170px);aspect-ratio:104/140;cursor:pointer;transition:.14s;position:relative;z-index:1;container-type:inline-size}
 .mkc:hover{transform:translateY(-5px) scale(1.04);z-index:5}
 .mkc .cface{padding:8px 9px}
 .mkc .c-name{font-size:12.5px}
@@ -204,9 +204,11 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .mkc.dis{filter:grayscale(.55) brightness(.85)}
 .cface .c-fam{text-align:center;font-size:10.5px;color:var(--ink-faint);font-weight:700}
 .cface .c-foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:auto}
-.cface .cost{font-weight:800;color:var(--gold-d);font-size:13px}
-.cface .vx{font-family:Georgia,serif;font-weight:700;color:var(--clean);font-size:18px}
+.cface .cost{font-weight:800;color:var(--gold-d);font-size:13px;white-space:nowrap}
+.cface .vx{font-family:Georgia,serif;font-weight:700;color:var(--clean);font-size:18px;white-space:nowrap}
 .cface.big .cost{font-size:15px} .cface.big .vx{font-size:22px}
+/* le pied des cartes marché s'adapte à la largeur de la carte (jamais de débordement) */
+.mkc .cost{font-size:clamp(9px,10.5cqi,14px)} .mkc .vx{font-size:clamp(11px,13cqi,18px)}
 .mkwarn{position:absolute;top:7px;right:7px;font-size:12px;z-index:2}
 
 /* ============ MODALES (zoom) ============ */
@@ -536,7 +538,7 @@ function cardStatLine(c){
 }
 function cardRuleText(c){
   if(c.kind==="cor") return `Tu gagnes ${c.gain} M€, carte cachée sur ${c.front}. Si on te dénonce sur ${c.front} (et que tu n'es pas protégé) : tu perds TOUT ton argent sale de ${c.front}.`;
-  if(c.kind==="clean") return `${c.gain} M€ 100 % légal, jamais dénonçable. Range-la dans un front pour bluffer : un front qui n'a que du propre fait RATER une dénonciation.`;
+  if(c.kind==="clean") return `Tu gagnes ${c.gain} M€. 100 % légal — jamais dénonçable.`;
   if(c.kind==="den") return `Vise un rival + un front (à l'aveugle). Sale caché dessus → il perd tout. Sinon (propre/vide/protégé) → tu perds 2 M€ + 3 M€ d'amende.`;
   if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate d'office.`;
   if(c.kind==="bla") return `Ta plus grosse carte sale devient PROPRE (plus dénonçable). Tu gardes l'argent.`;
@@ -563,7 +565,7 @@ function votFaceHTML(c,big){
     <div class="c-kind" style="color:var(--gold-d)">${FAM_ART[c.family]||"👥"} ${esc(c.family||"Indépendant")}</div>
     <div class="c-flav" style="border:none;padding:0;margin:6px 0 0;text-align:center">« ${VOT_FLAVOR[c.bloc]||"…"} »</div>
     ${inc.length?`<div class="c-incomp">✗ jamais avec ${inc.map(esc).join(" · ")}</div>`:`<div class="c-incomp" style="visibility:hidden">.</div>`}
-    <div class="c-foot"><span class="cost">${c.cost} M€</span><span class="vx">${c.voix} voix · ${c.tier}</span></div></div>`;
+    <div class="c-foot"><span class="cost">${c.cost} M€</span><span class="vx">${c.voix} voix</span></div></div>`;
 }
 
 /* ===================== RENDER ===================== */
@@ -676,6 +678,7 @@ function clickHand(i){
   const plays=legalMap().hand[i]||[];
   if(!canAct){ openCardZoom(i); return; }                                  // lecture seule
   if(card.kind==="cor"){ submit({type:"PLAY_FINANCE",handIndex:i}); return; }
+  if(card.kind==="clean"){ submit({type:"PLAY_FINANCE_CLEAN",handIndex:i}); return; }   // front auto (invisible), c'est un seul paquet
   if(card.kind==="pro"&&plays.length){ submit({type:"PLAY_PROTECT",handIndex:i}); return; }
   if(card.kind==="bla"&&plays.length){ submit({type:"PLAY_BLANCH",handIndex:i}); return; }
   if(card.kind==="coup"&&card.e!=="element"&&plays.length){ submit({type:"PLAY_COUP",handIndex:i}); return; }
@@ -691,10 +694,7 @@ function openCardZoom(i){
   else if(card.kind==="bla") act=actBtn(canAct&&plays.length>0,`Blanchir ma plus grosse carte sale (3 M€)`,`playSimple(${i},'PLAY_BLANCH')`);
   else if(card.kind==="coup"&&card.e!=="element") act=actBtn(canAct&&plays.length>0,`Jouer ce coup`,`playSimple(${i},'PLAY_COUP')`);
   else if(card.kind==="coup"&&card.e==="element") act=`<div class="muted small">Se joue automatiquement quand on te dénonce. Garde-la en main.</div>`;
-  else if(card.kind==="clean"){
-    act=`<div class="muted small" style="margin-bottom:4px">Pose ce leurre sur un front (face cachée) :</div><div class="btnrow">`+
-      CN.FRONTS.map(fr=>`<button class="btn${canAct?"":" off"}" ${canAct?`onclick="playClean(${i},'${fr}')"`:""}>${fr} <span class="muted">(${me.financCount[fr]})</span></button>`).join("")+`</div>`;
-  }
+  else if(card.kind==="clean") act=actBtn(canAct,`Encaisser (+${card.gain} M€, 100 % légal)`,`playSimple(${i},'PLAY_FINANCE_CLEAN')`);
   else if(card.kind==="den"){
     const opts=plays.filter(a=>a.type==="PLAY_DENOUNCE");
     act=opts.length?`<div class="muted small">DEVINE le front sale d'un rival (son casier est invisible) :</div><div class="choices">`+
@@ -713,7 +713,6 @@ function openCardZoom(i){
 }
 function actBtn(on,label,call){ return `<button class="btn primary${on?"":" off"}" ${on?`onclick="${call}"`:""}>${label}</button>`; }
 function playSimple(i,type){ hideModal(); submit({type,handIndex:i}); }
-function playClean(i,fr){ hideModal(); submit({type:"PLAY_FINANCE_CLEAN",handIndex:i,front:fr}); }
 function playDen(i,t,fr){ hideModal(); submit({type:"PLAY_DENOUNCE",handIndex:i,targetId:t,front:fr}); }
 function playSteal(i,t){ hideModal(); submit({type:"PLAY_STEAL",handIndex:i,targetId:t}); }
 
