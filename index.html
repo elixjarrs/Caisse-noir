@@ -432,7 +432,7 @@ const FLAVOR = {
   "Cotisations du parti":"Les petits ruisseaux font les grandes campagnes.",
   "Meeting payant":"Entrée 20 balles, drapeau offert.",
   "Subvention européenne":"Merci Bruxelles.",
-  "Dénonciation":"Balance son front.",
+  "Dénonciation":"Balance à l'aveugle.",
   "Juge acheté":"La justice est aveugle. Surtout bien payée.",
   "Médias corrompus":"Rien à voir ici, circulez.",
   "Compte offshore":"Quel argent ?",
@@ -601,9 +601,9 @@ function cardStatLine(c){
   return cardKindLabel(c).replace(/^[A-ZÉ]+ · /,"");
 }
 function cardRuleText(c){
-  if(c.kind==="cor") return `Tu gagnes ${c.gain} M€, carte cachée sur ${c.front}. Si on te dénonce sur ${c.front} (et que tu n'es pas protégé) : tu perds TOUT ton argent sale de ${c.front}.`;
+  if(c.kind==="cor") return `Tu empoches ${c.gain} M€ d'argent sale (catégorie ${c.front}). Si on te dénonce sur ${c.front} sans que tu sois protégé : tu perds tout ton argent sale de cette catégorie.`;
   if(c.kind==="clean") return `Tu gagnes ${c.gain} M€. 100 % légal — jamais dénonçable.`;
-  if(c.kind==="den") return `Vise un rival + un front (à l'aveugle). Sale caché dessus → il perd tout. Sinon (propre/vide/protégé) → tu perds 2 M€ + 3 M€ d'amende.`;
+  if(c.kind==="den") return `Vise un rival + une catégorie de fraude (à l'aveugle). S'il a de l'argent sale dedans → il perd tout. Sinon (propre / vide / protégé) → tu perds 2 M€ + 3 M€ d'amende.`;
   if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate d'office.`;
   if(c.kind==="bla") return `Ta plus grosse carte sale devient PROPRE (plus dénonçable). Tu gardes l'argent.`;
   if(c.kind==="steal") return c.e==="opa"?`Un rival te cède un de ses MEILLEURS blocs isolés (c'est lui qui choisit). Ses voix passent chez toi.`:`Un rival te cède un bloc isolé de son choix. Ses voix passent chez toi.`;
@@ -742,11 +742,11 @@ function clickHand(i){
   const plays=legalMap().hand[i]||[];
   if(!canAct){ openCardZoom(i); return; }                                  // lecture seule
   if(card.kind==="cor"){ submit({type:"PLAY_FINANCE",handIndex:i}); return; }
-  if(card.kind==="clean"){ submit({type:"PLAY_FINANCE_CLEAN",handIndex:i}); return; }   // front auto (invisible), c'est un seul paquet
+  if(card.kind==="clean"){ submit({type:"PLAY_FINANCE_CLEAN",handIndex:i}); return; }   // catégorie auto (invisible), c'est un seul paquet
   if(card.kind==="pro"&&plays.length){ submit({type:"PLAY_PROTECT",handIndex:i}); return; }
   if(card.kind==="bla"&&plays.length){ submit({type:"PLAY_BLANCH",handIndex:i}); return; }
   if(card.kind==="coup"&&card.e!=="element"&&plays.length){ submit({type:"PLAY_COUP",handIndex:i}); return; }
-  openCardZoom(i);   // clean (front), dénonce (cible+front), vol (cible), ou carte non jouable
+  openCardZoom(i);   // clean, dénonce (cible+catégorie), vol (cible), ou carte non jouable
 }
 function openCardZoom(i){
   const me=VIEW.players.find(p=>p.id===NET.mySeat); const card=me.hand[i]; if(!card) return;
@@ -761,7 +761,7 @@ function openCardZoom(i){
   else if(card.kind==="clean") act=actBtn(canAct,`Encaisser (+${card.gain} M€, 100 % légal)`,`playSimple(${i},'PLAY_FINANCE_CLEAN')`);
   else if(card.kind==="den"){
     const opts=plays.filter(a=>a.type==="PLAY_DENOUNCE");
-    act=opts.length?`<div class="muted small">DEVINE le front sale d'un rival (son casier est invisible) :</div><div class="choices">`+
+    act=opts.length?`<div class="muted small">DEVINE dans quelle catégorie un rival a fraudé (son casier est invisible) :</div><div class="choices">`+
       opts.map(a=>`<div class="choice" onclick="playDen(${i},${a.targetId},'${a.front}')">${esc(seatName(a.targetId))} · <span class="tag ${frontClass[a.front]}">${a.front}</span></div>`).join("")+`</div>`
       :`<div class="muted small">Aucune cible dénonçable pour l'instant (fronts protégés / cibles déjà attaquées / pas ton tour).</div>`;
   }
@@ -818,12 +818,12 @@ function openMyCasier(){
       : sale>0 ? `<b class="small" style="color:var(--sale)">⚠ dénoncé ici = je perds ${sale} M€</b>`
                : `<b class="small" style="color:var(--clean)">✓ rien à perdre</b>`);
     const items=cards.length?cards.map(c=>c.clean
-        ? `<div class="ccard clean"><b>🧾 Propre · ${c.amount} M€</b><i>Argent sûr. Gonfle la pile pour tromper — jamais dénonçable.</i></div>`
-        : `<div class="ccard dirty"><b>💸 SALE · ${c.amount} M€</b><i>Dénoncé sur ${fr} sans 🛡 → je perds les ${sale} M€ sales de ce front.</i></div>`
+        ? `<div class="ccard clean"><b>🧾 Propre · ${c.amount} M€</b><i>Argent 100 % légal. Jamais dénonçable.</i></div>`
+        : `<div class="ccard dirty"><b>💸 SALE · ${c.amount} M€</b><i>Dénoncé sur ${fr} sans 🛡 → je perds tout mon argent sale de cette catégorie (${sale} M€).</i></div>`
       ).join(""):`<span class="muted small">pile vide</span>`;
     return `<div style="margin:12px 0">${head}<div class="ccardrow">${items}</div></div>`;
   }).join("");
-  showModal(`<h2>🗄️ Mon casier — visible de moi seul</h2><p class="muted small">C'est ta pile de financement, face cachée. Les rivaux ne voient <b>rien</b> : ni le nombre de cartes, ni le contenu, seulement ton argent qui monte. Une dénonciation vise un front entier : si elle touche un front non protégé, tu perds <b>tout</b> l'argent SALE posé dessus.</p>${piles}
+  showModal(`<h2>🗄️ Mon casier — visible de moi seul</h2><p class="muted small">Ta pile de financement secrète — <b>une seule pile</b>, rangée par catégorie de fraude. Les rivaux ne voient <b>rien</b> : ni le nombre de cartes, ni le contenu, seulement ton argent qui monte. Une dénonciation vise une <b>catégorie entière</b> : si elle touche une catégorie non protégée, tu perds tout ton argent sale de cette catégorie.</p>${piles}
     <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
 }
 function openMyVotants(){

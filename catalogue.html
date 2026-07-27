@@ -54,7 +54,7 @@ table.bal th{background:var(--surface2);color:var(--gold-d);font-family:Fredoka}
 <body>
 <header>
   <h1>🗳️ Caisse Noire — Catalogue <span style="color:var(--muted);font-size:15px">(v0.7 « corruption cachée »)</span></h1>
-  <p>Généré depuis le moteur <code>src/engine.js</code>. Dénonciation = <b>pari à l'aveugle sur un front</b> (casier invisible ; touché → la cible paie <b>tout son sale</b> du front) · <b>parti secret à double face</b> (famille interdite + famille cible à +3 voix) · débauchage/OPA = cartes (la victime cède un bloc) · <b>incompatibilités renforcées</b>. Seuil = <b>45 voix</b>. · <a href="index.html">▶ Jouer</a></p>
+  <p>Généré depuis le moteur <code>src/engine.js</code>. Dénonciation = <b>pari à l'aveugle sur une catégorie de fraude</b> (casier invisible ; touché → la cible paie <b>tout son sale</b> de cette catégorie) · <b>parti secret à double face</b> (famille interdite + famille cible à +3 voix) · débauchage/OPA = cartes (la victime cède un bloc) · <b>incompatibilités renforcées</b>. Seuil = <b>45 voix</b>. · <a href="index.html">▶ Jouer</a></p>
 </header>
 <div class="wrap"><div class="filterbar" id="filter"></div><div id="body"></div></div>
 
@@ -84,26 +84,26 @@ function render(){
   }
   if(show("Corruption")){
     let g=""; ["Justice","Presse","Finances"].forEach(fr=>{ combines("cor").filter(c=>c.front===fr).sort((a,b)=>a.gain-b.gain).forEach(c=>{
-      g+=`<div class="card sale"><div class="nom">${c.nom}</div><span class="tag ${frontClass[fr]}">SALE · ${fr}</span><div class="desc">+<b>${c.gain} M€</b> face cachée sur ${fr}. Si on te dénonce sur ${fr}, tu recraches ce montant (avec tout ton sale de ce front).</div><div class="foot"><span class="voix">+${c.gain} M€</span><span class="malus">−${c.gain} si dénoncé</span></div></div>`; }); });
-    h+=`<h2 class="sec-title">Corruption (SALE) — 3 fronts × 3/6/9</h2><p class="sec-sub">Posée <b>face cachée</b> sur son front. Une dénonciation sur ce front frappe <b>toute</b> ta corruption qui s'y trouve → tu perds la somme d'un coup. Les autres ne voient <b>rien</b> de ton casier (ni contenu, ni nombre de cartes) : à eux de deviner où tu as fraudé.</p><div class="grid">${g}</div>`;
+      g+=`<div class="card sale"><div class="nom">${c.nom}</div><span class="tag ${frontClass[fr]}">SALE · ${fr}</span><div class="desc">+<b>${c.gain} M€</b> d'argent sale, catégorie ${fr}. Si on te dénonce sur ${fr}, tu recraches ce montant (avec tout ton sale de cette catégorie).</div><div class="foot"><span class="voix">+${c.gain} M€</span><span class="malus">−${c.gain} si dénoncé</span></div></div>`; }); });
+    h+=`<h2 class="sec-title">Corruption (SALE) — 3 catégories × 3/6/9</h2><p class="sec-sub">Argent sale rangé dans sa <b>catégorie de fraude</b> (Justice, Presse ou Finances). Une dénonciation sur cette catégorie frappe <b>toute</b> ta corruption qui s'y trouve → tu perds la somme d'un coup. Les autres ne voient <b>rien</b> de ton casier (ni contenu, ni nombre de cartes) : à eux de deviner où tu as fraudé.</p><div class="grid">${g}</div>`;
   }
   if(show("Propre")){
-    let g=""; combines("clean").sort((a,b)=>a.gain-b.gain).forEach(c=>g+=`<div class="card propre"><div class="nom">${c.nom}</div><span class="tag t-finances">PROPRE · sûr</span><div class="desc">+${c.gain} M€, 100 % légal, jamais dénonçable. Sert passivement de leurre (le moteur la classe tout seul) : un front rempli de propre fait <b>rater</b> une dénonciation → amende pour l'attaquant.</div><div class="foot"><span class="voix">+${c.gain} M€</span><span style="color:var(--money);font-weight:800">aucun risque</span></div></div>`);
-    h+=`<h2 class="sec-title">Financement PROPRE — leurres (3 / 6)</h2><p class="sec-sub">Argent sûr (plafonne à +6 ; le +9 est réservé au sale). Le joueur <b>ne choisit pas de front</b> : il encaisse juste de l'argent légal, la carte sert de leurre en coulisse. Ratio ~2 sales pour 1 propre.</p><div class="grid">${g}</div>`;
+    let g=""; combines("clean").sort((a,b)=>a.gain-b.gain).forEach(c=>g+=`<div class="card propre"><div class="nom">${c.nom}</div><span class="tag t-finances">PROPRE · sûr</span><div class="desc">+${c.gain} M€, 100 % légal, jamais dénonçable. Sert passivement de leurre (le moteur la classe tout seul) : une catégorie remplie de propre fait <b>rater</b> une dénonciation → amende pour l'attaquant.</div><div class="foot"><span class="voix">+${c.gain} M€</span><span style="color:var(--money);font-weight:800">aucun risque</span></div></div>`);
+    h+=`<h2 class="sec-title">Financement PROPRE — leurres (3 / 6)</h2><p class="sec-sub">Argent sûr (plafonne à +6 ; le +9 est réservé au sale). Le joueur <b>ne choisit pas de catégorie</b> : il encaisse juste de l'argent légal, la carte sert de leurre en coulisse. Ratio ~2 sales pour 1 propre.</p><div class="grid">${g}</div>`;
   }
   if(show("Attaques")){
     const deb=combines("steal").find(c=>c.e==="debauchage"), opa=combines("steal").find(c=>c.e==="opa"), den=combines("den")[0];
     const g=`
-      <div class="card att"><div class="nom">Dénonciation ×${den.n}</div><span class="tag">Attaque · 2 M€</span><div class="desc"><b>PARI sur un front</b> : la cible paie <b>toute</b> sa corruption cachée de ce front. Que du propre / vide → tu perds ta mise + <b>3 M€ d'amende</b>.</div></div>
+      <div class="card att"><div class="nom">Dénonciation ×${den.n}</div><span class="tag">Attaque · 2 M€</span><div class="desc"><b>PARI sur une catégorie</b> : la cible paie <b>toute</b> sa corruption cachée de cette catégorie. Que du propre / vide → tu perds ta mise + <b>3 M€ d'amende</b>.</div></div>
       <div class="card att"><div class="nom">Débauchage ×${deb.n}</div><span class="tag">Attaque · carte</span><div class="desc">La <b>victime choisit</b> quel bloc <b>isolé</b> elle te cède (voix + famille). Une coalition complète est involable.</div></div>
       <div class="card att"><div class="nom">OPA électorale ×${opa.n}</div><span class="tag">Attaque · carte</span><div class="desc">Comme le débauchage, mais la victime doit céder un de ses <b>meilleurs</b> blocs isolés.</div></div>`;
-    h+=`<h2 class="sec-title">Attaques</h2><p class="sec-sub">La dénonciation frappe l'ARGENT (un pari à l'aveugle sur un front entier). Le vol transfère un <b>bloc entier</b>. On ne subit qu'UNE attaque par manche.</p><div class="grid">${g}</div>`;
+    h+=`<h2 class="sec-title">Attaques</h2><p class="sec-sub">La dénonciation frappe l'ARGENT (un pari à l'aveugle sur une catégorie entière). Le vol transfère un <b>bloc entier</b>. On ne subit qu'UNE attaque par manche.</p><div class="grid">${g}</div>`;
   }
   if(show("Défenses")){
     let g=""; combines("pro").forEach(c=>g+=`<div class="card def"><div class="nom">${c.nom}</div><span class="tag ${frontClass[c.front]}">Protection · 5 M€</span><div class="desc">Bouclier permanent sur ${c.front} — toute dénonciation y rate.</div></div>`);
     g+=`<div class="card def"><div class="nom">Blanchiment</div><span class="tag">Défense · 3 M€</span><div class="desc">Rend une de tes cartes sales <b>propre</b> (plus dénonçable).</div></div>`;
     g+=`<div class="card def"><div class="nom">Élément de langage</div><span class="tag" style="color:var(--blue);border-color:#c5d8f4;background:#eef4fc">Réaction</span><div class="desc">Joue-la quand on te dénonce pour <b>annuler</b> le scandale.</div></div>`;
-    h+=`<h2 class="sec-title">Défenses (3 fronts → 3 protections)</h2><p class="sec-sub">Protéger un front, blanchir une carte, ou annuler une dénonciation en réaction.</p><div class="grid">${g}</div>`;
+    h+=`<h2 class="sec-title">Défenses (3 catégories → 3 protections)</h2><p class="sec-sub">Protéger une catégorie, blanchir une carte, ou annuler une dénonciation en réaction.</p><div class="grid">${g}</div>`;
   }
   if(show("Coups")){
     const d={remise:"Ton prochain votant coûte 3 M€ de moins.",incoherence:"Prends un bloc incompatible malgré l'exclusion, mais +1 carte sale sur Presse.",promesse:"+3 voix tout de suite, mais +1 carte sale sur Presse.",renvoi:"+3 M€ et pioche 1 carte."};

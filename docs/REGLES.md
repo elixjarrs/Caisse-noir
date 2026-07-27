@@ -344,9 +344,11 @@ Transfert de **voix** (la carte bloc ne change pas de main ; on déplace les pio
 ## 16.2 L'argent (roulette individuelle 0–80, visible)
 Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**. **Montants variés et qui se chevauchent** entre fronts → impossible de déduire le montant depuis le front, ni le front depuis le montant.
 
-**3 FRONTS de corruption : Justice · Presse · Finances** (la justice, les médias, l'argent — les trois piliers d'un scandale).
+**3 CATÉGORIES DE FRAUDE : Justice · Presse · Finances** (la justice, les médias, l'argent — les trois piliers d'un scandale).
 
-> **Un seul casier, les fronts sont des catégories internes.** Côté joueur, le casier est **une seule pile face cachée** — on ne voit pas trois piles à trier. Le « front » est juste l'étiquette portée par chaque carte SALE (elle sert de cible à la dénonciation) ; l'argent PROPRE, lui, n'a aucun front à choisir. *(Le mot « front » est jugé perfectible côté nommage — renommage à confirmer avec EJ ; ne pas renommer sans validation.)*
+> **Vocabulaire (décision EJ 2026-07) : le mot « front » est banni** de tout le texte joueur — on dit **« catégorie de fraude »** (ou « catégorie »). Ancien « front » = nouvelle « catégorie ». *(Dans le code, les identifiants internes `FRONTS`/`c.front`/`frontClass` restent inchangés ; seul le texte visible en français change.)*
+>
+> **Un seul casier, les catégories sont internes.** Côté joueur, le casier est **une seule pile face cachée** — on ne voit pas trois piles à trier. La catégorie est juste l'étiquette portée par chaque carte SALE (elle sert de cible à la dénonciation) ; l'argent PROPRE, lui, n'a aucune catégorie à choisir.
 
 **Tous les montants sont des multiples de 3 (3 / 6 / 9)**, au rythme du revenu (+3/tour).
 
