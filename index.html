@@ -143,42 +143,60 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .sidebox{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 11px;color:#d8cfae;cursor:pointer;transition:.12s;overflow:auto}
 .sidebox:hover{border-color:var(--gold)}
 .sidebox .ptitle{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#bdb494;font-weight:800;margin-bottom:6px}
-/* casier : 3 piles face cachée */
-.fslot{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:6px;padding:3px 0}
-.fpile{position:relative;display:inline-flex;height:22px}
-.fpile i{width:15px;height:21px;border-radius:2px;border:1px solid #8d7a52;background:repeating-linear-gradient(45deg,#7a6a49 0 3px,#6b5d40 3px 6px);margin-left:-11px;box-shadow:0 1px 2px rgba(0,0,0,.4)}
-.fpile i:first-child{margin-left:0}
-.fpile b{position:absolute;right:-14px;top:3px;font-size:12px;color:#f0e3bd}
-.fpile.empty{color:#8a8168;font-size:12px;align-items:center}
-.fexp{font-size:10.5px;font-weight:800;text-align:right}
-.fexp.warn{color:#e8a08c} .fexp.safe{color:#a8d3b2}
-/* votants groupés par famille */
+/* casier : une vraie pile secrète face cachée + exposition par catégorie */
+.casier{display:flex;flex-direction:column;align-items:center;gap:9px}
+.casier-pile{position:relative;width:74px;height:100px;flex:none;margin-top:2px}
+.casier-pile i{position:absolute;inset:0;border-radius:8px;border:1px solid #5f4d31;
+  background:linear-gradient(158deg,#9c8560 0%,#7a6544 55%,#5f4e33 100%);
+  box-shadow:0 3px 7px rgba(0,0,0,.5),inset 0 0 0 3px rgba(255,255,255,.05)}
+.casier-pile i::after{content:"";position:absolute;inset:6px;border-radius:5px;border:1px dashed rgba(240,227,189,.28)}
+.casier-pile i:nth-child(1){transform:rotate(-5deg) translate(-3px,2px)}
+.casier-pile i:nth-child(2){transform:rotate(3.5deg) translate(3px,1px)}
+.casier-pile i:nth-child(3){transform:rotate(-1.5deg) translate(-1px,0)}
+.casier-pile .seal{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#f5ecd0;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.casier-pile .seal b{font-family:Georgia,serif;font-size:30px;line-height:1}
+.casier-pile .seal small{font-size:8px;font-weight:800;letter-spacing:1.3px;opacity:.85;margin-top:2px}
+.casier-pile.empty i{background:repeating-linear-gradient(45deg,#3a3229 0 6px,#332c24 6px 12px);opacity:.7}
+.casier-pile.empty .seal small{opacity:.7}
+.casier-cats{width:100%;display:flex;flex-direction:column;gap:4px}
+.ccat{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:11px;font-weight:800;
+  background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:3px 8px}
+.ccat .warn{color:#e8a08c} .ccat .safe{color:#a8d3b2} .ccat .dim{color:#8a8168}
+/* votants : une collection de cartes d'électeurs face visible */
+.vgrid{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+.vcard{position:relative;width:62px;min-height:66px;background:linear-gradient(165deg,#f8f1de,var(--paper2));
+  border:1px solid var(--paper-edge);border-top:3px solid var(--gold-d);border-radius:7px;
+  padding:5px 3px 4px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;gap:1px}
+.vcard .por{font-size:20px;line-height:1;filter:sepia(.15)}
+.vcard .nm{font-size:8.5px;font-weight:800;line-height:1.05;color:var(--ink);word-break:break-word}
+.vcard .vv{position:absolute;top:2px;right:3px;font-size:9px;font-weight:800;color:var(--clean);font-family:Georgia,serif}
+.vcard.coal{border-top-color:var(--gold);box-shadow:0 0 0 2px var(--gold-d),0 2px 4px rgba(0,0,0,.3)}
+.vcard .lk{position:absolute;top:1px;left:3px;font-size:9px}
+/* couleur de bandeau par catégorie du casier (tag) reprise en haut de carte votant */
 .vfam{margin:4px 0;line-height:1.25}
 .vfam.done{background:rgba(195,154,74,.12);border-radius:7px;padding:2px 5px}
 .vfhead{display:block;font-size:11.5px;font-weight:800;color:#e8dfc8}
 .vfhead b{color:#a8d3b2}
 .vfnames{font-size:10.5px;color:#bdb494}
-.caserline{display:flex;justify-content:space-between;font-size:11.5px;padding:2.5px 0}
-.caserline .warn{color:#e8a08c;font-weight:800} .caserline .safe{color:#a8d3b2;font-weight:700}
 
 /* la MAIN en éventail */
-#handwrap{position:relative;display:flex;justify-content:center;align-items:flex-end;height:calc(clamp(150px,min(21.5vh,13.5vw),215px)*1.36 + 6px)}
+#handwrap{position:relative;display:flex;justify-content:center;align-items:flex-end;height:calc(clamp(160px,min(23vh,14.5vw),232px)*1.36 + 6px)}
 #hand{display:flex;align-items:flex-end;justify-content:center;height:100%}
-.hc{width:clamp(150px,min(21.5vh,13.5vw),215px);aspect-ratio:142/192;margin:0 -26px;transform:rotate(var(--r)) translateY(var(--y));transform-origin:50% 120%;transition:transform .18s,box-shadow .18s;cursor:pointer;position:relative;z-index:1}
+.hc{width:clamp(160px,min(23vh,14.5vw),232px);aspect-ratio:142/192;margin:0 -26px;transform:rotate(var(--r)) translateY(var(--y));transform-origin:50% 120%;transition:transform .18s,box-shadow .18s;cursor:pointer;position:relative;z-index:1}
 .hc:hover{transform:translateY(-42px) rotate(0deg) scale(1.08);z-index:20}
 .hc.dis{filter:grayscale(.5) brightness(.85)}
 
 /* ============ CARTES (papier) ============ */
 .cface{width:100%;height:100%;background:linear-gradient(168deg,#f8f1de,var(--paper) 45%,var(--paper2));border:1px solid var(--paper-edge);border-radius:11px;box-shadow:0 4px 10px rgba(0,0,0,.35);display:flex;flex-direction:column;padding:9px 10px;position:relative;overflow:hidden}
 .cface::before{content:"";position:absolute;inset:4px;border:1px solid rgba(150,118,47,.35);border-radius:8px;pointer-events:none}
-.cface .c-name{font-family:Georgia,serif;font-weight:700;font-size:15px;line-height:1.12;color:var(--ink);display:block}
+.cface .c-name{font-family:Georgia,serif;font-weight:700;font-size:15.5px;line-height:1.12;color:var(--ink);display:block}
 .cface .c-kind{font-size:9px;font-weight:800;letter-spacing:.4px;color:var(--ink-faint);margin-top:2px}
 .cface .c-incomp{font-size:9.5px;font-weight:800;color:var(--sale);margin-top:3px;line-height:1.2}
 .cface .c-art{text-align:center;font-size:38px;margin:5px 0 3px;filter:sepia(.25) saturate(.85)}
 .cface .c-art .med{display:inline-flex;width:58px;height:58px;border-radius:50%;align-items:center;justify-content:center;background:rgba(0,0,0,.06);border:1px solid rgba(150,118,47,.3)}
 .cface .c-stat{text-align:center;font-size:12.5px;font-weight:800;color:var(--ink)}
-.cface .c-rule{font-size:11px;color:var(--ink-soft);line-height:1.35;margin-top:4px;flex:1;overflow:hidden}
-.cface .c-flav{font-size:10px;font-style:italic;color:var(--ink-faint);border-top:1px dashed var(--paper-edge);padding-top:3px;margin-top:3px}
+.cface .c-rule{font-size:12px;color:var(--ink-soft);line-height:1.36;margin-top:4px;flex:1;overflow:hidden}
+.cface .c-flav{font-size:10.5px;font-style:italic;color:var(--ink-faint);border-top:1px dashed var(--paper-edge);padding-top:3px;margin-top:3px}
 .cface .ribbon{position:absolute;top:0;left:0;right:0;height:4px}
 .k-cor .ribbon{background:var(--sale)} .k-clean .ribbon{background:var(--clean)} .k-den .ribbon{background:var(--atk)}
 .k-pro .ribbon{background:var(--def)} .k-bla .ribbon{background:var(--bla)} .k-steal .ribbon{background:var(--steal)} .k-coup .ribbon{background:var(--coup)} .votant .ribbon{background:var(--gold-d)}
@@ -192,15 +210,15 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .cface.big .c-rule{font-size:13.5px;margin-top:8px}
 .cface.big .c-flav{font-size:11.5px;padding-top:6px}
 /* votant marché (mini) */
-.mkc{width:clamp(108px,min(16vh,calc((100vw - 215px)/8)),170px);aspect-ratio:104/140;cursor:pointer;transition:.14s;position:relative;z-index:1;container-type:inline-size}
+.mkc{width:clamp(116px,min(17vh,calc((100vw - 215px)/8)),190px);aspect-ratio:104/140;cursor:pointer;transition:.14s;position:relative;z-index:1;container-type:inline-size}
 .mkc:hover{transform:translateY(-5px) scale(1.04);z-index:5}
-.mkc .cface{padding:8px 9px}
-.mkc .c-name{font-size:12.5px}
+.mkc .cface{padding:9px 10px}
+.mkc .c-name{font-size:clamp(13px,12cqi,15.5px);line-height:1.1}
 .mkc .c-art{font-size:26px;margin:2px 0}
 .mkc .c-art .med{width:44px;height:44px}
 .mkc .c-flav{display:none}                 /* la phrase & l'incompat ne s'affichent qu'au zoom */
-.mkc .c-incomp{font-size:8.5px;margin-top:2px;overflow:hidden;max-height:22px}
-.mkc .c-kind{font-size:8.5px}
+.mkc .c-incomp{font-size:clamp(9px,8cqi,11px);margin-top:3px;overflow:hidden;max-height:40px}
+.mkc .c-kind{font-size:clamp(9.5px,8.5cqi,11.5px)}
 .mkc.dis{filter:grayscale(.55) brightness(.85)}
 .cface .c-fam{text-align:center;font-size:10.5px;color:var(--ink-faint);font-weight:700}
 .cface .c-foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:auto}
@@ -284,7 +302,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
   #myrow>:nth-child(1){grid-area:casier}
   #myrow>:nth-child(2){grid-area:hand}
   #myrow>:nth-child(3){grid-area:votants}
-  .sidebox{max-height:150px}
+  .sidebox{max-height:none;overflow:visible}   /* casier/votants à hauteur naturelle sur mobile (la page défile) */
 
   /* la MAIN : rangée droite que l'on fait défiler — chaque carte se tape franchement */
   #handwrap{grid-area:hand;height:auto;display:block}
@@ -700,21 +718,26 @@ function render(){
   if(myTurn){ let ph=`<span class="small" style="color:#bdb494;font-weight:800;margin-right:3px">Actions</span>`; for(let k=0;k<CN.CONFIG.actions;k++) ph+=`<span class="pip${k<VIEW.actionsLeft?" on":""}"></span>`; pips.innerHTML=ph; }
   else pips.innerHTML=`<span class="small" style="color:#bdb494">${VIEW.over?"terminée":VIEW.pending?"scandale…":busy?"envoi…":"patiente"}</span>`;
 
-  // casier : 3 piles face cachée (les MIENNES, que je peux inspecter) + exposition
-  $("#mycaser").innerHTML=CN.FRONTS.map(fr=>{
-    const prot=me.protect.includes(fr); const cards=me.financ[fr]||[]; const n=cards.length;
+  // casier : UNE seule pile secrète face cachée (réaliste) + exposition par catégorie
+  const totalFin=CN.FRONTS.reduce((a,fr)=>a+(me.financ[fr]||[]).length,0);
+  const pile=totalFin
+    ? `<div class="casier-pile">${"<i></i>".repeat(Math.min(totalFin,3)||1)}<span class="seal"><b>${totalFin}</b><small>🔒 SECRET</small></span></div>`
+    : `<div class="casier-pile empty"><i></i><span class="seal"><small>CASIER VIDE</small></span></div>`;
+  const cats=CN.FRONTS.map(fr=>{
+    const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
     const sale=cards.reduce((a,c)=>a+(c.clean?0:c.amount),0);
-    const stack=n?`<span class="fpile">${'<i></i>'.repeat(Math.min(n,6))}<b>${n}</b></span>`:`<span class="fpile empty">—</span>`;
-    return `<div class="fslot"><span class="tag ${frontClass[fr]}">${fr}</span>${stack}
-      <span class="fexp ${prot?"safe":sale>0?"warn":"safe"}">${prot?"🛡 protégé":sale>0?"⚠ "+sale+" M€":n?"✓ propre":"vide"}</span></div>`;
+    const st=prot?`<span class="safe">🛡 protégé</span>`:sale>0?`<span class="warn">⚠ ${sale} M€</span>`:cards.length?`<span class="safe">✓ propre</span>`:`<span class="dim">—</span>`;
+    return `<div class="ccat"><span class="tag ${frontClass[fr]}">${fr}</span>${st}</div>`;
   }).join("");
-  // votants groupés par famille (lisible, avec catégorie)
+  $("#mycaser").innerHTML=`<div class="casier">${pile}<div class="casier-cats">${cats}</div></div>`;
+  // votants : collection de cartes d'électeurs (regroupées par famille, coalitions en or)
+  const stripArt=s=>s.replace(/^Les\s|^La\s|^Le\s|^L['’]/,"");
   const byFam={}; me.votants.forEach(v=>{ const f=v.family||"—"; (byFam[f]=byFam[f]||[]).push(v); });
   const fams=Object.keys(byFam).sort((a,b)=>byFam[b].length-byFam[a].length);
   $("#myvots").innerHTML=me.votants.length
-    ? fams.map(f=>{ const list=byFam[f]; const done=me.coalitions.includes(f);
-        return `<div class="vfam ${done?"done":""}"><span class="vfhead">${FAM_ART[f]||"👥"} ${esc(f)} <b>${list.length}</b>${done?" 🔒":""}</span>
-          <span class="vfnames">${list.map(v=>esc(v.nom)).join(", ")}</span></div>`; }).join("")
+    ? `<div class="vgrid">`+fams.flatMap(f=>{ const done=me.coalitions.includes(f);
+        return byFam[f].map(v=>`<div class="vcard${done?" coal":""}" title="${esc(v.nom)} · ${esc(f)}${done?" · coalition":""}"><span class="vv">${v.voix}</span>${done?'<span class="lk">🔒</span>':""}<span class="por">${FAM_ART[f]||"👤"}</span><span class="nm">${esc(stripArt(v.nom))}</span></div>`);
+      }).join("")+`</div>`
     : `<span style="color:#a99f83">aucun votant acheté</span>`;
 
   /* la main en éventail */
