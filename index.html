@@ -15,6 +15,9 @@
   --paper:#f5edd8; --paper2:#ecdfc2; --paper-edge:#c9b98f;
   --ink:#2e2a20; --ink-soft:#6d6350; --ink-faint:#948a72;
   --gold:#c9a457; --gold-d:#9c7c34;
+  /* dos de carte : moitié rouge / moitié bleu, couture dorée au centre */
+  --cardred:#a5324a; --cardblue:#2a4675;
+  --cardback:linear-gradient(90deg,transparent calc(50% - 2px),var(--gold-d) calc(50% - 2px),var(--gold) 50%,var(--gold-d) calc(50% + 2px),transparent calc(50% + 2px)),linear-gradient(90deg,var(--cardred) 0 50%,var(--cardblue) 50% 100%);
   --sale:#a84a37; --clean:#4f7d5f; --atk:#8a3b3b; --def:#54718f; --bla:#6b7f95; --steal:#7d6390; --coup:#a8843b;
   --justice:#54718f; --presse:#b07d41; --finances:#4f7d5f;
   --shadow:0 8px 22px rgba(0,0,0,.4);
@@ -97,7 +100,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .deckcol{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center}
 .minideck{text-align:center;cursor:default}
 .minideck .stack{position:relative;width:52px;height:72px;margin:0 auto}
-.minideck .stack i{position:absolute;inset:0;border-radius:7px;border:1px solid #8d7a52;background:repeating-linear-gradient(45deg,#7a6a49 0 4px,#6b5d40 4px 8px);box-shadow:0 2px 4px rgba(0,0,0,.4)}
+.minideck .stack i{position:absolute;inset:0;border-radius:7px;border:1px solid #43391f;background:var(--cardback);box-shadow:0 2px 4px rgba(0,0,0,.4)}
 .minideck .stack i:nth-child(1){transform:translate(3px,3px);opacity:.6}
 .minideck .stack i:nth-child(2){transform:translate(1.5px,1.5px);opacity:.8}
 .minideck .stack.flat i{background:#e8dcbc}
@@ -146,10 +149,10 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 /* casier : une vraie pile secrète face cachée + exposition par catégorie */
 .casier{display:flex;flex-direction:column;align-items:center;gap:9px}
 .casier-pile{position:relative;width:74px;height:100px;flex:none;margin-top:2px}
-.casier-pile i{position:absolute;inset:0;border-radius:8px;border:1px solid #5f4d31;
-  background:linear-gradient(158deg,#9c8560 0%,#7a6544 55%,#5f4e33 100%);
+.casier-pile i{position:absolute;inset:0;border-radius:8px;border:1px solid #33290f;
+  background:var(--cardback);
   box-shadow:0 3px 7px rgba(0,0,0,.5),inset 0 0 0 3px rgba(255,255,255,.05)}
-.casier-pile i::after{content:"";position:absolute;inset:6px;border-radius:5px;border:1px dashed rgba(240,227,189,.28)}
+.casier-pile i::after{content:"";position:absolute;inset:6px;border-radius:5px;border:1px dashed rgba(240,227,189,.4)}
 .casier-pile i:nth-child(1){transform:rotate(-5deg) translate(-3px,2px)}
 .casier-pile i:nth-child(2){transform:rotate(3.5deg) translate(3px,1px)}
 .casier-pile i:nth-child(3){transform:rotate(-1.5deg) translate(-1px,0)}
