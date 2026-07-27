@@ -174,10 +174,11 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .vcard .lk{position:absolute;top:1px;left:3px;font-size:9px}
 /* couleur de bandeau par catégorie du casier (tag) reprise en haut de carte votant */
 .vfam{margin:4px 0;line-height:1.25}
-.vfam.done{background:rgba(195,154,74,.12);border-radius:7px;padding:2px 5px}
-.vfhead{display:block;font-size:11.5px;font-weight:800;color:#e8dfc8}
-.vfhead b{color:#a8d3b2}
-.vfnames{font-size:10.5px;color:#bdb494}
+.vfam.done{background:rgba(195,154,74,.16);border:1px solid rgba(156,124,52,.35);border-radius:7px;padding:3px 6px}
+/* rendu dans la modale (fond clair) → texte foncé et lisible */
+.vfhead{display:block;font-size:13.5px;font-weight:800;color:var(--ink)}
+.vfhead b{color:var(--clean);font-weight:800}
+.vfnames{font-size:10.5px;color:var(--ink-soft)}
 
 /* la MAIN en éventail */
 #handwrap{position:relative;display:flex;justify-content:center;align-items:flex-end;height:calc(clamp(160px,min(23vh,14.5vw),232px)*1.36 + 6px)}
