@@ -15,9 +15,9 @@
   --paper:#f5edd8; --paper2:#ecdfc2; --paper-edge:#c9b98f;
   --ink:#2e2a20; --ink-soft:#6d6350; --ink-faint:#948a72;
   --gold:#c9a457; --gold-d:#9c7c34;
-  /* dos de carte : moitié rouge / moitié bleu, couture dorée au centre */
-  --cardred:#a5324a; --cardblue:#2a4675;
-  --cardback:linear-gradient(90deg,transparent calc(50% - 2px),var(--gold-d) calc(50% - 2px),var(--gold) 50%,var(--gold-d) calc(50% + 2px),transparent calc(50% + 2px)),linear-gradient(90deg,var(--cardred) 0 50%,var(--cardblue) 50% 100%);
+  /* dos de carte : moitié bleu drapeau (gauche) / moitié rouge communiste (droite), couture dorée */
+  --cardblue:#0055A5; --cardred:#CC0000;
+  --cardback:linear-gradient(90deg,transparent calc(50% - 2px),var(--gold-d) calc(50% - 2px),var(--gold) 50%,var(--gold-d) calc(50% + 2px),transparent calc(50% + 2px)),linear-gradient(90deg,var(--cardblue) 0 50%,var(--cardred) 50% 100%);
   --sale:#a84a37; --clean:#4f7d5f; --atk:#8a3b3b; --def:#54718f; --bla:#6b7f95; --steal:#7d6390; --coup:#a8843b;
   --justice:#54718f; --presse:#b07d41; --finances:#4f7d5f;
   --shadow:0 8px 22px rgba(0,0,0,.4);
@@ -189,6 +189,9 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .hc{width:clamp(160px,min(23vh,14.5vw),232px);aspect-ratio:142/192;margin:0 -26px;transform:rotate(var(--r)) translateY(var(--y));transform-origin:50% 120%;transition:transform .18s,box-shadow .18s;cursor:pointer;position:relative;z-index:1}
 .hc:hover{transform:translateY(-42px) rotate(0deg) scale(1.08);z-index:20}
 .hc.dis{filter:grayscale(.5) brightness(.85)}
+.hc .c-art{display:none}   /* pas de médaillon en main : place au texte complet (médaillon + phrase restent au zoom) */
+.hc .c-flav{display:none}  /* pas de phrase en main : priorité à la règle complète */
+.hc .c-rule{font-size:12px;line-height:1.34}
 
 /* ============ CARTES (papier) ============ */
 .cface{width:100%;height:100%;background:linear-gradient(168deg,#f8f1de,var(--paper) 45%,var(--paper2));border:1px solid var(--paper-edge);border-radius:11px;box-shadow:0 4px 10px rgba(0,0,0,.35);display:flex;flex-direction:column;padding:9px 10px;position:relative;overflow:hidden}
@@ -196,8 +199,8 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .cface .c-name{font-family:Georgia,serif;font-weight:700;font-size:15.5px;line-height:1.12;color:var(--ink);display:block}
 .cface .c-kind{font-size:9px;font-weight:800;letter-spacing:.4px;color:var(--ink-faint);margin-top:2px}
 .cface .c-incomp{font-size:9.5px;font-weight:800;color:var(--sale);margin-top:3px;line-height:1.2}
-.cface .c-art{text-align:center;font-size:38px;margin:5px 0 3px;filter:sepia(.25) saturate(.85)}
-.cface .c-art .med{display:inline-flex;width:58px;height:58px;border-radius:50%;align-items:center;justify-content:center;background:rgba(0,0,0,.06);border:1px solid rgba(150,118,47,.3)}
+.cface .c-art{text-align:center;font-size:26px;margin:3px 0 1px;filter:sepia(.25) saturate(.85)}
+.cface .c-art .med{display:inline-flex;width:42px;height:42px;border-radius:50%;align-items:center;justify-content:center;background:rgba(0,0,0,.06);border:1px solid rgba(150,118,47,.3)}
 .cface .c-stat{text-align:center;font-size:12.5px;font-weight:800;color:var(--ink)}
 .cface .c-rule{font-size:12px;color:var(--ink-soft);line-height:1.36;margin-top:4px;flex:1;overflow:hidden}
 .cface .c-flav{font-size:10.5px;font-style:italic;color:var(--ink-faint);border-top:1px dashed var(--paper-edge);padding-top:3px;margin-top:3px}
@@ -301,6 +304,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
   #myForb{order:6;flex:0 0 100%}
   .actpips{margin-left:auto;order:4}
   #recycleBtn,#endBtn{order:7;flex:1 1 46%}
+  .deskword{display:none}   /* sur mobile : juste « Défausser » */
 
   /* main d'abord (jouable), puis casier + votants côte à côte */
   #myrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"hand hand" "casier votants";gap:8px}
@@ -336,7 +340,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 <div id="setup" class="wrap">
   <div class="mat">
     <h1 style="font-size:34px;text-align:center">🗳️ Caisse Noire</h1>
-    <p class="sub" style="text-align:center;max-width:560px;margin:8px auto 0">Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie à l'aveugle</b> en dénonçant : le casier des rivaux est invisible. Chacun a une <b>famille interdite</b> (impossible à acheter) et une <b>famille cible</b> secrète (coalition dessus = <b>+3 voix bonus</b>). Premier à <b>45 voix</b> déclenche la manche finale.</p>
+    <p class="sub" style="text-align:center;max-width:560px;margin:8px auto 0">Finance-toi <b>en secret</b>, achète des voix, bâtis des coalitions… et <b>parie à l'aveugle</b> en dénonçant : les cartes face cachée des rivaux sont invisibles. Chacun a une <b>famille interdite</b> (impossible à acheter) et une <b>famille cible</b> secrète (coalition dessus = <b>+3 voix bonus</b>). Premier à <b>45 voix</b> déclenche la manche finale.</p>
     <div class="field" style="max-width:320px;margin:20px auto 4px"><label>Ton nom (pseudo)</label><input type="text" id="pseudo" maxlength="16" placeholder="ex. Rastignac"></div>
     <div class="modes">
       <div class="modecard">
@@ -410,11 +414,11 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
       <div style="font-family:Georgia,serif;font-weight:700" id="myName"></div>
       <div class="forb" id="myForb"></div>
       <div class="actpips" id="actpips"></div>
-      <button class="btn" id="recycleBtn" onclick="openRecycle()">🗑 Défausser</button>
+      <button class="btn" id="recycleBtn" onclick="openRecycle()">🗑 Défausser<span class="deskword"> des cartes</span></button>
       <button class="btn primary" id="endBtn" onclick="endMyTurn()">Fin de tour ▶</button>
     </div>
     <div id="myrow">
-      <div class="sidebox" onclick="openMyCasier()"><div class="ptitle">🗄️ Mon casier (secret) — zoom ↗</div><div id="mycaser"></div></div>
+      <div class="sidebox" onclick="openMyCasier()"><div class="ptitle">🗄️ Mes cartes face cachée — zoom ↗</div><div id="mycaser"></div></div>
       <div id="handwrap"><div id="hand"></div></div>
       <div class="sidebox" onclick="openMyVotants()"><div class="ptitle">🗳️ Mes votants — zoom ↗</div><div id="myvots" class="votsum"></div></div>
     </div>
@@ -624,7 +628,7 @@ function cardStatLine(c){
   return cardKindLabel(c).replace(/^[A-ZÉ]+ · /,"");
 }
 function cardRuleText(c){
-  if(c.kind==="cor") return `Tu empoches ${c.gain} M€ d'argent sale (catégorie ${c.front}). Si on te dénonce sur ${c.front} sans que tu sois protégé : tu perds tout ton argent sale de cette catégorie.`;
+  if(c.kind==="cor") return `Tu empoches ${c.gain} M€ d'argent sale (catégorie ${c.front}). Dénoncé sur ${c.front} sans protection : tu perds tout ton sale de cette catégorie.`;
   if(c.kind==="clean") return `Tu gagnes ${c.gain} M€. 100 % légal — jamais dénonçable.`;
   if(c.kind==="den") return `Vise un rival + une catégorie de fraude (à l'aveugle). S'il a de l'argent sale dedans → il perd tout. Sinon (propre / vide / protégé) → tu perds 2 M€ + 3 M€ d'amende.`;
   if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate d'office.`;
@@ -684,7 +688,7 @@ function render(){
     d.onclick=()=>openSeatZoom(p.id);
     d.innerHTML=`<div class="ohead"><span class="dot" style="background:${seatColor(p.id)}"></span><span class="onm">${esc(seatName(p.id))}</span></div>
       <div class="ostats"><span class="v">${p.voix} voix</span><span class="m">${p.money} M€</span></div>
-      <div class="oinfo">🗄️ casier secret${shields.length?" · "+shields.map(f=>"🛡"+f.slice(0,4)).join(" "):""} · 🃏 ${p.handCount}</div>
+      <div class="oinfo">🗄️ cartes cachées${shields.length?" · "+shields.map(f=>"🛡"+f.slice(0,4)).join(" "):""} · 🃏 ${p.handCount}</div>
       <div class="oinfo">🗳️ ${p.votants.length} bloc${p.votants.length>1?"s":""}${p.coalitions.length?" · 🔒 "+p.coalitions.length+" coalition"+(p.coalitions.length>1?"s":""):""}</div>
       <div class="oflag">${inDebt?"⚠️ subit une attaque…":acting?"▶ joue…":""}</div>`;
     opp.appendChild(d);
@@ -727,7 +731,7 @@ function render(){
   const totalFin=CN.FRONTS.reduce((a,fr)=>a+(me.financ[fr]||[]).length,0);
   const pile=totalFin
     ? `<div class="casier-pile">${"<i></i>".repeat(Math.min(totalFin,3)||1)}<span class="seal"><b>${totalFin}</b><small>🔒 SECRET</small></span></div>`
-    : `<div class="casier-pile empty"><i></i><span class="seal"><small>CASIER VIDE</small></span></div>`;
+    : `<div class="casier-pile empty"><i></i><span class="seal"><small>AUCUNE CARTE</small></span></div>`;
   const cats=CN.FRONTS.map(fr=>{
     const prot=me.protect.includes(fr); const cards=me.financ[fr]||[];
     const sale=cards.reduce((a,c)=>a+(c.clean?0:c.amount),0);
@@ -789,7 +793,7 @@ function openCardZoom(i){
   else if(card.kind==="clean") act=actBtn(canAct,`Encaisser (+${card.gain} M€, 100 % légal)`,`playSimple(${i},'PLAY_FINANCE_CLEAN')`);
   else if(card.kind==="den"){
     const opts=plays.filter(a=>a.type==="PLAY_DENOUNCE");
-    act=opts.length?`<div class="muted small">DEVINE dans quelle catégorie un rival a fraudé (son casier est invisible) :</div><div class="choices">`+
+    act=opts.length?`<div class="muted small">DEVINE dans quelle catégorie un rival a fraudé (ses cartes cachées sont invisibles) :</div><div class="choices">`+
       opts.map(a=>`<div class="choice" onclick="playDen(${i},${a.targetId},'${a.front}')">${esc(seatName(a.targetId))} · <span class="tag ${frontClass[a.front]}">${a.front}</span></div>`).join("")+`</div>`
       :`<div class="muted small">Aucune cible dénonçable pour l'instant (fronts protégés / cibles déjà attaquées / pas ton tour).</div>`;
   }
@@ -831,7 +835,7 @@ function openSeatZoom(id){
   const vl=p.votants.length?`<div class="vlist">${p.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒 ":""}${esc(v.nom)} · ${v.voix}v</span>`).join("")}</div>`:`<p class="muted small">Aucun votant.</p>`;
   showModal(`<h2>${esc(seatName(id))}</h2>
     <p class="small" style="margin:4px 0"><b style="color:var(--clean)">${p.voix} voix</b> · <b style="color:var(--gold-d)">${p.money} M€</b> · 🃏 ${p.handCount} cartes en main</p>
-    <p class="small muted">🗄️ Casier <b>secret</b> — tu ne vois ni le contenu ni le nombre de cartes.${shields.length?" Protégé : "+shields.map(f=>"🛡 "+f).join(", ")+".":""}</p>
+    <p class="small muted">🗄️ Cartes <b>face cachée</b> — tu ne vois ni le contenu ni le nombre de cartes.${shields.length?" Protégé : "+shields.map(f=>"🛡 "+f).join(", ")+".":""}</p>
     ${p.coalitions.length?`<p class="small" style="color:var(--gold-d);font-weight:800">🔒 Coalitions : ${p.coalitions.join(" · ")}</p>`:""}
     <div class="small muted" style="margin-top:8px;font-weight:800;text-transform:uppercase">Ses votants (publics)</div>${vl}
     <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
@@ -851,7 +855,7 @@ function openMyCasier(){
       ).join(""):`<span class="muted small">pile vide</span>`;
     return `<div style="margin:12px 0">${head}<div class="ccardrow">${items}</div></div>`;
   }).join("");
-  showModal(`<h2>🗄️ Mon casier — visible de moi seul</h2><p class="muted small">Ta pile de financement secrète — <b>une seule pile</b>, rangée par catégorie de fraude. Les rivaux ne voient <b>rien</b> : ni le nombre de cartes, ni le contenu, seulement ton argent qui monte. Une dénonciation vise une <b>catégorie entière</b> : si elle touche une catégorie non protégée, tu perds tout ton argent sale de cette catégorie.</p>${piles}
+  showModal(`<h2>🗄️ Mes cartes face cachée — visibles de moi seul</h2><p class="muted small">Ta pile de financement secrète — <b>une seule pile</b>, rangée par catégorie de fraude. Les rivaux ne voient <b>rien</b> : ni le nombre de cartes, ni le contenu, seulement ton argent qui monte. Une dénonciation vise une <b>catégorie entière</b> : si elle touche une catégorie non protégée, tu perds tout ton argent sale de cette catégorie.</p>${piles}
     <div class="choices"><div class="choice" onclick="hideModal()">Fermer</div></div>`);
 }
 function openMyVotants(){
