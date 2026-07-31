@@ -198,7 +198,11 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .hc.dis{filter:grayscale(.5) brightness(.85)}
 .hc .c-art{display:none}   /* pas de médaillon en main : place au texte complet (médaillon + phrase restent au zoom) */
 .hc .c-flav{display:none}  /* pas de phrase en main : priorité à la règle complète */
-.hc .c-rule{font-size:12px;line-height:1.34}
+/* en main : plus compact (specificité .hc .cface pour battre .cface) */
+.hc .cface .c-rule{font-size:11.5px;line-height:1.3}
+.hc .cface .c-amount{margin:1px 0}
+.hc .cface .c-amount b{font-size:25px}
+.hc .cface .c-amount .c-risk,.hc .cface .c-amount .c-safe{margin-top:0;font-size:10px}
 
 /* ============ CARTES (papier) ============ */
 .cface{width:100%;height:100%;background:linear-gradient(168deg,#f8f1de,var(--paper) 45%,var(--paper2));border:1px solid var(--paper-edge);border-radius:11px;box-shadow:0 4px 10px rgba(0,0,0,.35);display:flex;flex-direction:column;padding:9px 10px;position:relative;overflow:hidden}
@@ -208,6 +212,14 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .cface .c-incomp{font-size:9.5px;font-weight:800;color:var(--sale);margin-top:3px;line-height:1.2}
 .cface .c-art{text-align:center;font-size:26px;margin:3px 0 1px;filter:sepia(.25) saturate(.85)}
 .cface .c-art .med{display:inline-flex;width:42px;height:42px;border-radius:50%;align-items:center;justify-content:center;background:rgba(0,0,0,.06);border:1px solid rgba(150,118,47,.3)}
+/* montant gagné, bien en évidence sur les cartes de financement */
+.cface .c-amount{text-align:center;margin:4px 0 2px;line-height:1}
+.cface .c-amount b{font-family:Georgia,serif;font-weight:800;font-size:32px;display:inline-block}
+.cface .c-amount small{font-size:.46em;font-weight:800}
+.cface .c-amount .c-risk{display:block;font-size:10.5px;font-weight:800;color:var(--sale);margin-top:2px}
+.cface .c-amount .c-safe{display:block;font-size:10.5px;font-weight:800;color:var(--clean);margin-top:2px}
+.c-amount.k-clean b{color:var(--clean)} .c-amount.k-cor b{color:var(--gold-d)}
+.cface.big .c-amount b{font-size:50px} .cface.big .c-amount .c-risk,.cface.big .c-amount .c-safe{font-size:13px;margin-top:5px}
 .cface .c-stat{text-align:center;font-size:12.5px;font-weight:800;color:var(--ink)}
 .cface .c-rule{font-size:12px;color:var(--ink-soft);line-height:1.36;margin-top:4px;flex:1;overflow:hidden}
 .cface .c-flav{font-size:10.5px;font-style:italic;color:var(--ink-faint);border-top:1px dashed var(--paper-edge);padding-top:3px;margin-top:3px}
@@ -635,8 +647,8 @@ function cardStatLine(c){
   return cardKindLabel(c).replace(/^[A-ZÉ]+ · /,"");
 }
 function cardRuleText(c){
-  if(c.kind==="cor") return `Tu empoches ${c.gain} M€ d'argent sale (catégorie ${c.front}). Dénoncé sur ${c.front} sans protection : tu perds tout ton sale de cette catégorie.`;
-  if(c.kind==="clean") return `Tu gagnes ${c.gain} M€. 100 % légal — jamais dénonçable.`;
+  if(c.kind==="cor") return `Argent sale, catégorie ${c.front}. Dénoncé là sans protection : tu perds tout ton argent sale.`;
+  if(c.kind==="clean") return `Argent parfaitement légal : jamais dénonçable, aucun risque.`;
   if(c.kind==="den") return `Vise un rival + une catégorie de fraude (à l'aveugle). S'il a de l'argent sale dedans → il perd tout. Sinon (propre / vide / protégé) → tu perds 2 M€ + 3 M€ d'amende.`;
   if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate d'office.`;
   if(c.kind==="bla") return `Ta plus grosse carte sale devient PROPRE (plus dénonçable). Tu gardes l'argent.`;
@@ -644,10 +656,13 @@ function cardRuleText(c){
   return "";
 }
 function cardFaceHTML(c,big){
+  const money=(c.kind==="cor"||c.kind==="clean")
+    ? `<div class="c-amount k-${c.kind}"><b>+${c.gain}<small> M€</small></b>${c.kind==="cor"?`<span class="c-risk">−${c.gain} M€ si dénoncé</span>`:`<span class="c-safe">100 % légal</span>`}</div>`
+    : `<div class="c-art"><span class="med">${TYPE_ART[c.kind]||"🃏"}</span></div>`;
   return `<div class="cface k-${c.kind}${big?" big":""}"><span class="ribbon"></span>
     <span class="c-name">${esc(c.nom)}</span>
     <div class="c-kind">${cardKindLabel(c)}</div>
-    <div class="c-art"><span class="med">${TYPE_ART[c.kind]||"🃏"}</span></div>
+    ${money}
     <div class="c-rule">${cardRuleText(c)}</div>
     <div class="c-flav">« ${FLAVOR[c.nom]||"…"} »</div></div>`;
 }
