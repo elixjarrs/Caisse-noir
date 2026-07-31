@@ -385,12 +385,11 @@ Les **votants restent face visible** devant toi : **voix = somme de tes cartes v
 
 **Le frein anti-meneur (clé du modèle) :** plus tu as converti d'argent en voix, **moins tu as de cash** → quand on te dénonce, tu paies en **rendant des votants** → tu perds des voix. **Le frein se cible donc tout seul sur le meneur.** À l'inverse, planquer du cash sale = se rendre dénonçable sans avancer : double peine.
 
-**Défenses** (3 fronts → 3 protections) :
-- **Protection** (5 M€) — bouclier permanent sur un front : toute dénonciation y rate. Une par front : **Juge acheté** (Justice), **Médias corrompus** (Presse), **Compte offshore** (Finances).
+**Défenses** (3 catégories → 3 protections) :
+- **Protection** (5 M€) — bouclier permanent sur une catégorie : toute dénonciation y rate. Une par catégorie : **Juge acheté** (Justice), **Médias corrompus** (Presse), **Compte offshore** (Finances). **La protection est PUBLIQUE** : les adversaires voient quelles catégories tu as protégées (une dénonciation dessus est un ratage assuré).
 - **Blanchiment** (3 M€) — rend une de tes cartes sales **propre** (elle n'est plus dénonçable).
-- **Élément de langage** — réactif : annule une dénonciation.
 
-*(Les coups « Incohérence » et « Promesse intenable », qui ajoutaient une carte sale sur l'ex-front « Rue », la posent désormais sur **Presse**.)*
+> **Plus de coups tactiques** (décision EJ, 2026-07). Les cartes « Élément de langage », « Remise de campagne », « Incohérence », « Promesse intenable » et « Renvoi d'ascenseur » sont **retirées du jeu**. Conséquences : la dénonciation ne peut plus être **annulée** (l'Élément de langage n'existe plus) et les **incompatibilités sont absolues** (l'Incohérence ne les contourne plus). Calibrage revérifié : seuil 45, ~14-15 manches, 100 % des parties finies au seuil (N=2..6).
 
 ## 16.5 Parti = famille interdite + famille CIBLE (double face SECRÈTE)
 En début de partie, chaque joueur reçoit **1 carte Parti face cachée** (aléatoire) à **deux faces secrètes**, connues de **lui seul** :

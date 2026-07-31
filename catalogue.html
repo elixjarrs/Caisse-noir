@@ -64,7 +64,7 @@ const CN = window.CaisseNoire;
 const $ = s => document.querySelector(s);
 const frontClass = {Justice:"t-justice",Presse:"t-presse",Finances:"t-finances"};
 const blocName = b => { const v=CN.VOTANTS.find(x=>x.bloc===b); return v?v.nom:b; };
-const SECTIONS = ["Tout","Votants","Incompatibilités","Corruption","Propre","Attaques","Défenses","Coups","Partis","Équilibrage"];
+const SECTIONS = ["Tout","Votants","Incompatibilités","Corruption","Propre","Attaques","Défenses","Partis","Équilibrage"];
 let cur = "Tout";
 function chips(){ const f=$("#filter"); f.innerHTML=""; SECTIONS.forEach(s=>{ const c=document.createElement("div"); c.className="chip"+(s===cur?" active":""); c.textContent=s; c.onclick=()=>{cur=s;chips();render();}; f.appendChild(c); }); }
 const show = s => cur==="Tout"||cur===s;
@@ -79,7 +79,7 @@ function render(){
       h+=`<div class="famhead">👥 ${fam} <span style="color:var(--muted);font-weight:600;font-size:12px">(${list.length})</span></div><div class="grid">${list.map(votCard).join("")}</div>`; });
   }
   if(show("Incompatibilités")){
-    h+=`<h2 class="sec-title">Incompatibilités exclusives (${CN.INCOMPAT.length} paires)</h2><p class="sec-sub">Tu ne peux <b>pas détenir les deux</b> blocs d'une paire (achat refusé). Ça t'oblige à choisir ta ligne et ralentit la course. <i>(Seule la carte « Incohérence » passe outre.)</i></p>
+    h+=`<h2 class="sec-title">Incompatibilités exclusives (${CN.INCOMPAT.length} paires)</h2><p class="sec-sub">Tu ne peux <b>pas détenir les deux</b> blocs d'une paire (achat refusé). Ça t'oblige à choisir ta ligne et ralentit la course. <i>(Les incompatibilités sont absolues.)</i></p>
       <div class="pairs">${CN.INCOMPAT.map(([a,b])=>`<span class="pair">${blocName(a)} ✗ ${blocName(b)}</span>`).join("")}</div>`;
   }
   if(show("Corruption")){
@@ -102,13 +102,7 @@ function render(){
   if(show("Défenses")){
     let g=""; combines("pro").forEach(c=>g+=`<div class="card def"><div class="nom">${c.nom}</div><span class="tag ${frontClass[c.front]}">Protection · 5 M€</span><div class="desc">Bouclier permanent sur ${c.front} — toute dénonciation y rate.</div></div>`);
     g+=`<div class="card def"><div class="nom">Blanchiment</div><span class="tag">Défense · 3 M€</span><div class="desc">Rend une de tes cartes sales <b>propre</b> (plus dénonçable).</div></div>`;
-    g+=`<div class="card def"><div class="nom">Élément de langage</div><span class="tag" style="color:var(--blue);border-color:#c5d8f4;background:#eef4fc">Réaction</span><div class="desc">Joue-la quand on te dénonce pour <b>annuler</b> le scandale.</div></div>`;
-    h+=`<h2 class="sec-title">Défenses (3 catégories → 3 protections)</h2><p class="sec-sub">Protéger une catégorie, blanchir une carte, ou annuler une dénonciation en réaction.</p><div class="grid">${g}</div>`;
-  }
-  if(show("Coups")){
-    const d={remise:"Ton prochain votant coûte 3 M€ de moins.",incoherence:"Prends un bloc incompatible malgré l'exclusion, mais +1 carte sale sur Presse.",promesse:"+3 voix tout de suite, mais +1 carte sale sur Presse.",renvoi:"+3 M€ et pioche 1 carte."};
-    let g=""; combines("coup").filter(c=>c.e!=="element").forEach(c=>g+=`<div class="card coup"><div class="nom">${c.nom} ×${c.n}</div><span class="tag">Coup tactique</span><div class="desc">${d[c.e]||""}</div></div>`);
-    h+=`<h2 class="sec-title">Coups tactiques</h2><p class="sec-sub">Petits effets pour pimenter.</p><div class="grid">${g}</div>`;
+    h+=`<h2 class="sec-title">Défenses (3 catégories → 3 protections)</h2><p class="sec-sub">Protéger une catégorie (bouclier permanent, <b>visible de tous</b>) ou blanchir une carte sale.</p><div class="grid">${g}</div>`;
   }
   if(show("Partis")){
     let g=""; CN.FAMILY_LIST.forEach(fam=>g+=`<div class="card fam"><div class="nom">${CN.PARTY_BY_FAMILY[fam]||"?"}</div><span class="tag" style="color:var(--red);border-color:#f0c0b5;background:#fdeeeb">Famille interdite</span><div class="desc">⛔ Ne peut jamais acheter : <b>${fam}</b>. C'est <b>toute</b> l'asymétrie — secrète, sans aucun signal économique. Les autres doivent la deviner.</div></div>`);

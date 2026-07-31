@@ -22,7 +22,7 @@
  *      n'expose que l'argent + le NOMBRE de cartes par front.
  *
  * ACTIONS : BUY_VOTANT · PLAY_FINANCE · PLAY_FINANCE_CLEAN{front?} · PLAY_PROTECT · PLAY_BLANCH ·
- *   PLAY_DENOUNCE{targetId,front} · PLAY_STEAL{targetId} · PLAY_COUP · RECYCLE · END_TURN
+ *   PLAY_DENOUNCE{targetId,front} · PLAY_STEAL{targetId} · RECYCLE · END_TURN
  *   PAY_DEBT{votantIndexes} (réaction du dénoncé) · CEDE_BLOC{bloc} (réaction de la victime d'un vol)
  * ============================================================================= */
 
@@ -160,12 +160,7 @@ const COMBINES_DEF = [
   { kind:'bla', nom:'Blanchiment', n:8 },
   { kind:'steal', e:'debauchage', nom:'Débauchage', n:8 },
   { kind:'steal', e:'opa', nom:'OPA électorale', n:4 },
-  // Coups tactiques
-  { kind:'coup', e:'element', nom:'Élément de langage', n:5 },
-  { kind:'coup', e:'remise', nom:'Remise de campagne', n:3 },
-  { kind:'coup', e:'incoherence', nom:'Incohérence', n:3 },
-  { kind:'coup', e:'promesse', nom:'Promesse intenable', n:3 },
-  { kind:'coup', e:'renvoi', nom:"Renvoi d'ascenseur", n:2 },
+  // (Coups tactiques retirés — plus de coups dans le jeu.)
 ];
 
 /* -------------------------------- RNG seedée ------------------------------- */
@@ -185,7 +180,6 @@ function newPlayer(id, forbiddenFamily, targetFamily, name) {
     financ: { Justice: [], Presse: [], Finances: [] },   // piles ordonnées {clean,amount}
     protect: [], hand: [],
     attackedThisRound: false, denounceLaunched: 0, failedDenounce: [],
-    incoherenceReady: false, discount: false,
   };
 }
 
@@ -246,7 +240,7 @@ function startRound(state) {
   state.currentIdx = 0;
   beginTurn(state);
 }
-function beginTurn(state) { const p = current(state); p.money += CONFIG.income; p.discount = false; p.incoherenceReady = false; state.actionsLeft = CONFIG.actions; log(state, `${p.name} encaisse +${CONFIG.income} M€`, 'income'); }
+function beginTurn(state) { const p = current(state); p.money += CONFIG.income; state.actionsLeft = CONFIG.actions; log(state, `${p.name} encaisse +${CONFIG.income} M€`, 'income'); }
 function endTurn(state) {
   const p = current(state);
   drawUp(state, p);
@@ -289,18 +283,17 @@ function legalActions(state, playerId) {
         for (const fr of FRONTS) if (!t.protect.includes(fr)) acts.push({ type: 'PLAY_DENOUNCE', handIndex: i, targetId: t.id, front: fr });
     } else if (card.kind === 'steal') {
       for (const t of state.players) if (t !== p && !t.attackedThisRound && cedeableBlocs(state, t, { attackerId: p.id, mode: card.e }).length) acts.push({ type: 'PLAY_STEAL', handIndex: i, targetId: t.id });
-    } else if (card.kind === 'coup' && card.e !== 'element') acts.push({ type: 'PLAY_COUP', handIndex: i });
+    }
   });
   acts.push({ type: 'RECYCLE', handIndexes: [0] });
   acts.push({ type: 'END_TURN' });
   return acts;
 }
 function canBuy(p, c) {
-  let cost = c.cost;
-  if (p.discount) cost = Math.max(0, cost - 3);
+  const cost = c.cost;
   if (cost > p.money) return { ok: false, why: 'argent' };
   if (FAMILIES[c.bloc] === p.forbiddenFamily) return { ok: false, why: 'famille-interdite' };
-  if (incompatWith(c.bloc, p.blocs) && !p.incoherenceReady) return { ok: false, why: 'incompatible' };
+  if (incompatWith(c.bloc, p.blocs)) return { ok: false, why: 'incompatible' };   // incompatibilités absolues
   return { ok: true, cost };
 }
 // blocs qu'une victime peut céder à un vol : isolés (hors coalition complète) ET pas de la
@@ -335,7 +328,6 @@ function applyAction(state, playerId, action) {
     case 'PLAY_BLANCH': res = doBlanch(state, p, action.handIndex); break;
     case 'PLAY_DENOUNCE': res = doDenounce(state, p, action.handIndex, action.targetId, action.front); break;
     case 'PLAY_STEAL': res = doSteal(state, p, action.handIndex, action.targetId); break;
-    case 'PLAY_COUP': res = doCoup(state, p, action.handIndex); break;
     case 'RECYCLE': res = doRecycle(state, p, action.handIndexes); break;
     default: res = fail(state, 'action inconnue');
   }
@@ -348,13 +340,11 @@ function spend(state) { state.actionsLeft = Math.max(0, state.actionsLeft - 1); 
 function doBuy(state, p, idx) {
   const c = state.market[idx]; if (!c) return fail(state, 'bloc absent du marché');
   const chk = canBuy(p, c); if (!chk.ok) return fail(state, 'achat impossible: ' + chk.why);
-  let note = '';
-  if (p.incoherenceReady && incompatWith(c.bloc, p.blocs)) { p.incoherenceReady = false; p.financ.Presse.push({ clean: false, amount: 3 }); note = ' (incohérence)'; }
-  p.money -= chk.cost; p.discount = false;
+  p.money -= chk.cost;
   if (!p.blocs.includes(c.bloc)) p.blocs.push(c.bloc);
   p.votants.push({ nom: c.nom, bloc: c.bloc, voix: c.voix });
   state.market.splice(idx, 1); refillMarket(state); recompute(p);
-  log(state, `${p.name} achète ${c.nom} (+${c.voix} voix${note})`, 'buy');
+  log(state, `${p.name} achète ${c.nom} (+${c.voix} voix)`, 'buy');
   spend(state); return { ok: true, state };
 }
 function doFinance(state, p, i) {
@@ -392,10 +382,8 @@ function doDenounce(state, p, i, targetId, front) {   // frappe TOUTE la corrupt
   if (CONFIG.denounceCost > p.money) return fail(state, "pas assez d'argent");
   p.money -= CONFIG.denounceCost; p.denounceLaunched++;
   discardFromHand(state, p, i); spend(state);
-  const ei = t.hand.findIndex(c => c.kind === 'coup' && c.e === 'element');
   const blocked = t.protect.includes(front) || t.attackedThisRound;
   const saleSum = blocked ? 0 : saleSumFront(t, front);   // somme de TOUTES les cartes sales du front
-  if (!blocked && saleSum > 0 && ei >= 0) { discardFromHand(state, t, ei); log(state, `${p.name} dénonce ${t.name} (${front})… contré (Élément de langage) !`, 'denounce'); return { ok: true, state }; }
   if (saleSum <= 0) {   // RATÉ (que du propre / vide / protégé)
     p.failedDenounce.push(t.id + ':' + front);   // l'accusateur retient son erreur (IA)
     const amende = Math.min(CONFIG.amende, p.money); p.money -= amende; t.money += amende;
@@ -448,15 +436,6 @@ function doCede(state, victim, bloc) {   // la victime cède un bloc à l'attaqu
   log(state, `${victim.name} cède ${src.nom} à ${attacker ? attacker.name : '?'}`, 'denounce');
   if (!state.over && attacker && attacker.voix >= state.X) state.endingTriggered = true;
   return { ok: true, state };
-}
-function doCoup(state, p, i) {
-  const card = p.hand[i]; if (!card || card.kind !== 'coup') return fail(state, 'pas un coup');
-  if (card.e === 'element') return fail(state, "l'Élément de langage se joue en réaction");
-  if (card.e === 'remise') { p.discount = true; log(state, `${p.name} : remise prête`, 'coup'); }
-  else if (card.e === 'incoherence') { p.incoherenceReady = true; log(state, `${p.name} prépare une incohérence`, 'coup'); }
-  else if (card.e === 'promesse') { p.votants.push({ nom: 'Promesse intenable', bloc: null, voix: 3 }); p.financ.Presse.push({ clean: false, amount: 3 }); recompute(p); log(state, `${p.name} : promesse intenable (+3 voix)`, 'buy'); }
-  else if (card.e === 'renvoi') { p.money += 3; discardFromHand(state, p, i); drawUp(state, p); log(state, `${p.name} : renvoi d'ascenseur (+3 M€, pioche 1)`, 'coup'); spend(state); return { ok: true, state }; }
-  discardFromHand(state, p, i); spend(state); return { ok: true, state };
 }
 function doRecycle(state, p, idxs) {
   const list = (idxs || []).filter(i => i >= 0 && i < p.hand.length).sort((a, b) => b - a).slice(0, 2);
@@ -535,8 +514,6 @@ function botChooseAction(state, playerId) {
   // 3. voler un bloc au meneur
   const si = p.hand.findIndex(c => c.kind === 'steal');
   if (si >= 0) { const card = p.hand[si]; const tgt = others.filter(q => !q.attackedThisRound && q.voix >= p.voix && cedeableBlocs(state, q, { attackerId: p.id, mode: card.e }).length).sort((a, b) => b.voix - a.voix)[0]; if (tgt) return { type: 'PLAY_STEAL', handIndex: si, targetId: tgt.id }; }
-  // 4. promesse si proche du seuil
-  const pri = p.hand.findIndex(c => c.kind === 'coup' && c.e === 'promesse'); if (pri >= 0 && p.voix >= state.X - 6) return { type: 'PLAY_COUP', handIndex: pri };
   // 5. acheter le meilleur bloc (favorise les coalitions ; respecte famille interdite + incompat)
   let best = -1, bestScore = -1;
   const tgtBefore = completeFamilies(p.blocs).includes(p.targetFamily) ? CONFIG.targetBonus : 0;
@@ -554,7 +531,7 @@ function botChooseAction(state, playerId) {
   // 6. se financer si pauvre
   if (p.money < 10) { if (!iLead) { const ci = p.hand.findIndex(c => c.kind === 'cor'); if (ci >= 0) return { type: 'PLAY_FINANCE', handIndex: ci }; } const cl = p.hand.findIndex(c => c.kind === 'clean'); if (cl >= 0) return { type: 'PLAY_FINANCE_CLEAN', handIndex: cl }; const ci2 = p.hand.findIndex(c => c.kind === 'cor'); if (ci2 >= 0) return { type: 'PLAY_FINANCE', handIndex: ci2 }; }
   // 7. recycler l'inutile
-  const junk = []; for (let k = p.hand.length - 1; k >= 0 && junk.length < 2; k--) { const c = p.hand[k]; if ((c.kind === 'coup' && c.e === 'renvoi') || (c.kind === 'pro' && !myExposed.includes(c.front))) junk.push(k); }
+  const junk = []; for (let k = p.hand.length - 1; k >= 0 && junk.length < 2; k--) { const c = p.hand[k]; if (c.kind === 'pro' && !myExposed.includes(c.front)) junk.push(k); }
   if (junk.length) return { type: 'RECYCLE', handIndexes: junk };
   // 8. financer sinon finir
   if (p.money < 14) { const ci = p.hand.findIndex(c => c.kind === 'cor' || c.kind === 'clean'); if (ci >= 0) return p.hand[ci].kind === 'cor' ? { type: 'PLAY_FINANCE', handIndex: ci } : { type: 'PLAY_FINANCE_CLEAN', handIndex: ci }; }

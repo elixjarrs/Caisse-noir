@@ -93,6 +93,13 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .ostats{display:flex;justify-content:space-between;font-size:12.5px;margin-top:4px}
 .ostats .v{color:#a8d3b2;font-weight:800} .ostats .m{color:#f4d689;font-weight:800}
 .oinfo{font-size:10.5px;color:#bdb494;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* protections adverses — publiques et bien visibles */
+.oprotect{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;align-items:center}
+.oprotect.none{font-size:11px;font-weight:700;color:#8a8168}
+.pshield{font-size:12.5px;font-weight:800;padding:2px 9px;border-radius:9px;background:rgba(255,255,255,.08);border:1.5px solid var(--gold-d);color:#f0e3bd}
+.pshield.t-justice{border-color:var(--justice);color:#bcd0e4;background:rgba(84,113,143,.22)}
+.pshield.t-presse{border-color:var(--presse);color:#eccfa6;background:rgba(176,125,65,.22)}
+.pshield.t-finances{border-color:var(--finances);color:#b6d8c1;background:rgba(79,125,95,.22)}
 .oflag{font-size:10px;font-weight:800;color:var(--gold);min-height:13px;margin-top:3px}
 
 /* centre : pioches | marché+piste | journal */
@@ -621,7 +628,7 @@ function cardKindLabel(c){
   if(c.kind==="pro") return `PROTECTION · <span class="tag ${frontClass[c.front]}">${c.front}</span>`;
   if(c.kind==="bla") return `BLANCHIMENT · 3 M€`;
   if(c.kind==="steal") return c.e==="opa"?`OPA · vol de bloc`:`DÉBAUCHAGE · vol de bloc`;
-  return `COUP TACTIQUE`;
+  return esc(c.nom||"Carte");
 }
 function cardStatLine(c){
   if(c.kind==="cor"||c.kind==="clean") return `<span style="color:var(--clean)">+${c.gain} M€</span>${c.kind==="cor"?` · risque −${c.gain}`:``}`;
@@ -634,11 +641,6 @@ function cardRuleText(c){
   if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate d'office.`;
   if(c.kind==="bla") return `Ta plus grosse carte sale devient PROPRE (plus dénonçable). Tu gardes l'argent.`;
   if(c.kind==="steal") return c.e==="opa"?`Un rival te cède un de ses MEILLEURS blocs isolés (c'est lui qui choisit). Ses voix passent chez toi.`:`Un rival te cède un bloc isolé de son choix. Ses voix passent chez toi.`;
-  if(c.e==="remise") return `Ton prochain votant coûte 3 M€ de moins.`;
-  if(c.e==="incoherence") return `Achète un bloc incompatible malgré l'exclusion (au prix d'1 carte sale sur Presse).`;
-  if(c.e==="promesse") return `+3 voix immédiates (au prix d'1 carte sale sur Presse).`;
-  if(c.e==="element") return `RÉACTION auto : annule une dénonciation lancée contre toi. Garde-la simplement en main.`;
-  if(c.e==="renvoi") return `+3 M€ et pioche 1 carte.`;
   return "";
 }
 function cardFaceHTML(c,big){
@@ -686,10 +688,13 @@ function render(){
     const shields=CN.FRONTS.filter(fr=>p.protect.includes(fr));
     const d=document.createElement("div"); d.className="opp"+(acting?" turn":"")+(inDebt?" debt":"");
     d.onclick=()=>openSeatZoom(p.id);
+    const protLine=shields.length
+      ? `<div class="oprotect" title="Catégories protégées : une dénonciation y échoue">${shields.map(fr=>`<span class="pshield ${frontClass[fr]}">🛡 ${fr}</span>`).join("")}</div>`
+      : `<div class="oprotect none">🛡 aucune protection</div>`;
     d.innerHTML=`<div class="ohead"><span class="dot" style="background:${seatColor(p.id)}"></span><span class="onm">${esc(seatName(p.id))}</span></div>
       <div class="ostats"><span class="v">${p.voix} voix</span><span class="m">${p.money} M€</span></div>
-      <div class="oinfo">🗄️ cartes cachées${shields.length?" · "+shields.map(f=>"🛡"+f.slice(0,4)).join(" "):""} · 🃏 ${p.handCount}</div>
-      <div class="oinfo">🗳️ ${p.votants.length} bloc${p.votants.length>1?"s":""}${p.coalitions.length?" · 🔒 "+p.coalitions.length+" coalition"+(p.coalitions.length>1?"s":""):""}</div>
+      ${protLine}
+      <div class="oinfo">🗄️ cartes cachées · 🃏 ${p.handCount} en main · 🗳️ ${p.votants.length} bloc${p.votants.length>1?"s":""}${p.coalitions.length?" · 🔒 "+p.coalitions.length+" coalition"+(p.coalitions.length>1?"s":""):""}</div>
       <div class="oflag">${inDebt?"⚠️ subit une attaque…":acting?"▶ joue…":""}</div>`;
     opp.appendChild(d);
   });
@@ -777,7 +782,6 @@ function clickHand(i){
   if(card.kind==="clean"){ submit({type:"PLAY_FINANCE_CLEAN",handIndex:i}); return; }   // catégorie auto (invisible), c'est un seul paquet
   if(card.kind==="pro"&&plays.length){ submit({type:"PLAY_PROTECT",handIndex:i}); return; }
   if(card.kind==="bla"&&plays.length){ submit({type:"PLAY_BLANCH",handIndex:i}); return; }
-  if(card.kind==="coup"&&card.e!=="element"&&plays.length){ submit({type:"PLAY_COUP",handIndex:i}); return; }
   openCardZoom(i);   // clean, dénonce (cible+catégorie), vol (cible), ou carte non jouable
 }
 function openCardZoom(i){
@@ -788,8 +792,6 @@ function openCardZoom(i){
   if(card.kind==="cor") act=actBtn(canAct&&plays.length>0,`Se financer (+${card.gain} M€)`,`playSimple(${i},'PLAY_FINANCE')`);
   else if(card.kind==="pro") act=actBtn(canAct&&plays.length>0,`Protéger ${card.front} (5 M€)`,`playSimple(${i},'PLAY_PROTECT')`);
   else if(card.kind==="bla") act=actBtn(canAct&&plays.length>0,`Blanchir ma plus grosse carte sale (3 M€)`,`playSimple(${i},'PLAY_BLANCH')`);
-  else if(card.kind==="coup"&&card.e!=="element") act=actBtn(canAct&&plays.length>0,`Jouer ce coup`,`playSimple(${i},'PLAY_COUP')`);
-  else if(card.kind==="coup"&&card.e==="element") act=`<div class="muted small">Se joue automatiquement quand on te dénonce. Garde-la en main.</div>`;
   else if(card.kind==="clean") act=actBtn(canAct,`Encaisser (+${card.gain} M€, 100 % légal)`,`playSimple(${i},'PLAY_FINANCE_CLEAN')`);
   else if(card.kind==="den"){
     const opts=plays.filter(a=>a.type==="PLAY_DENOUNCE");
@@ -803,7 +805,7 @@ function openCardZoom(i){
       opts.map(a=>{ const t=VIEW.players.find(p=>p.id===a.targetId); return `<div class="choice" onclick="playSteal(${i},${a.targetId})">${esc(seatName(a.targetId))} — ${t.voix} voix</div>`; }).join("")+`</div>`
       :`<div class="muted small">Aucune cible volable pour l'instant.</div>`;
   }
-  if(!canAct&&card.kind!=="coup") act=`<div class="muted small">⏳ ${VIEW.currentPlayerId!==NET.mySeat?"Ce n'est pas ton tour.":"Plus d'action ce tour."}</div>`+(act&&card.e==="element"?act:"");
+  if(!canAct) act=`<div class="muted small">⏳ ${VIEW.currentPlayerId!==NET.mySeat?"Ce n'est pas ton tour.":"Plus d'action ce tour."}</div>`;
   showModal(`<div class="zoomwrap">${cardFaceHTML(card,true)}<div class="zoomact"><h2 style="font-size:16px">${esc(card.nom)}</h2>${act}
     <button class="btn ghost" style="border-color:var(--paper-edge);color:var(--ink-soft);margin-top:auto" onclick="hideModal()">Fermer</button></div></div>`);
 }
