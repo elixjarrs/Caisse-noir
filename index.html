@@ -655,7 +655,7 @@ function cardStatLine(c){
 function cardRuleText(c){
   if(c.kind==="cor") return `Argent sale, catégorie ${c.front}. Dénoncé là sans protection : tu perds tout ton argent sale.`;
   if(c.kind==="clean") return `Argent parfaitement légal : jamais dénonçable, aucun risque.`;
-  if(c.kind==="den") return `Vise un rival + une catégorie de fraude (à l'aveugle). S'il a de l'argent sale dedans → il perd tout. Sinon (propre / vide / protégé) → tu perds 2 M€ + 3 M€ d'amende.`;
+  if(c.kind==="den") return `Vise un rival + une catégorie de fraude (à l'aveugle). S'il a de l'argent sale dedans → il perd tout. Sinon (propre / vide / protégé) → tu perds juste ta mise de 2 M€.`;
   if(c.kind==="pro") return `Bouclier permanent : toute dénonciation sur ${c.front} rate d'office.`;
   if(c.kind==="bla") return `Ta plus grosse carte sale devient PROPRE (plus dénonçable). Tu gardes l'argent.`;
   if(c.kind==="steal") return c.e==="opa"?`Un rival te cède un de ses MEILLEURS blocs isolés (c'est lui qui choisit). Ses voix passent chez toi.`:`Un rival te cède un bloc isolé de son choix. Ses voix passent chez toi.`;

@@ -8,7 +8,7 @@
  *   1. DÉNONCIATION = pari sur un FRONT ENTIER : chaque front est une pile face cachée. On désigne
  *      un front ; la cible perd la SOMME de TOUTES ses cartes sales de ce front (cash, sinon rend
  *      des votants). Si le front n'a QUE du propre / est vide / protégé → RATÉ : l'accusateur perd
- *      sa mise (2) + amende 3 à la cible. Les leurres propres appâtent donc un ratage (bluff).
+ *      sa mise (2) — pas d'amende à la cible. Les leurres propres appâtent donc un ratage (bluff).
  *   2. PARTI = carte secrète à double face : une famille INTERDITE (jamais achetable) ET une
  *      famille CIBLE (+3 voix bonus si tu complètes une coalition de cette famille, en plus
  *      du bonus de coalition). Les deux sont connues du joueur seul. Cible ≠ interdite.
@@ -31,7 +31,7 @@
 /* ----------------------------- CONFIG (à calibrer) ------------------------- */
 const CONFIG = {
   start: 7, income: 3, hand: 5, actions: 2,
-  protectCost: 5, blanchCost: 3, denounceCost: 2, amende: 3,
+  protectCost: 5, blanchCost: 3, denounceCost: 2,
   targetBonus: 3,        // +voix si coalition complète de sa famille CIBLE (secrète)
   guardrail: 40,
 };
@@ -384,10 +384,9 @@ function doDenounce(state, p, i, targetId, front) {   // frappe TOUTE la corrupt
   discardFromHand(state, p, i); spend(state);
   const blocked = t.protect.includes(front) || t.attackedThisRound;
   const saleSum = blocked ? 0 : saleSumFront(t, front);   // somme de TOUTES les cartes sales du front
-  if (saleSum <= 0) {   // RATÉ (que du propre / vide / protégé)
+  if (saleSum <= 0) {   // RATÉ (que du propre / vide / protégé) — l'accusateur ne perd QUE sa mise (2 M€), plus d'amende à la cible
     p.failedDenounce.push(t.id + ':' + front);   // l'accusateur retient son erreur (IA)
-    const amende = Math.min(CONFIG.amende, p.money); p.money -= amende; t.money += amende;
-    log(state, `${p.name} dénonce ${t.name} (${front})… RATÉ : −${amende} M€ d'amende à ${t.name}`, 'denounce');
+    log(state, `${p.name} dénonce ${t.name} (${front})… RATÉ : mise de ${CONFIG.denounceCost} M€ perdue`, 'denounce');
     return { ok: true, state };
   }
   // TOUCHÉ : la cible perd TOUTE la corruption du front (les cartes sales sautent)

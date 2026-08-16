@@ -378,10 +378,10 @@ Les **votants restent face visible** devant toi : **voix = somme de tes cartes v
 ## 16.4 La dénonciation = un PARI qui frappe l'argent (sur un FRONT entier)
 **Dénoncer** (2 M€) : tu désignes un rival **et UN de ses trois fronts** (Justice / Presse / Finances). Son casier est **totalement invisible** — tu ne vois ni le contenu, ni même le nombre de cartes : c'est un pari **à l'aveugle** (a-t-il fraudé là… ou pas du tout ?) :
 - **Touché** (au moins une carte sale sur ce front) → **scandale** : la cible perd, en argent, la **SOMME de TOUTES ses cartes sales de ce front** (toutes défaussées). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) qui **retournent au marché**.
-- **Raté** (le front n'a que des leurres propres, ou il est vide/protégé) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** (et il a cramé son action). *Dénoncer est donc un vrai pari.*
+- **Raté** (le front n'a que des leurres propres, ou il est vide/protégé) → **échec** : l'accusateur perd **juste ses 2 M€ de mise** (et il a cramé son action). *(Décision EJ, 2026-07 : plus d'amende de diffamation versée à la cible — ça décourageait trop de dénoncer.)* Dénoncer reste un pari (2 M€ + une action pour rien si tu te trompes), mais sans récompenser la cible.
 - **Un seul scandale subi par manche** (anti-acharnement).
 
-> **Le rôle des leurres propres :** empilés sur un front, ils gonflent le compteur (les autres voient une pile épaisse sans savoir ce qu'elle vaut). Un front qui n'a **que** du propre appâte une dénonciation **ratée** → l'attaquant paie l'amende. C'est le bluff : cacher son sale, ou faire croire qu'on en a.
+> **Le rôle des leurres propres :** empilés sur un front, ils gonflent le compteur (les autres voient une pile épaisse sans savoir ce qu'elle vaut). Un front qui n'a **que** du propre appâte une dénonciation **ratée** → l'attaquant perd sa mise pour rien. C'est le bluff : cacher son sale, ou faire croire qu'on en a.
 
 **Le frein anti-meneur (clé du modèle) :** plus tu as converti d'argent en voix, **moins tu as de cash** → quand on te dénonce, tu paies en **rendant des votants** → tu perds des voix. **Le frein se cible donc tout seul sur le meneur.** À l'inverse, planquer du cash sale = se rendre dénonçable sans avancer : double peine.
 
@@ -410,7 +410,7 @@ En début de partie, chaque joueur reçoit **1 carte Parti face cachée** (aléa
 - Votants : Petit **4/2**, Moyen **8/4**, Gros **12/6**. **Deck 57 blocs uniques** (8 familles, ~7 par famille).
 - **Seuil de victoire = 45 voix, FIXE pour tous les nombres de joueurs (2 à 6).**
 - Pourquoi un seuil **fixe marche ici** : quand on dénonce, la cible qui manque de cash **rend des votants** qui **retournent au marché** → le marché **ne se vide pas**, la partie tient ~15 manches, et chacun a le temps d'atteindre 45 même à 6 joueurs. (Un deck fixe sans recirculation aurait forcé un seuil dégressif ; ce n'est pas le cas.)
-- Coûts d'attaque : **dénoncer 2 M€** (+ **amende 3 M€** si raté) · **Débauchage / OPA** = cartes.
+- Coûts d'attaque : **dénoncer 2 M€** (mise perdue si raté, rien à la cible) · **Débauchage / OPA** = cartes.
 - **Résultats `simulate()` (moteur réel, 57 blocs, ordre de tour fixe)** : **~100 % par le seuil** (96 % à 6 j.), **~15-16 manches** quel que soit le nombre de joueurs, voix du gagnant ≈ 46. La dénonciation « front entier » + les incompatibilités gardent la course disputée.
 - Le seuil est réglable dans `src/engine.js` (`const SEUIL_VOIX = 45`).
 
