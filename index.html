@@ -174,6 +174,12 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .ccat .warn{color:#e8a08c} .ccat .safe{color:#a8d3b2} .ccat .dim{color:#8a8168}
 /* votants : une collection de cartes d'électeurs face visible */
 .vgrid{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+/* votants regroupés par famille, avec en-tête de famille toujours visible */
+.vgrp{margin-bottom:9px}
+.vghead{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:4px;padding-bottom:2px;border-bottom:1px solid rgba(255,255,255,.12)}
+.vgfam{font-size:11.5px;font-weight:800;color:#e8dfc8}
+.vgn{font-size:11px;font-weight:800;color:#a8d3b2;white-space:nowrap}
+.vgrp.done .vgfam{color:#f0e3bd} .vgrp.done .vgn{color:var(--gold)}
 .vcard{position:relative;width:62px;min-height:66px;background:linear-gradient(165deg,#f8f1de,var(--paper2));
   border:1px solid var(--paper-edge);border-top:3px solid var(--gold-d);border-radius:7px;
   padding:5px 3px 4px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;gap:1px}
@@ -764,9 +770,10 @@ function render(){
   const byFam={}; me.votants.forEach(v=>{ const f=v.family||"—"; (byFam[f]=byFam[f]||[]).push(v); });
   const fams=Object.keys(byFam).sort((a,b)=>byFam[b].length-byFam[a].length);
   $("#myvots").innerHTML=me.votants.length
-    ? `<div class="vgrid">`+fams.flatMap(f=>{ const done=me.coalitions.includes(f);
-        return byFam[f].map(v=>`<div class="vcard${done?" coal":""}" title="${esc(v.nom)} · ${esc(f)}${done?" · coalition":""}"><span class="vv">${v.voix}</span>${done?'<span class="lk">🔒</span>':""}<span class="por">${FAM_ART[f]||"👤"}</span><span class="nm">${esc(stripArt(v.nom))}</span></div>`);
-      }).join("")+`</div>`
+    ? fams.map(f=>{ const list=byFam[f]; const done=me.coalitions.includes(f); const isTgt=me.targetFamily===f;
+        return `<div class="vgrp${done?" done":""}"><div class="vghead"><span class="vgfam">${FAM_ART[f]||"👤"} ${esc(f)}</span><span class="vgn">${list.length}${done?" 🔒":""}${isTgt?" 🎯":""}</span></div>
+          <div class="vgrid">${list.map(v=>`<div class="vcard${done?" coal":""}" title="${esc(v.nom)} · ${esc(f)}${done?" · coalition":""}"><span class="vv">${v.voix}</span>${done?'<span class="lk">🔒</span>':""}<span class="por">${FAM_ART[f]||"👤"}</span><span class="nm">${esc(stripArt(v.nom))}</span></div>`).join("")}</div></div>`;
+      }).join("")
     : `<span style="color:#a99f83">aucun votant acheté</span>`;
 
   /* la main en éventail */
@@ -849,7 +856,14 @@ function buyMarket(i){ hideModal(); submit({type:"BUY_VOTANT",marketIndex:i}); }
 function openSeatZoom(id){
   const p=VIEW.players.find(x=>x.id===id); if(!p) return;
   const shields=CN.FRONTS.filter(fr=>p.protect.includes(fr));
-  const vl=p.votants.length?`<div class="vlist">${p.votants.map(v=>`<span class="vchip${v.fidele?" fidele":""}">${v.fidele?"🔒 ":""}${esc(v.nom)} · ${v.voix}v</span>`).join("")}</div>`:`<p class="muted small">Aucun votant.</p>`;
+  const vByFam={}; p.votants.forEach(v=>{ const f=v.family||"—"; (vByFam[f]=vByFam[f]||[]).push(v); });
+  const vfams=Object.keys(vByFam).sort((a,b)=>vByFam[b].length-vByFam[a].length);
+  const vl=p.votants.length
+    ? vfams.map(f=>{ const done=p.coalitions.includes(f);
+        return `<div class="vfam ${done?"done":""}" style="margin:6px 0"><span class="vfhead">${FAM_ART[f]||"👤"} ${esc(f)} — <b>${vByFam[f].length}${done?" 🔒 coalition":""}</b></span>
+          <div class="vlist" style="margin-top:3px">${vByFam[f].map(v=>`<span class="vchip${v.fidele?" fidele":""}">${esc(v.nom)} · ${v.voix}v</span>`).join("")}</div></div>`;
+      }).join("")
+    : `<p class="muted small">Aucun votant.</p>`;
   showModal(`<h2>${esc(seatName(id))}</h2>
     <p class="small" style="margin:4px 0"><b style="color:var(--clean)">${p.voix} voix</b> · <b style="color:var(--gold-d)">${p.money} M€</b> · 🃏 ${p.handCount} cartes en main</p>
     <p class="small muted">🗄️ Cartes <b>face cachée</b> — tu ne vois ni le contenu ni le nombre de cartes.${shields.length?" Protégé : "+shields.map(f=>"🛡 "+f).join(", ")+".":""}</p>
