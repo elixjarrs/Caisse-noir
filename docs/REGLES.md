@@ -403,14 +403,14 @@ En début de partie, chaque joueur reçoit **1 carte Parti face cachée** (aléa
 - **Familles** : 8 familles (voir §15.1), **57 blocs uniques** répartis dessus. La plupart des familles ont au moins un **gros bloc (12 M€ / 6 voix)** ; quelques familles n'en ont pas (déséquilibre thématique assumé). **3 blocs d'une même famille = +3 voix**, puis **+1 par bloc** en plus.
 - **Incompatibilités renforcées** : de nombreuses **paires de votants s'excluent** (tu ne peux pas détenir les deux — ex. Chasseurs × Animalistes, Patronat × CGT, Flics × Émeutiers…). Ça ralentit la course aux voix, oblige à choisir sa ligne, et **allonge la partie**. *(À l'échelle du moteur : une liste de paires interdites ; à l'achat, on refuse un bloc incompatible avec un bloc déjà détenu.)*
 - **Coalition complète = électorat fidèle → involable** (protégé du vol). Si la famille est ta **cible** secrète (§16.5), la coalition rapporte **+3 voix de plus**.
-- **Débauchage = une CARTE** (vol de voix) : tu la joues sur un rival ; **c'est la victime qui choisit** quel **votant isolé** (hors coalition complète) elle te cède — le bloc passe dans ta zone (tu gagnes ses voix, elle les perd). **OPA électorale** (carte plus chère) : même principe sur un bloc de plus forte valeur. Partage le plafond « 1 attaque subie / manche » avec la dénonciation.
+- **Débauchage = une CARTE** (vol de voix) : tu la joues sur un rival ; **c'est la victime qui choisit** quel **votant isolé** (hors coalition complète) elle te cède — le bloc passe dans ta zone (tu gagnes ses voix, elle les perd). Partage le plafond « 1 attaque subie / manche » avec la dénonciation. *(Une seule carte de vol : l'ancienne « OPA » a été fusionnée dans Débauchage.)*
 
 ## 16.7 Économie & seuil (calibré par simulation v0.7)
 - Départ **7 M€**, revenu **+3/tour**, main **5**, garde-fou **~40 manches** (jamais atteint en pratique).
 - Votants : Petit **4/2**, Moyen **8/4**, Gros **12/6**. **Deck 57 blocs uniques** (8 familles, ~7 par famille).
 - **Seuil de victoire = 45 voix, FIXE pour tous les nombres de joueurs (2 à 6).**
 - Pourquoi un seuil **fixe marche ici** : quand on dénonce, la cible qui manque de cash **rend des votants** qui **retournent au marché** → le marché **ne se vide pas**, la partie tient ~15 manches, et chacun a le temps d'atteindre 45 même à 6 joueurs. (Un deck fixe sans recirculation aurait forcé un seuil dégressif ; ce n'est pas le cas.)
-- Coûts d'attaque : **dénoncer 2 M€** (mise perdue si raté, rien à la cible) · **Débauchage / OPA** = cartes.
+- Coûts d'attaque : **dénoncer 2 M€** (mise perdue si raté, rien à la cible) · **Débauchage** = cartes.
 - **Résultats `simulate()` (moteur réel, 57 blocs, ordre de tour fixe)** : **~100 % par le seuil** (96 % à 6 j.), **~15-16 manches** quel que soit le nombre de joueurs, voix du gagnant ≈ 46. La dénonciation « front entier » + les incompatibilités gardent la course disputée.
 - Le seuil est réglable dans `src/engine.js` (`const SEUIL_VOIX = 45`).
 

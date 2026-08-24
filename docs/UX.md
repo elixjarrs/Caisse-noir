@@ -29,7 +29,7 @@ Devant **chaque joueur** (sa zone) :
 
 - **Votant** : nom satirique + **famille** + **coût (M€)** + **voix**. Chaque bloc est **unique**. Texte très court (voix bien lisibles). Paliers ≈ 2 M€/voix : Petit 4/2 · Moyen 8/4 · Gros 12/6.
 - **Financement** : **Sale** (3 / 6 / 9 M€, dénonçable, malus = le montant) ou **Propre / leurre** (3 / 6 M€, sûr, jamais dénonçable). Joué **face cachée** sur un front. ~2 sales pour 1 propre.
-- **Attaques** : **Dénonciation** (2 M€), **Débauchage** (carte, vol de voix), **OPA électorale** (carte, vol renforcé).
+- **Attaques** : **Dénonciation** (2 M€), **Débauchage** (carte, vol de voix — la victime choisit le bloc cédé).
 - **Défenses** : **Protection** (5 M€, bouclier permanent d'un front — Juge acheté / Médias corrompus / Compte offshore), **Blanchiment** (3 M€, rend une carte sale propre), **Élément de langage** (réaction : annule une dénonciation).
 - **Coups tactiques** : Remise de campagne, Incohérence, Promesse intenable, Renvoi d'ascenseur…
 - **Parti** : un nom + **une famille interdite** (au dos-révélé). Style visé pour toutes les cartes : **1 phrase de règle + 1 phrase drôle**.
@@ -40,7 +40,7 @@ Devant **chaque joueur** (sa zone) :
 2. **2 actions**, au choix :
    - **Acheter un Votant** au marché → baisse ta roulette du coût, **pose le bloc face visible**, avance ton pion des voix (−1 si coalition molle). On révèle un nouveau bloc à la place.
    - **Se financer** → **pose une carte face cachée** sur un front, monte ta roulette (personne ne sait si tu es sale ou si c'est un leurre).
-   - **Attaquer** : Dénoncer (2 M€) / Débaucher / OPA.
+   - **Attaquer** : Dénoncer (2 M€) / Débaucher.
    - **Se défendre** : Protéger (5 M€) / Blanchir (3 M€).
    - **Coup tactique**, ou **Recycler** (défausser 1-2 cartes et repiocher — pari, la pioche est aveugle).
 3. **Élément de langage** : se joue **en réaction**, hors de ton tour, quand on te dénonce.
@@ -55,7 +55,7 @@ Le cœur sensoriel du jeu, c'est **l'information cachée tactile** :
 
 - **Se financer** = poser un **dos** sur un front. Toute la table voit ton argent grimper et ta pile épaissir, **sans savoir** si tu fraudes ou si tu bluffes avec des leurres.
 - **Dénoncer** = **pari** : tu désignes un rival **+ un de ses 3 fronts**, et on résout selon le modèle de règle en vigueur (voir l'encadré ⚠️ ci-dessous). Touché → la cible **perd de l'argent** ; si elle est à sec (tout converti en voix), elle **rend des votants de son choix** → elle **perd des voix** (le frein se cible tout seul sur le meneur). Raté → l'accusateur paie sa mise **+ 3 M€ d'amende** à la cible.
-- **Débaucher / OPA** = tu joues la carte, mais **c'est la VICTIME qui choisit** quel votant **isolé** elle te cède (un bloc en coalition complète est involable).
+- **Débaucher** = tu joues la carte, mais **c'est la VICTIME qui choisit** quel votant **isolé** elle te cède (un bloc en coalition complète est involable).
 - **Famille interdite** = tu ne peux jamais acheter cette famille ; les autres **devinent** la tienne à ta façon de jouer.
 
 > ⚠️ **Point de règle à trancher (dénonciation).** Deux versions coexistent dans le repo :

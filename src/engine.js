@@ -12,8 +12,8 @@
  *   2. PARTI = carte secrète à double face : une famille INTERDITE (jamais achetable) ET une
  *      famille CIBLE (+3 voix bonus si tu complètes une coalition de cette famille, en plus
  *      du bonus de coalition). Les deux sont connues du joueur seul. Cible ≠ interdite.
- *   3. DÉBAUCHAGE / OPA = CARTES : la VICTIME choisit quel votant ISOLÉ elle cède ; le bloc
- *      (voix + famille) passe chez l'attaquant. OPA = bloc de plus forte valeur.
+ *   3. DÉBAUCHAGE = CARTE : la VICTIME choisit quel votant ISOLÉ elle cède ; le bloc
+ *      (voix + famille) passe chez l'attaquant.
  *   4. INCOMPATIBILITÉS renforcées : paires exclusives (on ne peut pas détenir les deux).
  *   5. DECK VOTANTS 57 blocs uniques (7 par famille, Précaires 8), tiers 4/2, 8/4, 12/6.
  *   6. SEUIL = 45 voix (fixe, tous N ; calibré ~14-15 manches). Garde-fou 40 manches.
@@ -158,8 +158,7 @@ const COMBINES_DEF = [
   { kind:'pro', nom:'Médias corrompus', front:'Presse', n:4 },
   { kind:'pro', nom:'Compte offshore', front:'Finances', n:4 },
   { kind:'bla', nom:'Blanchiment', n:8 },
-  { kind:'steal', e:'debauchage', nom:'Débauchage', n:8 },
-  { kind:'steal', e:'opa', nom:'OPA électorale', n:4 },
+  { kind:'steal', e:'debauchage', nom:'Débauchage', n:10 },
   // (Coups tactiques retirés — plus de coups dans le jeu.)
 ];
 
@@ -297,11 +296,10 @@ function canBuy(p, c) {
   return { ok: true, cost };
 }
 // blocs qu'une victime peut céder à un vol : isolés (hors coalition complète) ET pas de la
-// famille interdite de l'attaquant. OPA => uniquement les plus hauts tiers possédés.
+// famille interdite de l'attaquant.
 function cedeableBlocs(state, victim, pend) {
   const attacker = state.players.find(x => x.id === pend.attackerId);
   let cand = victim.blocs.filter(b => !isFidele(b, victim.blocs) && FAMILIES[b] !== (attacker ? attacker.forbiddenFamily : null));
-  if (pend.mode === 'opa' && cand.length) { const mx = Math.max(...cand.map(b => VOTANT_BY_BLOC[b].voix)); cand = cand.filter(b => VOTANT_BY_BLOC[b].voix === mx); }
   return cand;
 }
 
@@ -409,7 +407,7 @@ function doPayDebt(state, p, idxs) {
   log(state, `${p.name} rend des votants (scandale)`, 'denounce');
   return { ok: true, state };
 }
-function doSteal(state, p, i, targetId) {   // débauchage / OPA : la VICTIME choisit le bloc
+function doSteal(state, p, i, targetId) {   // débauchage : la VICTIME choisit le bloc
   const card = p.hand[i]; if (!card || card.kind !== 'steal') return fail(state, 'pas une carte de vol');
   const t = state.players.find(x => x.id === targetId); if (!t || t === p) return fail(state, 'cible invalide');
   if (t.attackedThisRound) return fail(state, 'cible déjà attaquée ce tour');
@@ -417,7 +415,7 @@ function doSteal(state, p, i, targetId) {   // débauchage / OPA : la VICTIME ch
   discardFromHand(state, p, i); spend(state);
   t.attackedThisRound = true;
   state.pending = { kind: 'cede', playerId: t.id, attackerId: p.id, mode: card.e };
-  log(state, `${p.name} ${card.e === 'opa' ? 'lance une OPA sur' : 'débauche'} ${t.name}…`, 'denounce');
+  log(state, `${p.name} débauche ${t.name}…`, 'denounce');
   return { ok: true, state };
 }
 function doCede(state, victim, bloc) {   // la victime cède un bloc à l'attaquant

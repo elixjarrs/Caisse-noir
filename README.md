@@ -410,7 +410,11 @@ Transfert de **voix** (la carte bloc ne change pas de main ; on déplace les pio
 ## 16.2 L'argent (roulette individuelle 0–80, visible)
 Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**. **Montants variés et qui se chevauchent** entre fronts → impossible de déduire le montant depuis le front, ni le front depuis le montant.
 
-**3 FRONTS de corruption : Justice · Presse · Finances** (la justice, les médias, l'argent — les trois piliers d'un scandale).
+**3 CATÉGORIES DE FRAUDE : Justice · Presse · Finances** (la justice, les médias, l'argent — les trois piliers d'un scandale).
+
+> **Vocabulaire (décision EJ 2026-07) : le mot « front » est banni** de tout le texte joueur — on dit **« catégorie de fraude »** (ou « catégorie »). Ancien « front » = nouvelle « catégorie ». *(Dans le code, les identifiants internes `FRONTS`/`c.front`/`frontClass` restent inchangés ; seul le texte visible en français change.)*
+>
+> **Un seul casier, les catégories sont internes.** Côté joueur, le casier est **une seule pile face cachée** — on ne voit pas trois piles à trier. La catégorie est juste l'étiquette portée par chaque carte SALE (elle sert de cible à la dénonciation) ; l'argent PROPRE, lui, n'a aucune catégorie à choisir.
 
 **Tous les montants sont des multiples de 3 (3 / 6 / 9)**, au rythme du revenu (+3/tour).
 
@@ -422,7 +426,7 @@ Revenu auto **+3 M€/tour**. On se finance en jouant une carte **face cachée**
 | **Presse** | Petits cadeaux (+3) · Ménage médiatique (+6) · Voyage offert (+9) |
 | **Finances** | Note de frais maquillée (+3) · Rétrocommission (+6) · Évasion fiscale (+9) |
 
-**PROPRE (légal, sûr, jamais dénonçable)** — sert aussi de **leurre** (posée face cachée sur un front de ton choix). **Plafonne à +6** (le +9 est réservé au sale = prime du risque, sinon plus personne ne se corromprait) :
+**PROPRE (légal, sûr, jamais dénonçable)** — tu gagnes juste de l'argent 100 % légal. Le joueur n'a **rien d'autre à savoir** : il **ne choisit pas de front**, il ne « range » rien — la carte va dans son casier (une seule pile) et sert passivement de **leurre** (le moteur la classe tout seul sur un front, invisible). **Plafonne à +6** (le +9 est réservé au sale = prime du risque, sinon plus personne ne se corromprait) :
 
 | Carte | Argent |
 |---|---|
@@ -440,38 +444,39 @@ Les **votants restent face visible** devant toi : **voix = somme de tes cartes v
 ## 16.4 La dénonciation = un PARI qui frappe l'argent (sur un FRONT entier)
 **Dénoncer** (2 M€) : tu désignes un rival **et UN de ses trois fronts** (Justice / Presse / Finances). Son casier est **totalement invisible** — tu ne vois ni le contenu, ni même le nombre de cartes : c'est un pari **à l'aveugle** (a-t-il fraudé là… ou pas du tout ?) :
 - **Touché** (au moins une carte sale sur ce front) → **scandale** : la cible perd, en argent, la **SOMME de TOUTES ses cartes sales de ce front** (toutes défaussées). Elle paie d'abord sur sa **roulette** ; **si le cash ne suffit pas**, elle paie le manque en **rendant des votants de SON choix** (≈ 2 M€ / voix) qui **retournent au marché**.
-- **Raté** (le front n'a que des leurres propres, ou il est vide/protégé) → **échec** : l'accusateur perd ses **2 M€** de mise **+ une amende de diffamation de 3 M€ versée à la cible** (et il a cramé son action). *Dénoncer est donc un vrai pari.*
+- **Raté** (le front n'a que des leurres propres, ou il est vide/protégé) → **échec** : l'accusateur perd **juste ses 2 M€ de mise** (et il a cramé son action). *(Décision EJ, 2026-07 : plus d'amende de diffamation versée à la cible — ça décourageait trop de dénoncer.)* Dénoncer reste un pari (2 M€ + une action pour rien si tu te trompes), mais sans récompenser la cible.
 - **Un seul scandale subi par manche** (anti-acharnement).
 
-> **Le rôle des leurres propres :** empilés sur un front, ils gonflent le compteur (les autres voient une pile épaisse sans savoir ce qu'elle vaut). Un front qui n'a **que** du propre appâte une dénonciation **ratée** → l'attaquant paie l'amende. C'est le bluff : cacher son sale, ou faire croire qu'on en a.
+> **Le rôle des leurres propres :** empilés sur un front, ils gonflent le compteur (les autres voient une pile épaisse sans savoir ce qu'elle vaut). Un front qui n'a **que** du propre appâte une dénonciation **ratée** → l'attaquant perd sa mise pour rien. C'est le bluff : cacher son sale, ou faire croire qu'on en a.
 
 **Le frein anti-meneur (clé du modèle) :** plus tu as converti d'argent en voix, **moins tu as de cash** → quand on te dénonce, tu paies en **rendant des votants** → tu perds des voix. **Le frein se cible donc tout seul sur le meneur.** À l'inverse, planquer du cash sale = se rendre dénonçable sans avancer : double peine.
 
-**Défenses** (3 fronts → 3 protections) :
-- **Protection** (5 M€) — bouclier permanent sur un front : toute dénonciation y rate. Une par front : **Juge acheté** (Justice), **Médias corrompus** (Presse), **Compte offshore** (Finances).
+**Défenses** (3 catégories → 3 protections) :
+- **Protection** (5 M€) — bouclier permanent sur une catégorie : toute dénonciation y rate. Une par catégorie : **Juge acheté** (Justice), **Médias corrompus** (Presse), **Compte offshore** (Finances). **La protection est PUBLIQUE** : les adversaires voient quelles catégories tu as protégées (une dénonciation dessus est un ratage assuré).
 - **Blanchiment** (3 M€) — rend une de tes cartes sales **propre** (elle n'est plus dénonçable).
-- **Élément de langage** — réactif : annule une dénonciation.
 
-*(Les coups « Incohérence » et « Promesse intenable », qui ajoutaient une carte sale sur l'ex-front « Rue », la posent désormais sur **Presse**.)*
+> **Plus de coups tactiques** (décision EJ, 2026-07). Les cartes « Élément de langage », « Remise de campagne », « Incohérence », « Promesse intenable » et « Renvoi d'ascenseur » sont **retirées du jeu**. Conséquences : la dénonciation ne peut plus être **annulée** (l'Élément de langage n'existe plus) et les **incompatibilités sont absolues** (l'Incohérence ne les contourne plus). Calibrage revérifié : seuil 45, ~14-15 manches, 100 % des parties finies au seuil (N=2..6).
 
-## 16.5 Parti = famille interdite SECRÈTE
-En début de partie, chaque joueur reçoit **1 carte Parti face cachée** (aléatoire). Elle indique **une famille d'électeurs qu'il ne peut jamais acheter** — connue de **lui seul**. C'est toute l'asymétrie : invisible, sans aucun signal économique (rien à repérer type « +1 M€/manche »). Les autres doivent **deviner** ta famille interdite à ta façon de jouer.
-- Ça crée un handicap thématique (« le parti anti-écolo ne courtisera jamais les Animalistes ») et de l'information cachée à lire.
+## 16.5 Parti = famille interdite + famille CIBLE (double face SECRÈTE)
+En début de partie, chaque joueur reçoit **1 carte Parti face cachée** (aléatoire) à **deux faces secrètes**, connues de **lui seul** :
+- **Famille INTERDITE** : une famille d'électeurs qu'il **ne peut jamais acheter**. C'est le handicap thématique (« le parti anti-écolo ne courtisera jamais les Animalistes ») et de l'information cachée à lire. Aucun signal économique (rien à repérer type « +1 M€/manche ») : les autres doivent **deviner** à ta façon de jouer.
+- **Famille CIBLE** : une famille (toujours **différente** de l'interdite) qui rapporte un **bonus de +3 voix** si tu en **complètes la coalition** (≥3 blocs). Ce bonus s'ajoute **au +3 de coalition** — donc une coalition sur ta cible vaut **+6 voix**. Elle t'oriente secrètement vers une ligne électorale précise ; révélée à la fin comme l'interdite.
 - **Remplace** les anciens pouvoirs de parti visibles **et** les objectifs à points (jugés trop lisibles / obvious).
-- Design : chaque carte Parti = un nom satirique + la famille interdite au dos-révélé. Une famille interdite peut se répéter d'une partie à l'autre ; à distribuer pour qu'aucun joueur n'ait la même sur une partie donnée.
+- Design : chaque carte Parti = un nom satirique + interdite/cible au dos-révélé. Les familles peuvent se répéter d'une partie à l'autre ; à distribuer pour qu'aucun joueur n'ait la même interdite, et que cible ≠ interdite pour chacun.
+- **Calibrage** : ce bonus (~+3 pour un ou deux joueurs par partie) reste absorbé par le **seuil fixe de 45 voix** (§16.7) — vérifié par `simulate()`.
 
 ## 16.6 Familles, coalitions, incompatibilités & vol
 - **Familles** : 8 familles (voir §15.1), **57 blocs uniques** répartis dessus. La plupart des familles ont au moins un **gros bloc (12 M€ / 6 voix)** ; quelques familles n'en ont pas (déséquilibre thématique assumé). **3 blocs d'une même famille = +3 voix**, puis **+1 par bloc** en plus.
 - **Incompatibilités renforcées** : de nombreuses **paires de votants s'excluent** (tu ne peux pas détenir les deux — ex. Chasseurs × Animalistes, Patronat × CGT, Flics × Émeutiers…). Ça ralentit la course aux voix, oblige à choisir sa ligne, et **allonge la partie**. *(À l'échelle du moteur : une liste de paires interdites ; à l'achat, on refuse un bloc incompatible avec un bloc déjà détenu.)*
-- **Coalition complète = électorat fidèle → involable** (protégé du vol).
-- **Débauchage = une CARTE** (vol de voix) : tu la joues sur un rival ; **c'est la victime qui choisit** quel **votant isolé** (hors coalition complète) elle te cède — le bloc passe dans ta zone (tu gagnes ses voix, elle les perd). **OPA électorale** (carte plus chère) : même principe sur un bloc de plus forte valeur. Partage le plafond « 1 attaque subie / manche » avec la dénonciation.
+- **Coalition complète = électorat fidèle → involable** (protégé du vol). Si la famille est ta **cible** secrète (§16.5), la coalition rapporte **+3 voix de plus**.
+- **Débauchage = une CARTE** (vol de voix) : tu la joues sur un rival ; **c'est la victime qui choisit** quel **votant isolé** (hors coalition complète) elle te cède — le bloc passe dans ta zone (tu gagnes ses voix, elle les perd). Partage le plafond « 1 attaque subie / manche » avec la dénonciation. *(Une seule carte de vol : l'ancienne « OPA » a été fusionnée dans Débauchage.)*
 
 ## 16.7 Économie & seuil (calibré par simulation v0.7)
 - Départ **7 M€**, revenu **+3/tour**, main **5**, garde-fou **~40 manches** (jamais atteint en pratique).
 - Votants : Petit **4/2**, Moyen **8/4**, Gros **12/6**. **Deck 57 blocs uniques** (8 familles, ~7 par famille).
 - **Seuil de victoire = 45 voix, FIXE pour tous les nombres de joueurs (2 à 6).**
 - Pourquoi un seuil **fixe marche ici** : quand on dénonce, la cible qui manque de cash **rend des votants** qui **retournent au marché** → le marché **ne se vide pas**, la partie tient ~15 manches, et chacun a le temps d'atteindre 45 même à 6 joueurs. (Un deck fixe sans recirculation aurait forcé un seuil dégressif ; ce n'est pas le cas.)
-- Coûts d'attaque : **dénoncer 2 M€** (+ **amende 3 M€** si raté) · **Débauchage / OPA** = cartes.
+- Coûts d'attaque : **dénoncer 2 M€** (mise perdue si raté, rien à la cible) · **Débauchage** = cartes.
 - **Résultats `simulate()` (moteur réel, 57 blocs, ordre de tour fixe)** : **~100 % par le seuil** (96 % à 6 j.), **~15-16 manches** quel que soit le nombre de joueurs, voix du gagnant ≈ 46. La dénonciation « front entier » + les incompatibilités gardent la course disputée.
 - Le seuil est réglable dans `src/engine.js` (`const SEUIL_VOIX = 45`).
 

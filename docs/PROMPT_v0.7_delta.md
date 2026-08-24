@@ -25,10 +25,9 @@ puis recalibre avec simulate(). Ne casse pas le déterminisme ni le secret des c
      économique. publicState NE révèle PAS la famille interdite des autres.
    - Supprime tout ancien pouvoir de parti et toute carte objectif à +3 voix.
 
-3. DÉBAUCHAGE / OPA = CARTES (vol de voix) ; la VICTIME choisit.
+3. DÉBAUCHAGE = CARTE (vol de voix) ; la VICTIME choisit.
    - Joue la carte sur un rival ; c'est la cible qui désigne quel votant ISOLÉ (hors
      coalition complète) elle cède ; le bloc passe chez l'attaquant (voix + famille).
-   - OPA = version plus chère / bloc de plus forte valeur.
 
 4. INCOMPATIBILITÉS RENFORCÉES entre votants.
    - Liste de PAIRES exclusives (ne peut détenir les deux) : à l'achat, refuse un bloc
@@ -55,7 +54,7 @@ puis recalibre avec simulate(). Ne casse pas le déterminisme ni le secret des c
 9. UI :
    - index.html : casier de financement en PILES par front, face cachée (les rivaux voient
      des dos + le total d'argent, pas le contenu) ; dénonciation = cible + front -> révèle la
-     carte du dessus ; débauchage/OPA = la victime choisit le bloc ; famille interdite visible
+     carte du dessus ; débauchage = la victime choisit le bloc ; famille interdite visible
      seulement par son propriétaire.
    - catalogue.html : reconstruis en v0.7 (réf. catalogue-v0.6.html) ; bac à sable seuil 45 fixe.
 

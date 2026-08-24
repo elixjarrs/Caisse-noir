@@ -4,13 +4,13 @@
 > ✅ **DÉJÀ IMPLÉMENTÉ — `src/engine.js` fait foi.** Ce prompt est conservé comme historique.
 > Divergences entre ce prompt et le code livré : **dénonciation = FRONT ENTIER** (la cible perd toute sa corruption du front visé, pas « 1 carte ») · **seuil = 45 voix FIXE** pour 2 à 6 joueurs (pas de formule dégressive) · **deck = 57 blocs** · **ordre de tour fixe**. En cas de doute, lire le code, pas ce document.
 
-> Évolution de la v0.6. Changements v0.7 : dénonciation = **tout le front visé** (pari) · parti = **famille interdite secrète** (remplace pouvoirs + objectifs) · **débauchage/OPA = cartes, la victime choisit** · **incompatibilités renforcées** · **deck 57 blocs** · **seuil = 45 voix (fixe)** pour une partie ~7-12 min.
+> Évolution de la v0.6. Changements v0.7 : dénonciation = **tout le front visé** (pari) · parti = **famille interdite secrète** (remplace pouvoirs + objectifs) · **débauchage = cartes, la victime choisit** · **incompatibilités renforcées** · **deck 57 blocs** · **seuil = 45 voix (fixe)** pour une partie ~7-12 min.
 
 ## 📋 Résumé lisible — tout ce qu'on ajoute / change (pour relecture rapide)
 
 1. **Familles d'électeurs → voix bonus.** Chaque bloc appartient à une famille (8 familles). **3 blocs d'une même famille = +3 voix**, puis **+1 par bloc** supplémentaire. *(déjà acté)*
 2. **Coalition complète = électorat fidèle → involable** (ne peut pas être volé). *(déjà acté)*
-3. **Vol d'électorat** (transfert de voix, sur blocs **isolés** seulement) : **Débauchage** (2 M€ : −2/+2) et **OPA électorale** (4 M€ : −3/+3). *(déjà acté)*
+3. **Vol d'électorat** (transfert de voix, sur blocs **isolés** seulement) : **Débauchage** — la victime choisit le votant cédé. *(une seule carte de vol)*
 4. **Corruption CACHÉE** : on joue le financement **face cachée**. Les autres voient l'argent monter, **pas** s'il est propre/sale ni sur quel front.
 5. **Cartes de financement PROPRE** (Don/Meeting/Débat télévisé) : argent **sûr**, jamais dénonçable (rapporte moins). Elles servent aussi de **LEURRES** : posées face cachée sur un front pour que la taille des piles ne trahisse pas où on est sale.
 6. **Dénonciation = perte d'ARGENT et c'est un PARI sur UNE carte** : tu désignes un rival + **un** front, on révèle **la carte du dessus** de la pile. Sale → il perd **ce montant** (3/6/9 ; cash, sinon **rend des votants de SON choix → perd des voix** ; blocs au marché). **Raté** (leurre/vide) → tu perds ta mise (2 M€) + amende 3 M€ à la cible. *(v0.7 : une carte, plus le front entier → parties plus longues, leurres plus forts.)*
@@ -22,7 +22,7 @@
 12. **Fin de partie** : franchir le seuil déclenche la **manche finale** (tout le monde joue) ; le **plus de voix gagne**, même si renvoyé sous le seuil.
 13. **Deck votants 57 blocs uniques** (roster existant ; la plupart des familles ont un gros 12/6, quelques-unes non).
 14. **Incompatibilités renforcées** : nombreuses **paires de votants exclusives** (ne peut pas détenir les deux) → progression plus lente.
-15. **Débauchage / OPA = cartes** ; **la victime choisit** le votant isolé cédé.
+15. **Débauchage = carte** ; **la victime choisit** le votant isolé cédé.
 
 Spec complète et faisant foi : **`docs/REGLES.md` §16**.
 
@@ -76,9 +76,9 @@ patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recali
       un gros 12/6, quelques-unes non). INCOMPATIBILITÉS : liste de PAIRES de votants exclusives
       (ne peut détenir les deux) — à l'achat, refuse un bloc incompatible avec un bloc détenu.
       Étoffe la liste (Chasseurs×Animalistes, Patronat×CGT, Flics×Émeutiers…) pour ralentir.
-   e. VOL = CARTES : Débauchage et OPA (transfert de voix). La VICTIME choisit quel votant
+   e. VOL = CARTE : Débauchage (transfert de voix). La VICTIME choisit quel votant
       ISOLÉ (hors coalition complète) elle cède ; le bloc passe chez l'attaquant (voix + famille
-      transférées). OPA = version plus chère / bloc de plus forte valeur.
+      transférées).
    f. PARTI = FAMILLE INTERDITE SECRÈTE : à la création, chaque joueur reçoit 1 carte Parti
       cachée = { forbiddenFamily }. Il ne peut jamais acheter de bloc de cette famille. AUCUN
       autre effet (pas de pouvoir économique). publicState NE révèle PAS la famille interdite
@@ -110,7 +110,7 @@ patch. Implémente d'abord dans src/engine.js, puis propage à l'UI, puis recali
      sable avec le seuil 45 fixe.
    - index.html : casier de financement FACE CACHÉE en PILES par front (les rivaux voient des
      dos + le total d'argent, pas le contenu) ; dénonciation = choisir cible + front → révèle
-     la carte du dessus (pari) ; débauchage/OPA = la victime choisit le bloc cédé ; coalitions/
+     la carte du dessus (pari) ; débauchage = la victime choisit le bloc cédé ; coalitions/
      fidèles affichés ; famille interdite affichée seulement à son propriétaire.
 
 4) TESTS : `node src/engine.js` sort le rapport d'équilibrage recalibré ; vérifie qu'aucune
