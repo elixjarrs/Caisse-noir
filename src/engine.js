@@ -54,7 +54,7 @@ const FAMILY_DEF = {
   ],
   'Le Bloc Public': [
     ['La CGT','CGT','G'],['Les Fonctionnaires','Fonctionnaires','G'],['Les Soignants','Soignants','M'],
-    ['Les Profs','Profs','M'],['Les Cheminots','Cheminots','M'],
+    ['Les Profs','Profs','M'],['Les Douaniers','Douaniers','M'],
     ['Les Agents du fisc','AgentsFisc','P'],['Les Bibliothécaires','Bibliothecaires','P'],
   ],
   "L'Ordre & le Terroir": [
@@ -67,13 +67,13 @@ const FAMILY_DEF = {
     ['Les Youtubeurs','Youtubeurs','M'],['Les Crypto-bros','Crypto','P'],['Les Influenceurs','Influenceurs','P'],
     ['Les Nomades digitaux','NomadesDigitaux','P'],['Les Gamers','Gamers','P'],
   ],
-  "L'Écolo-Bobo": [
-    ['Les Décroissants','Decroissants','M'],['Les Néo-ruraux','Neoruraux','M'],
-    ['Les Animalistes','Animalistes','P'],['Les Bobos urbains','Bobos','P'],['Les Éveillés','Eveilles','P'],
+  'Les Bobos': [
+    ['Les Écolos','Ecolos','M'],['Les Néo-ruraux','Neoruraux','M'],
+    ['Les Animalistes','Animalistes','P'],['Les Performative males','PerformativeMales','P'],['Les Matcha girls','MatchaGirls','P'],
     ['Les Cyclistes','Cyclistes','P'],['Les Vegans','Vegans','P'],
   ],
   "L'Identité": [
-    ['Les Souverainistes','Souverainistes','G'],['Les Intégristes','Integristes','G'],['Les Identitaires','Identitaires','M'],
+    ['Les Souverainistes','Souverainistes','G'],['Les Intégristes','Integristes','G'],['Les Wokes','Wokes','M'],
     ['Les Traditionalistes','Traditionalistes','M'],['Les Masculinistes','Masculinistes','P'],
     ['Les Survivalistes','Survivalistes','P'],['Les Complotistes','Complotistes','P'],
   ],
@@ -85,7 +85,7 @@ const FAMILY_DEF = {
   'La Mobilité': [
     ['Les Automobilistes','Automobilistes','G'],['Les Taxis','Taxis','M'],['Les Routiers','Routiers','M'],
     ['Les Compagnies aériennes','Aerien','M'],['Les Motards','Motards','P'],['Les Usagers du périph','Periph','P'],
-    ['Les Routards','Routards','P'],
+    ['Les Cheminots','Cheminots','P'],
   ],
 };
 const TIERVAL = { P: { tier:'Petit', cost:4, voix:2 }, M: { tier:'Moyen', cost:8, voix:4 }, G: { tier:'Gros', cost:12, voix:6 } };
@@ -101,15 +101,11 @@ const FAMILY_LIST = Object.keys(FAMILY_DEF);
 /* ------------------- INCOMPATIBILITÉS : paires EXCLUSIVES ------------------- */
 /* On ne peut pas détenir les deux (refus à l'achat, sauf carte Incohérence). Cross-familles. */
 const INCOMPAT = [
-  ['Chasseurs','Animalistes'], ['Chasseurs','Vegans'],
-  ['Patronat','CGT'], ['Actionnaires','CGT'], ['Banquiers','GiletsJaunes'],
-  ['Flics','GiletsJaunes'], ['Gendarmes','GiletsJaunes'],
-  ['Bobos','Souverainistes'], ['Eveilles','Masculinistes'],
-  ['Neoruraux','Promoteurs'], ['Cyclistes','Automobilistes'], ['Cyclistes','Motards'],
-  ['Integristes','Eveilles'], ['Militaires','Intermittents'],
-  ['Decroissants','Traders'], ['Survivalistes','Eveilles'],
-  ['Traditionalistes','Youtubeurs'], ['Automobilistes','Decroissants'],
-  ['AgentsFisc','Rentiers'],
+  ['Patronat','CGT'], ['Banquiers','Intermittents'], ['Retraités','Youtubeurs'],
+  ['Chasseurs','Animalistes'], ['Flics','GiletsJaunes'], ['Neoruraux','Promoteurs'],
+  ['Cyclistes','Automobilistes'], ['Startuppers','Fonctionnaires'], ['AgentsFisc','Rentiers'],
+  ['Ubers','Taxis'], ['Ecolos','Aerien'], ['Masculinistes','PerformativeMales'],
+  ['Agroalim','Vegans'], ['Routiers','Douaniers'], ['Complotistes','Actionnaires'],
 ];
 function incompatWith(bloc, owned) {
   for (const [a, b] of INCOMPAT) { if (bloc === a && owned.includes(b)) return b; if (bloc === b && owned.includes(a)) return a; }
@@ -129,7 +125,7 @@ const PARTY_BY_FAMILY = {
   'Le Bloc Public':        'Le Parti du Privé',
   "L'Ordre & le Terroir":  'Les Écologistes Radicaux',
   'La Start-up Nation':    'Le Mouvement Souverain',
-  "L'Écolo-Bobo":          'Le Rassemblement des Bâtisseurs',
+  'Les Bobos':             'Le Rassemblement des Bâtisseurs',
   "L'Identité":            'La République Ouverte',
   'Les Précaires':         'Le Parti de l\'Ordre',
   'La Mobilité':           'Les Amis du Rail',

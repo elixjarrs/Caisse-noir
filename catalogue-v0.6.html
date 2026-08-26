@@ -45,16 +45,7 @@ header p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:900px}
 /* ============ DONNÉES v0.6 ============ */
 const T={P:[4,2],M:[8,4],G:[12,6],E:[13,7]}; // paliers coût/voix
 // Votants : [nom, palier]  groupés par famille
-const FAMS=[
- ["Le Capital",[["Le Patronat","G"],["Les Banquiers","G"],["Les Retraités","M"],["Les Rentiers","M"],["Les Héritiers","M"],["Les Promoteurs","P"],["Les Actionnaires","P"]]],
- ["Le Bloc Public",[["La CGT","G"],["Les Fonctionnaires","G"],["Les Soignants","M"],["Les Profs","M"],["Les Cheminots","M"],["Les Agents du fisc","P"],["Les Bibliothécaires","P"]]],
- ["L'Ordre & le Terroir",[["Le Lobby agroalimentaire","G"],["Les Militaires","G"],["Les Policiers","M"],["Les Chasseurs","M"],["Les Gendarmes","P"],["Les Pêcheurs","P"],["Les Viticulteurs","P"]]],
- ["La Start-up Nation",[["Les Start-uppers","M"],["Les Traders","M"],["Les Youtubeurs","M"],["Les Crypto-bros","P"],["Les Influenceurs","P"],["Les Nomades digitaux","P"],["Les Gamers","P"]]],
- ["L'Écolo-Bobo",[["Les Décroissants","M"],["Les Néo-ruraux","M"],["Les Animalistes","P"],["Les Bobos urbains","P"],["Les Éveillés","P"],["Les Cyclistes","P"],["Les Vegans","P"]]],
- ["L'Identité",[["Les Souverainistes","G"],["Les Intégristes","G"],["Les Identitaires","M"],["Les Traditionalistes","M"],["Les Masculinistes","P"],["Les Survivalistes","P"],["Les Complotistes","P"]]],
- ["Les Précaires",[["Les Gilets jaunes","G"],["Les Chômeurs","M"],["Les Intérimaires","M"],["Les Auto-entrepreneurs","M"],["Les Intermittents","P"],["Les Étudiants","P"],["Les Chauffeurs VTC","P"],["Les Livreurs","P"]]],
- ["La Mobilité",[["Les Automobilistes","G"],["Les Taxis","M"],["Les Routiers","M"],["Les Compagnies aériennes","M"],["Les Motards","P"],["Les Usagers du périph","P"],["Les Routards","P"]]],
-];
+const FAMS=[["Le Capital",[["Le Patronat","G"],["Les Banquiers","G"],["Les Retraités","M"],["Les Rentiers","M"],["Les Héritiers","M"],["Les Promoteurs","P"],["Les Actionnaires","P"]]],["Le Bloc Public",[["La CGT","G"],["Les Fonctionnaires","G"],["Les Soignants","M"],["Les Profs","M"],["Les Douaniers","M"],["Les Agents du fisc","P"],["Les Bibliothécaires","P"]]],["L'Ordre & le Terroir",[["Le Lobby agroalimentaire","G"],["Les Militaires","G"],["Les Policiers","M"],["Les Chasseurs","M"],["Les Gendarmes","P"],["Les Pêcheurs","P"],["Les Viticulteurs","P"]]],["La Start-up Nation",[["Les Start-uppers","M"],["Les Traders","M"],["Les Youtubeurs","M"],["Les Crypto-bros","P"],["Les Influenceurs","P"],["Les Nomades digitaux","P"],["Les Gamers","P"]]],["Les Bobos",[["Les Écolos","M"],["Les Néo-ruraux","M"],["Les Animalistes","P"],["Les Performative males","P"],["Les Matcha girls","P"],["Les Cyclistes","P"],["Les Vegans","P"]]],["L'Identité",[["Les Souverainistes","G"],["Les Intégristes","G"],["Les Wokes","M"],["Les Traditionalistes","M"],["Les Masculinistes","P"],["Les Survivalistes","P"],["Les Complotistes","P"]]],["Les Précaires",[["Les Gilets jaunes","G"],["Les Chômeurs","M"],["Les Intérimaires","M"],["Les Auto-entrepreneurs","M"],["Les Intermittents","P"],["Les Étudiants","P"],["Les Chauffeurs VTC","P"],["Les Livreurs","P"]]],["La Mobilité",[["Les Automobilistes","G"],["Les Taxis","M"],["Les Routiers","M"],["Les Compagnies aériennes","M"],["Les Motards","P"],["Les Usagers du périph","P"],["Les Cheminots","P"]]]];
 // Corruption SALE : 3 fronts × {3,6,9}
 const SALE=[
  ["Justice",[["Petit pot-de-vin",3],["Trafic d'influence",6],["Caisse noire judiciaire",9]]],
@@ -82,11 +73,11 @@ const COUPS=[
 // Partis = nom satirique (ironique) + famille SECRÈTE qu'il ne peut jamais acheter.
 const PARTIS=[
  {n:"La France des Travailleurs",s:"anti-capital",d:"Famille interdite (secrète) : <b>Le Capital</b>. Ne courtisera jamais Patronat, Banquiers, Rentiers, Actionnaires…"},
- {n:"Le Parti du Privé",s:"anti-public",d:"Famille interdite : <b>Le Bloc Public</b>. Pas de CGT, Fonctionnaires, Soignants, Profs, Cheminots…"},
+ {n:"Le Parti du Privé",s:"anti-public",d:"Famille interdite : <b>Le Bloc Public</b>. Pas de CGT, Fonctionnaires, Soignants, Profs, Douaniers…"},
  {n:"Les Écologistes Radicaux",s:"anti-terroir",d:"Famille interdite : <b>L'Ordre & le Terroir</b>. Pas de Chasseurs, Militaires, Agroalimentaire, Viticulteurs…"},
  {n:"Le Mouvement Souverain",s:"anti-tech",d:"Famille interdite : <b>La Start-up Nation</b>. Pas de Start-uppers, Traders, Crypto, Nomades digitaux…"},
- {n:"Le Rassemblement des Bâtisseurs",s:"anti-écolo",d:"Famille interdite : <b>L'Écolo-Bobo</b>. Pas d'Animalistes, Bobos, Vegans, Cyclistes…"},
- {n:"La République Ouverte",s:"anti-identité",d:"Famille interdite : <b>L'Identité</b>. Pas de Souverainistes, Intégristes, Identitaires…"},
+ {n:"Le Rassemblement des Bâtisseurs",s:"anti-bobo",d:"Famille interdite : <b>Les Bobos</b>. Pas d'Animalistes, Écolos, Matcha girls, Vegans…"},
+ {n:"La République Ouverte",s:"anti-identité",d:"Famille interdite : <b>L'Identité</b>. Pas de Souverainistes, Intégristes, Wokes…"},
  {n:"Le Parti de l'Ordre",s:"anti-précaires",d:"Famille interdite : <b>Les Précaires</b>. Pas de Gilets jaunes, Chômeurs, Livreurs, Intérimaires…"},
  {n:"Les Amis du Rail",s:"anti-bagnole",d:"Famille interdite : <b>La Mobilité</b>. Pas d'Automobilistes, Routiers, Motards, Taxis…"},
 ];
