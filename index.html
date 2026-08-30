@@ -15,6 +15,7 @@
   --paper:#f5edd8; --paper2:#ecdfc2; --paper-edge:#c9b98f;
   --ink:#2e2a20; --ink-soft:#6d6350; --ink-faint:#948a72;
   --gold:#c9a457; --gold-d:#9c7c34;
+  --hand-h:calc(clamp(160px,min(23vh,14.5vw),232px)*1.36 + 6px);   /* hauteur de la main = plafond des panneaux latéraux */
   /* dos de carte : moitié bleu drapeau (gauche) / moitié rouge communiste (droite), couture dorée */
   --cardblue:#0055A5; --cardred:#CC0000;
   --cardback:linear-gradient(90deg,transparent calc(50% - 2px),var(--gold-d) calc(50% - 2px),var(--gold) 50%,var(--gold-d) calc(50% + 2px),transparent calc(50% + 2px)),linear-gradient(90deg,var(--cardblue) 0 50%,var(--cardred) 50% 100%);
@@ -150,7 +151,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .pip{width:12px;height:12px;border-radius:50%;border:2px solid var(--gold)}
 .pip.on{background:var(--gold)}
 #myrow{display:grid;grid-template-columns:210px minmax(0,1fr) 210px;gap:10px}
-.sidebox{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 11px;color:#d8cfae;cursor:pointer;transition:.12s;overflow:auto}
+.sidebox{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px 11px;color:#d8cfae;cursor:pointer;transition:.12s;overflow:auto;max-height:var(--hand-h);min-height:0}
 .sidebox:hover{border-color:var(--gold)}
 .sidebox .ptitle{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#bdb494;font-weight:800;margin-bottom:6px}
 /* casier : une vraie pile secrète face cachée + exposition par catégorie */
@@ -197,7 +198,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
 .vfnames{font-size:10.5px;color:var(--ink-soft)}
 
 /* la MAIN en éventail */
-#handwrap{position:relative;display:flex;justify-content:center;align-items:flex-end;height:calc(clamp(160px,min(23vh,14.5vw),232px)*1.36 + 6px)}
+#handwrap{position:relative;display:flex;justify-content:center;align-items:flex-end;height:var(--hand-h)}
 #hand{display:flex;align-items:flex-end;justify-content:center;height:100%}
 .hc{width:clamp(160px,min(23vh,14.5vw),232px);aspect-ratio:142/192;margin:0 -26px;transform:rotate(var(--r)) translateY(var(--y));transform-origin:50% 120%;transition:transform .18s,box-shadow .18s;cursor:pointer;position:relative;z-index:1}
 .hc:hover{transform:translateY(-42px) rotate(0deg) scale(1.08);z-index:20}
