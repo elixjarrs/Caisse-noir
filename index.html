@@ -358,6 +358,30 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
   .mkc{width:clamp(96px,44vw,150px)}
   #myrow{grid-template-columns:minmax(0,1fr);grid-template-areas:"hand" "casier" "votants"}
 }
+
+/* ===================== HISTORIQUE DES PARTIES ===================== */
+.modal.wide{max-width:940px;width:100%}
+.htabs{display:flex;gap:6px;margin:12px 0 10px;flex-wrap:wrap}
+.htab{padding:6px 13px;border:1px solid var(--paper-edge);border-radius:9px;cursor:pointer;font-weight:800;font-size:12.5px;background:rgba(255,255,255,.4);color:var(--ink-soft)}
+.htab.on{background:linear-gradient(180deg,#d3ab5c,var(--gold));border-color:var(--gold-d);color:#2c1f08}
+.hsum{width:100%;border-collapse:collapse;font-size:12.5px}
+.hsum th,.hsum td{padding:5px 8px;border-bottom:1px solid var(--paper-edge);text-align:right;white-space:nowrap}
+.hsum th:first-child,.hsum td:first-child{text-align:left}
+.hsum th{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft)}
+.hsum tr.win td{background:#f2e4bd;font-weight:800}
+.hsum .neg{color:var(--sale)} .hsum .pos{color:var(--clean)}
+.hjournal{max-height:54vh;overflow:auto;font-size:12.5px;line-height:1.5;background:rgba(255,255,255,.35);border:1px solid var(--paper-edge);border-radius:10px;padding:8px 12px}
+.hjournal .ln{padding:2px 0;border-bottom:1px dashed rgba(150,118,47,.18)}
+.hjournal .ln.turn{border-top:2px solid var(--paper-edge);margin-top:5px;padding-top:6px}
+.hjournal .win{color:#8a6d1f;font-weight:800}.hjournal .denounce{color:#9a3b2b;font-weight:700}
+.hjournal .buy{color:#33553f}.hjournal .income{color:#8a8168}.hjournal .finance{color:#6b5423}
+.hlist{display:flex;flex-direction:column;gap:8px;max-height:62vh;overflow:auto;margin-top:4px}
+.hrow{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--paper-edge);border-radius:11px;background:rgba(255,255,255,.42)}
+.hrow .hmeta{flex:1;min-width:0}
+.hrow .hmeta b{font-size:13.5px}
+.hrow .hmeta span{display:block;font-size:11px;color:var(--ink-soft);margin-top:1px}
+.hrow .btn{padding:6px 11px;font-size:12px}
+.hempty{color:var(--ink-soft);text-align:center;padding:26px 10px;font-size:13px}
 </style>
 </head>
 <body>
@@ -382,7 +406,7 @@ input[type=text]{width:100%;padding:10px 13px;border:1px solid var(--paper-edge)
         </div>
       </div>
     </div>
-    <div class="note">🔒 Beta sans serveur : le secret des mains n'est pas garanti — jouez entre potes. · <a href="catalogue.html">Catalogue &amp; équilibrage</a> · <b style="color:var(--gold)">🏷️ build : table-v1</b></div>
+    <div class="note">🔒 Beta sans serveur : le secret des mains n'est pas garanti — jouez entre potes. · <a href="#" onclick="openHistoryList();return false">📚 Parties enregistrées (<span id="histCount">0</span>)</a> · <a href="catalogue.html">Catalogue &amp; équilibrage</a> · <b style="color:var(--gold)">🏷️ build : table-v1</b></div>
   </div>
 </div>
 
@@ -541,6 +565,7 @@ function setBusy(){ busy = true; clearTimeout(busyTimer); busyTimer = setTimeout
 /* ===================== ÉCRANS ===================== */
 function buildSeatPicker(elId, get, set){ const e=$(elId); e.innerHTML=""; for(let n=2;n<=6;n++){ const b=document.createElement("button"); b.className="seat"+(n===get()?" on":""); b.textContent=n; b.onclick=()=>{ set(n); buildSeatPicker(elId,get,set); }; e.appendChild(b); } }
 buildSeatPicker("#seatsSolo", ()=>soloSeats, n=>soloSeats=n);
+updateHistCount();
 function showScreen(name){ ["setup","lobby"].forEach(s=>$("#"+s).style.display=(s===name?"block":"none")); $("#table").style.display=(name==="table"?"grid":"none"); document.body.classList.toggle("ingame", name==="table"); }
 function pseudo(){ return ($("#pseudo").value||"").trim(); }
 function nameOk(){ if(!pseudo()){ toast("Entre ton pseudo d'abord 🙂"); return false; } NET.name=pseudo(); return true; }
@@ -587,7 +612,7 @@ function genRoom(){ const a="ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let r=""; for(let
 function connectChannel(room, asHost){
   NET.online=true; NET.isHost=asHost; NET.room=room; NET.started=false; NET.mySeat=null;
   NET.channel=sb.channel("caisse-"+room,{config:{broadcast:{self:false},presence:{key:NET.clientId}}});
-  NET.channel.on("broadcast",{event:"action"},onAction).on("broadcast",{event:"state"},onState).on("broadcast",{event:"start"},onStart).on("presence",{event:"sync"},onPresenceSync)
+  NET.channel.on("broadcast",{event:"action"},onAction).on("broadcast",{event:"state"},onState).on("broadcast",{event:"start"},onStart).on("broadcast",{event:"history"},onHistory).on("presence",{event:"sync"},onPresenceSync)
     .subscribe(st=>{ if(st==="SUBSCRIBED"){ NET.channel.track({clientId:NET.clientId,name:NET.name,isHost:asHost}); enterLobby(asHost,room); } else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT") toast("Connexion temps réel impossible 😕"); });
 }
 function createTable(){ if(!nameOk()) return; connectChannel(genRoom(), true); }
@@ -956,17 +981,156 @@ function confirmCede(bloc){ modalMode=null; hideModal(); submitPending({type:"CE
 /* ===================== FIN ===================== */
 function onGameOver(){
   if(gameOverShown) return; gameOverShown=true; modalMode=null;
+  recordGame();   // l'hôte enregistre la partie complète (journal + ledger) et la diffuse aux invités
   const mine=VIEW.winner===NET.mySeat; const ranked=VIEW.players.slice().sort((a,b)=>b.finalScore-a.finalScore);
   let h=`<h2>${mine?"🏆 Tu remportes l'élection !":"🗳️ "+esc(seatName(VIEW.winner))+" l'emporte"}</h2>
     <p class="muted small" style="margin-top:4px">${VIEW.endReason==="seuil"?"Le plus de voix en fin de manche finale.":"Fin au garde-fou — décompte des voix."} Rôles secrets révélés :</p>
     <table class="reveal"><tr><th>Joueur</th><th>Voix</th><th>Parti</th><th>Interdit</th><th>Cible +3</th></tr>`;
   ranked.forEach(p=>{ h+=`<tr class="${p.id===VIEW.winner?"win":""}"><td>${esc(seatName(p.id))}</td><td><b>${p.finalScore}</b></td><td>${esc(p.partyName||"?")}</td><td>⛔ ${esc(p.forbiddenFamily||"?")}</td><td>${p.targetDone?"🎯 ":"○ "}${esc(p.targetFamily||"?")}</td></tr>`; });
   h+=`</table><div class="choices" style="margin-top:12px">`;
+  h+=`<div class="choice" onclick="openFullHistory(lastRecord,false)">📜 Voir l'historique complet de la partie</div>`;
   if(NET.isHost) h+=`<div class="choice" onclick="hideModal();rematch()">↺ Relancer une partie</div>`; else h+=`<div class="muted small">En attente de l'hôte pour relancer…</div>`;
   h+=`<div class="choice" onclick="hideModal();leaveTable()">← Quitter la table</div></div>`;
   showModal(h);
 }
 function rematch(){ if(!NET.isHost) return; if(NET.online) hostStart(); else startSolo(); }
+
+/* ===================== HISTORIQUE DES PARTIES (localStorage) ===================== */
+const HIST_KEY="cn_history";
+let lastRecord=null;   // dernière partie terminée (pour l'écran de fin), hôte OU invité
+function loadHistory(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY))||[]; }catch(e){ return []; } }
+function saveHistory(list){
+  let arr=list.slice(-40);   // on garde au plus 40 parties ; on jette les plus vieilles si le quota sature
+  while(arr.length){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(arr)); return true; }catch(e){ arr=arr.slice(1); } }
+  try{ localStorage.setItem(HIST_KEY,"[]"); }catch(e){}
+  return false;
+}
+function updateHistCount(){ const el=$("#histCount"); if(el) el.textContent=loadHistory().length; }
+function buildGameRecord(){
+  if(!S) return null;
+  return {
+    v:1, id:Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,6),
+    date:new Date().toISOString(),
+    mode:NET.online?"online":"solo", room:NET.room||null,
+    nPlayers:S.nPlayers, X:S.X, seed:S.seed0, turns:S.turn, winner:S.winner, endReason:S.endReason,
+    players:S.players.map(p=>({ seat:p.id, name:p.name, isBot:isBotSeat(p.id), voix:p.voix, money:p.money,
+      forbiddenFamily:p.forbiddenFamily, targetFamily:p.targetFamily,
+      targetDone:CN.completeFamilies(p.blocs).includes(p.targetFamily), party:CN.PARTY_BY_FAMILY[p.forbiddenFamily] })),
+    log:S.log.slice().reverse(),   // chronologique (le moteur stocke récent-en-premier)
+    ledger:S.ledger.slice(),
+  };
+}
+function recordGame(){   // seul l'hôte détient l'état complet S
+  if(!NET.isHost||!S) return null;
+  const rec=buildGameRecord(); if(!rec) return null;
+  const h=loadHistory(); h.push(rec); saveHistory(h); updateHistCount();
+  lastRecord=rec;
+  if(NET.online&&NET.channel) NET.channel.send({type:"broadcast",event:"history",payload:{rec}});
+  return rec;
+}
+function onHistory({payload}){   // invité en ligne : reçoit la partie complète de l'hôte
+  if(NET.isHost||!payload||!payload.rec) return;
+  lastRecord=payload.rec;
+  const h=loadHistory(); if(!h.some(g=>g.id===payload.rec.id)){ h.push(payload.rec); saveHistory(h); updateHistCount(); }
+}
+
+/* ---- résumé des flux d'argent par joueur (dérivé du ledger) ---- */
+function moneySummary(rec){
+  const per={};
+  rec.players.forEach(p=>per[p.seat]={ name:p.name, isBot:p.isBot, seat:p.seat, voix:p.voix, end:p.money,
+    start:0, income:0, gain:0, buy:0, other:0, fines:0 });
+  (rec.ledger||[]).forEach(e=>{ const s=per[e.seat]; if(!s) return;
+    if(e.type==="start") s.start+=e.delta;
+    else if(e.type==="income") s.income+=e.delta;
+    else if(e.type==="finance_dirty"||e.type==="finance_clean") s.gain+=e.delta;
+    else if(e.type==="buy") s.buy+=-e.delta;
+    else if(e.type==="protect"||e.type==="blanch"||e.type==="denounce_stake") s.other+=-e.delta;
+    else if(e.type==="fine_cash") s.fines+=-e.delta;
+  });
+  return per;
+}
+
+/* ---- écran DÉTAILLÉ d'une partie (journal complet + flux d'argent) ---- */
+let histTab="journal";
+function openFullHistory(rec, fromList){
+  if(!rec){ toast("Partie introuvable"); return; }
+  lastRecord=rec; histTab="journal";
+  renderFullHistory(rec, fromList);
+}
+function renderFullHistory(rec, fromList){
+  const d=new Date(rec.date); const dstr=d.toLocaleString("fr-FR");
+  const wname=(rec.players.find(p=>p.seat===rec.winner)||{}).name||("Siège "+rec.winner);
+  let body="";
+  if(histTab==="journal"){
+    const rows=(rec.log||[]).map(e=>{
+      const cls="ln"+(e.tag==="income"?" turn":"")+(e.tag?" "+e.tag:"");
+      return `<div class="${cls}"><span class="small" style="color:var(--ink-faint)">M${e.t}</span> ${esc(e.msg)}</div>`;
+    }).join("");
+    body=`<div class="hjournal" id="hjbox">${rows||'<div class="hempty">Journal vide</div>'}</div>`;
+  } else {
+    const per=moneySummary(rec);
+    const arr=rec.players.map(p=>per[p.seat]);
+    let rows=arr.map(s=>`<tr class="${s.seat===rec.winner?"win":""}"><td>${s.isBot?"🤖 ":""}${esc(s.name)}</td>
+      <td class="pos">+${s.start}</td><td class="pos">+${s.income}</td><td class="pos">+${s.gain}</td>
+      <td class="neg">−${s.buy}</td><td class="neg">−${s.other}</td><td class="neg">−${s.fines}</td>
+      <td><b>${s.end}</b></td><td><b>${s.voix}</b></td></tr>`).join("");
+    body=`<div style="overflow:auto"><table class="hsum">
+      <tr><th>Joueur</th><th>Départ</th><th>Revenus</th><th>Finance</th><th>Achats</th><th>Prot./Dén.</th><th>Amendes</th><th>Solde fin</th><th>Voix</th></tr>
+      ${rows}</table></div>
+      <p class="muted small" style="margin-top:10px">Chaque montant est un flux cumulé sur la partie. « Solde fin » = cash restant. L'export JSON contient le <b>ledger</b> complet (chaque mouvement, type + solde après) pour l'analyse des coupures.</p>`;
+  }
+  const backBtn=fromList?`<div class="choice" onclick="openHistoryList()">← Liste des parties</div>`:`<div class="choice" onclick="hideModal()">Fermer</div>`;
+  showModal(`<h2>📜 ${esc(wname)} l'emporte — ${rec.turns} manches</h2>
+    <p class="muted small">${dstr} · ${rec.mode==="online"?"En ligne":"Solo"} · ${rec.nPlayers} joueurs · objectif ${rec.X} voix · fin : ${rec.endReason==="seuil"?"seuil":"garde-fou"} · seed ${rec.seed}</p>
+    <div class="htabs">
+      <div class="htab${histTab==="journal"?" on":""}" onclick="histTab='journal';renderFullHistory(getRec('${rec.id}'),${!!fromList})">📰 Journal complet (${(rec.log||[]).length})</div>
+      <div class="htab${histTab==="money"?" on":""}" onclick="histTab='money';renderFullHistory(getRec('${rec.id}'),${!!fromList})">💰 Flux d'argent</div>
+    </div>
+    ${body}
+    <div class="btnrow" style="margin-top:12px">
+      <button class="btn primary" onclick="exportGame('${rec.id}')">⬇︎ Exporter JSON</button>
+      ${backBtn.replace('class="choice"','class="btn"')}
+    </div>`);
+  $("#modal").classList.add("wide");
+  const jb=$("#hjbox"); if(jb) jb.scrollTop=0;
+}
+function getRec(id){ if(lastRecord&&lastRecord.id===id) return lastRecord; return loadHistory().find(g=>g.id===id)||lastRecord; }
+
+/* ---- LISTE des parties enregistrées ---- */
+function openHistoryList(){
+  const h=loadHistory().slice().reverse();   // plus récentes en haut
+  let rows;
+  if(!h.length) rows=`<div class="hempty">Aucune partie enregistrée pour l'instant.<br>Joue une partie jusqu'au bout : elle apparaîtra ici.</div>`;
+  else rows=h.map(g=>{
+    const wname=(g.players.find(p=>p.seat===g.winner)||{}).name||("Siège "+g.winner);
+    const dstr=new Date(g.date).toLocaleString("fr-FR");
+    return `<div class="hrow"><div class="hmeta"><b>🏆 ${esc(wname)}</b> — ${g.turns} manches
+      <span>${dstr} · ${g.mode==="online"?"🌐 en ligne":"🎲 solo"} · ${g.nPlayers} joueurs · ${(g.log||[]).length} évèn.</span></div>
+      <button class="btn" onclick="openFullHistory(getRec('${g.id}'),true)">Voir</button>
+      <button class="btn" onclick="exportGame('${g.id}')">⬇︎</button>
+      <button class="btn danger-x" onclick="deleteGame('${g.id}')">🗑</button></div>`;
+  }).join("");
+  showModal(`<h2>📚 Parties enregistrées (${h.length})</h2>
+    <p class="muted small">Enregistrées sur cet appareil (localStorage). Elles survivent à la fin des parties et aux relances.</p>
+    <div class="hlist">${rows}</div>
+    <div class="btnrow" style="margin-top:12px">
+      ${h.length?`<button class="btn" onclick="exportAllGames()">⬇︎ Tout exporter</button><button class="btn" onclick="clearHistory()">🗑 Tout vider</button>`:""}
+      <button class="btn primary" onclick="hideModal()">Fermer</button>
+    </div>`);
+  $("#modal").classList.add("wide");
+}
+function deleteGame(id){ const h=loadHistory().filter(g=>g.id!==id); saveHistory(h); updateHistCount(); openHistoryList(); }
+function clearHistory(){ if(!confirm("Supprimer TOUTES les parties enregistrées ?")) return; try{ localStorage.removeItem(HIST_KEY); }catch(e){} updateHistCount(); openHistoryList(); }
+
+/* ---- export JSON (téléchargement fichier) ---- */
+function downloadJSON(filename, obj){
+  const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a");
+  a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function exportGame(id){ const g=getRec(id); if(!g){ toast("Introuvable"); return; } downloadJSON(`caisse-noire_${g.id}.json`, g); }
+function exportAllGames(){ downloadJSON(`caisse-noire_historique_${new Date().toISOString().slice(0,10)}.json`, loadHistory()); }
 
 /* ===================== UTILS ===================== */
 function showModal(h){ const m=$("#modal"); m.className="modal"; m.innerHTML=h; $("#overlay").style.display="flex"; }

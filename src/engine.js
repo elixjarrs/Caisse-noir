@@ -181,14 +181,15 @@ function newPlayer(id, forbiddenFamily, targetFamily, name) {
 
 function createGame(opts = {}) {
   const nPlayers = Math.max(2, Math.min(6, opts.nPlayers || 4));
+  const seed0 = (opts.seed != null ? opts.seed : (Date.now() & 0xffffffff)) >>> 0;
   const state = {
-    rng: (opts.seed != null ? opts.seed : (Date.now() & 0xffffffff)) >>> 0,
+    rng: seed0, seed0,                     // seed0 = graine initiale conservée (parties rejouables)
     nPlayers, X: (opts.X != null ? opts.X : seuil(nPlayers)),
     marketVisible: opts.marketVisible || marketVisibleFor(nPlayers),
     turn: 0, order: [], currentIdx: 0, actionsLeft: 0,
     deck: [], discard: [], votantDeck: [], market: [],
     players: [], over: false, winner: null, endReason: null,
-    pending: null, endingTriggered: false, log: [],
+    pending: null, endingTriggered: false, log: [], ledger: [],   // ledger = relevé structuré des flux d'argent
   };
   const famPool = shuffle(FAMILY_LIST.slice(), state);   // famille interdite distincte par joueur
   const tgtPool = shuffle(FAMILY_LIST.slice(), state);   // famille cible distincte par joueur, ≠ sa propre interdite
@@ -202,12 +203,19 @@ function createGame(opts = {}) {
   state.votantDeck = shuffle(buildVotants(), state);
   refillMarket(state);
   for (const p of state.players) drawUp(state, p);
+  for (const p of state.players) ledger(state, p.id, 'start', CONFIG.start, null);   // dotation de départ
   startRound(state);
   return state;
 }
 
 /* ------------------------------ UTILITAIRES -------------------------------- */
 function log(state, msg, tag) { state.log.unshift({ t: state.turn, msg, tag: tag || null }); }
+// Relevé structuré d'un mouvement d'argent : delta signé + solde du joueur APRÈS le mouvement.
+// Types : start · income · buy · finance_dirty · finance_clean · protect · blanch · denounce_stake · fine_cash · fine_votants
+function ledger(state, seat, type, delta, info) {
+  const p = state.players.find(x => x.id === seat);
+  state.ledger.push({ t: state.turn, seat, type, delta, bal: p ? p.money : null, info: info || null });
+}
 function current(state) { return state.order[state.currentIdx]; }
 function recompute(p) {
   const tgt = p.targetFamily && completeFamilies(p.blocs).includes(p.targetFamily) ? CONFIG.targetBonus : 0;
@@ -236,7 +244,7 @@ function startRound(state) {
   state.currentIdx = 0;
   beginTurn(state);
 }
-function beginTurn(state) { const p = current(state); p.money += CONFIG.income; state.actionsLeft = CONFIG.actions; log(state, `${p.name} encaisse +${CONFIG.income} M€`, 'income'); }
+function beginTurn(state) { const p = current(state); p.money += CONFIG.income; ledger(state, p.id, 'income', CONFIG.income, null); state.actionsLeft = CONFIG.actions; log(state, `${p.name} encaisse +${CONFIG.income} M€`, 'income'); }
 function endTurn(state) {
   const p = current(state);
   drawUp(state, p);
@@ -335,7 +343,7 @@ function spend(state) { state.actionsLeft = Math.max(0, state.actionsLeft - 1); 
 function doBuy(state, p, idx) {
   const c = state.market[idx]; if (!c) return fail(state, 'bloc absent du marché');
   const chk = canBuy(p, c); if (!chk.ok) return fail(state, 'achat impossible: ' + chk.why);
-  p.money -= chk.cost;
+  p.money -= chk.cost; ledger(state, p.id, 'buy', -chk.cost, { bloc: c.bloc, nom: c.nom, voix: c.voix });
   if (!p.blocs.includes(c.bloc)) p.blocs.push(c.bloc);
   p.votants.push({ nom: c.nom, bloc: c.bloc, voix: c.voix });
   state.market.splice(idx, 1); refillMarket(state); recompute(p);
@@ -345,6 +353,7 @@ function doBuy(state, p, idx) {
 function doFinance(state, p, i) {
   const card = p.hand[i]; if (!card || card.kind !== 'cor') return fail(state, 'pas une carte corruption');
   p.money += card.gain; p.financ[card.front].push({ clean: false, amount: card.gain });
+  ledger(state, p.id, 'finance_dirty', card.gain, { front: card.front });
   log(state, `${p.name} se finance (+${card.gain} M€, carte posée)`, 'finance');
   discardFromHand(state, p, i); spend(state); return { ok: true, state };
 }
@@ -352,6 +361,7 @@ function doFinanceClean(state, p, i, front) {
   const card = p.hand[i]; if (!card || card.kind !== 'clean') return fail(state, 'pas un financement propre');
   const fr = FRONTS.includes(front) ? front : decoyFront(p);
   p.money += card.gain; p.financ[fr].push({ clean: true, amount: card.gain });
+  ledger(state, p.id, 'finance_clean', card.gain, { front: fr });
   log(state, `${p.name} se finance (+${card.gain} M€, carte posée)`, 'finance');
   discardFromHand(state, p, i); spend(state); return { ok: true, state };
 }
@@ -359,7 +369,7 @@ function decoyFront(p) { const withSale = FRONTS.filter(fr => p.financ[fr].some(
 function doProtect(state, p, i) {
   const card = p.hand[i]; if (!card || card.kind !== 'pro') return fail(state, 'pas une protection');
   if (CONFIG.protectCost > p.money) return fail(state, "pas assez d'argent");
-  p.money -= CONFIG.protectCost; if (!p.protect.includes(card.front)) p.protect.push(card.front);
+  p.money -= CONFIG.protectCost; ledger(state, p.id, 'protect', -CONFIG.protectCost, { front: card.front }); if (!p.protect.includes(card.front)) p.protect.push(card.front);
   log(state, `${p.name} protège ${card.front}`, 'protect');
   discardFromHand(state, p, i); spend(state); return { ok: true, state };
 }
@@ -367,7 +377,7 @@ function doBlanch(state, p, i) {
   const card = p.hand[i]; if (!card || card.kind !== 'bla') return fail(state, 'pas un blanchiment');
   const big = biggestDirty(p); if (!big) return fail(state, 'rien à blanchir');
   if (CONFIG.blanchCost > p.money) return fail(state, "pas assez d'argent");
-  p.money -= CONFIG.blanchCost; p.financ[big.front][big.idx].clean = true;
+  p.money -= CONFIG.blanchCost; ledger(state, p.id, 'blanch', -CONFIG.blanchCost, { front: big.front }); p.financ[big.front][big.idx].clean = true;
   log(state, `${p.name} blanchit une carte (${big.front})`, 'blanch');
   discardFromHand(state, p, i); spend(state); return { ok: true, state };
 }
@@ -375,7 +385,7 @@ function doDenounce(state, p, i, targetId, front) {   // frappe TOUTE la corrupt
   const card = p.hand[i]; if (!card || card.kind !== 'den') return fail(state, 'pas une dénonciation');
   const t = state.players.find(x => x.id === targetId); if (!t || t === p) return fail(state, 'cible invalide');
   if (CONFIG.denounceCost > p.money) return fail(state, "pas assez d'argent");
-  p.money -= CONFIG.denounceCost; p.denounceLaunched++;
+  p.money -= CONFIG.denounceCost; ledger(state, p.id, 'denounce_stake', -CONFIG.denounceCost, { target: targetId, front }); p.denounceLaunched++;
   discardFromHand(state, p, i); spend(state);
   const blocked = t.protect.includes(front) || t.attackedThisRound;
   const saleSum = blocked ? 0 : saleSumFront(t, front);   // somme de TOUTES les cartes sales du front
@@ -387,8 +397,11 @@ function doDenounce(state, p, i, targetId, front) {   // frappe TOUTE la corrupt
   // TOUCHÉ : la cible perd TOUTE la corruption du front (les cartes sales sautent)
   t.financ[front] = t.financ[front].filter(c => c.clean);
   let byVotants = 0;
+  const cashPaid = Math.min(t.money, saleSum);   // part de l'amende réglée en cash (le reste, en votants rendus)
   if (t.money >= saleSum) t.money -= saleSum;
   else { const shortfall = saleSum - t.money; t.money = 0; const need = Math.ceil(shortfall / 2); if (t.votants.length) { state.pending = { kind: 'debt', playerId: t.id, voixNeeded: need }; byVotants = need; } }
+  if (cashPaid > 0) ledger(state, t.id, 'fine_cash', -cashPaid, { front, by: p.id, saleSum });
+  if (byVotants > 0) ledger(state, t.id, 'fine_votants', 0, { front, by: p.id, voixNeeded: byVotants, saleSum });
   t.attackedThisRound = true; recompute(t);
   log(state, `${p.name} dénonce ${t.name} (${front}) : −${saleSum} M€${byVotants ? ` → rend des votants` : ''}`, 'denounce');
   return { ok: true, state };
