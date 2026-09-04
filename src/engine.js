@@ -106,6 +106,7 @@ const INCOMPAT = [
   ['Cyclistes','Automobilistes'], ['Startuppers','Fonctionnaires'], ['AgentsFisc','Rentiers'],
   ['Ubers','Taxis'], ['Ecolos','Aerien'], ['Masculinistes','PerformativeMales'],
   ['Agroalim','Vegans'], ['Routiers','Douaniers'], ['Complotistes','Actionnaires'],
+  ['Soignants','Influenceurs'],
 ];
 function incompatWith(bloc, owned) {
   for (const [a, b] of INCOMPAT) { if (bloc === a && owned.includes(b)) return b; if (bloc === b && owned.includes(a)) return a; }
